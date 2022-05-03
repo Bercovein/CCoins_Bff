@@ -1,4 +1,4 @@
-package com.wisp.Bff;
+package com.ccoins.Bff;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
