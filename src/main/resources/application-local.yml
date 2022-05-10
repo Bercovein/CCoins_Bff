@@ -2,11 +2,17 @@ server:
   port: 8080
   servlet:
     context-path: /bff
-
 spring:
   application:
     name: bff
-
 bff:
   path:
     actuator: /actuator
+#FEIGN CLIENT
+feign:
+  coins-ms:
+    name: coins
+    url: http://localhost:8081/coins
+
+
+
