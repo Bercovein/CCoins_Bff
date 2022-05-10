@@ -12,15 +12,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/demo2")
 public class DemoController implements ICoinsController {
 
-    private final ICoinsService coinsService;
 
-    @Autowired
-    public DemoController(ICoinsService coinsService) {
-        this.coinsService = coinsService;
-    }
-
-    @GetMapping
-    public ResponseEntity demo(){
-        return this.coinsService.demo();
-    }
 }

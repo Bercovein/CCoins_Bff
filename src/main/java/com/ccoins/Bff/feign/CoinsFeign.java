@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @FeignClient(name = "${feign.coins-ms.name}", url = "${feign.coins-ms.url}")
-@RequestMapping("demo")
+@RequestMapping("${feign.coins-ms.req-ma}")
 public interface CoinsFeign {
 
-    @GetMapping
+    @GetMapping("demo")
     ResponseEntity<String> demo();
 }
