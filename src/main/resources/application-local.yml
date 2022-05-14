@@ -5,6 +5,12 @@ server:
 spring:
   application:
     name: bff
+
+#LOGIN GOOGLE
+google:
+  client:
+    id: 361460326222-60aal4bkqjt0t0mpl42s4ruo3qm9lpqn.apps.googleusercontent.com
+
 bff:
   path:
     actuator: /actuator

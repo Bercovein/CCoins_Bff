@@ -1,4 +1,4 @@
-package com.ccoins.Bff.service.impl;
+package com.ccoins.Bff.service;
 
 public interface ICoinsService {
 
