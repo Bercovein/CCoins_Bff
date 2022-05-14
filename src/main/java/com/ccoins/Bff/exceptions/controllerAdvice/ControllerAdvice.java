@@ -4,7 +4,6 @@ import com.ccoins.Bff.exceptions.*;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -14,8 +13,8 @@ import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.ResponseEntity.status;
 
 @Order(HIGHEST_PRECEDENCE)
-@ControllerAdvice
-public class ControllerAdviceImpl { // se encarga de enviar una respuesta cuando se lanza una excepcion explicita
+@org.springframework.web.bind.annotation.ControllerAdvice
+public class ControllerAdvice { // se encarga de enviar una respuesta cuando se lanza una excepcion explicita
 
     @ExceptionHandler({ObjectNoContentException.class})
     @ResponseStatus(NO_CONTENT)
