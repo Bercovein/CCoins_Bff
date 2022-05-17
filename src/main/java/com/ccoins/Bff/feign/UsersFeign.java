@@ -1,9 +1,18 @@
 package com.ccoins.Bff.feign;
 
+import com.ccoins.Bff.dto.users.request.OwnerDTO;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @FeignClient(name = "${feign.users-ms.name}", url = "${feign.users-ms.url}")
-@RequestMapping("${feign.users-ms.req-ma}")
+@RequestMapping("${feign.users-ms.req-map}")
 public interface UsersFeign {
+
+    @PostMapping("/owner")
+    void saveOwner(@RequestBody OwnerDTO owner);
+
+    @GetMapping("/owner/email/{email}")
+    Optional<OwnerDTO> findByEmail(@PathVariable("email") String email);
 }

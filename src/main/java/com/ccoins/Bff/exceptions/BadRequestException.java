@@ -10,8 +10,8 @@ public class BadRequestException extends CustomException {
         super("BadRequest");
     }
 
-    public BadRequestException(String code, Class<?> object){
-        super(code,format("{0}BadRequest", object.getSimpleName()));
+    public BadRequestException(String code, Class<?> object, String message){
+        super(code,format("{0}BadRequest: {1}", object.getSimpleName(), message));
     }
 
 }
