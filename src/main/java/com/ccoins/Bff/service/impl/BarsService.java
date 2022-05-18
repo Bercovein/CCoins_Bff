@@ -26,7 +26,6 @@ public class BarsService implements IBarsService {
 
         try{
             //METER LO QUE VENGA POR HEADERS EN BARDTO
-
             return this.barsFeign.saveOrUpdate(barDTO);
         }catch(Exception e){
             log.error(ErrorUtils.parseMethodError(this.getClass()));
