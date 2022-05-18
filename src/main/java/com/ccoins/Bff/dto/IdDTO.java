@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TokenDTO {
+public class IdDTO {
 
-   private String value;
+   private Long id;
 }

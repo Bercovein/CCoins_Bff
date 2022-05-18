@@ -8,6 +8,8 @@ public class ExceptionConstant {
     public static final String GET_ERROR_LABEL = ERROR_LABEL.concat("get ");
     public static final String CREATE_NEW_ERROR_LABEL = ERROR_LABEL.concat("create new ");
 
+    public static final String CREATE_OR_REPLACE_ERROR_LABEL = ERROR_LABEL.concat("create or replace ");
+
     //ERRORS
     public static final String GENERIC_ERROR_CODE = "0001";
     public static final String GENERIC_ERROR = "Something went wrong! Check with your administrator";
@@ -23,5 +25,17 @@ public class ExceptionConstant {
 
     public static final String USERS_GET_OWNER_BY_EMAIL_ERROR_CODE = "0005";
     public static final String USERS_GET_OWNER_BY_EMAIL_ERROR = GET_ERROR_LABEL.concat("owner");
+
+    public static final String BARS_CREATE_OR_UPDATE_ERROR_CODE = "0006";
+    public static final String BARS_CREATE_OR_UPDATE_ERROR = CREATE_OR_REPLACE_ERROR_LABEL.concat("bar");
+
+    public static final String BARS_FIND_BY_ID_ERROR_CODE = "0007";
+    public static final String BARS_FIND_BY_ID_ERROR = GET_ERROR_LABEL.concat("bar by id");
+
+    public static final String BARS_FIND_BY_OWNER_ERROR_CODE = "0008";
+    public static final String BARS_FIND_BY_OWNER_ERROR = GET_ERROR_LABEL.concat("bars by owner");
+
+    public static final String USER_NOT_FOUND_ERROR_CODE = "0009";
+    public static final String USER_NOT_FOUND_ERROR = "User not found.";
 
 }

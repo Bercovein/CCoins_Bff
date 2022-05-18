@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public abstract class CustomException extends RuntimeException {
+public abstract class CustomException extends RuntimeException{
     private String code;
 
     public CustomException(String code){
