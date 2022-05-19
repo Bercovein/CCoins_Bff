@@ -1,5 +1,6 @@
 package com.ccoins.Bff.service.impl;
 
+import com.ccoins.Bff.configuration.security.PrincipalUserFactory;
 import com.ccoins.Bff.dto.users.OwnerDTO;
 import com.ccoins.Bff.exceptions.BadRequestException;
 import com.ccoins.Bff.exceptions.UnauthorizedException;
@@ -9,11 +10,12 @@ import com.ccoins.Bff.utils.DateUtils;
 import com.ccoins.Bff.utils.ErrorUtils;
 import com.ccoins.Bff.utils.constant.ExceptionConstant;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -25,6 +27,12 @@ public class UsersService implements IUsersService, UserDetailsService {
     @Autowired
     private UsersFeign usersFeign;
 
+    @Autowired
+	PasswordEncoder passwordEncoder;
+    
+    @Value("${secretPsw}") 
+    String secretPsw;
+
     @Override
     public OwnerDTO newOwner(String email) {
 
@@ -32,7 +40,8 @@ public class UsersService implements IUsersService, UserDetailsService {
 
         try{
             ownerDTO = OwnerDTO.builder().email(email).startDate(DateUtils.now()).build();
-            return this.usersFeign.saveOwner(ownerDTO);
+            OwnerDTO newOwner = this.usersFeign.saveOwner(ownerDTO);
+            return newOwner;
         }catch(Exception e){
             log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.USERS_NEW_OWNER_ERROR_CODE, this.getClass(), ExceptionConstant.USERS_NEW_OWNER_ERROR);
@@ -66,11 +75,10 @@ public class UsersService implements IUsersService, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-
         try{
-            ModelMapper mapper = new ModelMapper();
             OwnerDTO ownerDTO = this.usersFeign.findByEmail(email).get();
-            return mapper.map(ownerDTO,UserDetails.class);
+
+            return PrincipalUserFactory.build(ownerDTO, passwordEncoder.encode(secretPsw));
         }catch(Exception e){
             log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new UnauthorizedException(ExceptionConstant.USER_NOT_FOUND_ERROR_CODE, this.getClass(), ExceptionConstant.USER_NOT_FOUND_ERROR);

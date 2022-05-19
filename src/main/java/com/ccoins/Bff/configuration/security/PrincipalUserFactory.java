@@ -4,7 +4,7 @@ import com.ccoins.Bff.dto.users.OwnerDTO;
 
 public class PrincipalUserFactory {
 
-    public static PrincipalUser build(OwnerDTO owner){
-        return PrincipalUser.builder().email(owner.getEmail()).build();
+    public static PrincipalUser build(OwnerDTO owner, String secretPsw){
+       return PrincipalUser.builder().email(owner.getEmail()).password(secretPsw).build();
     }
 }
