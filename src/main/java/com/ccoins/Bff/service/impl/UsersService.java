@@ -28,7 +28,7 @@ public class UsersService implements IUsersService, UserDetailsService {
     private UsersFeign usersFeign;
 
     @Autowired
-	PasswordEncoder passwordEncoder;
+    PasswordEncoder passwordEncoder;
     
     @Value("${secretPsw}") 
     String secretPsw;
@@ -40,8 +40,7 @@ public class UsersService implements IUsersService, UserDetailsService {
 
         try{
             ownerDTO = OwnerDTO.builder().email(email).startDate(DateUtils.now()).build();
-            OwnerDTO newOwner = this.usersFeign.saveOwner(ownerDTO);
-            return newOwner;
+            return this.usersFeign.saveOwner(ownerDTO);
         }catch(Exception e){
             log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.USERS_NEW_OWNER_ERROR_CODE, this.getClass(), ExceptionConstant.USERS_NEW_OWNER_ERROR);
