@@ -3,9 +3,11 @@ package com.ccoins.Bff.exceptions;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.function.Supplier;
+
 @Data
 @NoArgsConstructor
-public abstract class CustomException extends RuntimeException{
+public abstract class CustomException extends RuntimeException implements Supplier {
     private String code;
 
     public CustomException(String code){

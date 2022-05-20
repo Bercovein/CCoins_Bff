@@ -1,37 +1,31 @@
 package com.ccoins.Bff.service.impl;
 
-import com.ccoins.Bff.configuration.security.PrincipalUserFactory;
 import com.ccoins.Bff.dto.users.OwnerDTO;
 import com.ccoins.Bff.exceptions.BadRequestException;
-import com.ccoins.Bff.exceptions.UnauthorizedException;
+import com.ccoins.Bff.exceptions.ObjectNotFoundException;
+import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.Bff.feign.UsersFeign;
 import com.ccoins.Bff.service.IUsersService;
 import com.ccoins.Bff.utils.DateUtils;
 import com.ccoins.Bff.utils.ErrorUtils;
-import com.ccoins.Bff.utils.constant.ExceptionConstant;
+import com.ccoins.Bff.utils.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 @Slf4j
-public class UsersService implements IUsersService, UserDetailsService {
+public class UsersService implements IUsersService  {
+
+    private final UsersFeign usersFeign;
 
     @Autowired
-    private UsersFeign usersFeign;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
-    
-    @Value("${secretPsw}") 
-    String secretPsw;
+    public UsersService(UsersFeign usersFeign) {
+        this.usersFeign = usersFeign;
+    }
 
     @Override
     public OwnerDTO newOwner(String email) {
@@ -58,6 +52,23 @@ public class UsersService implements IUsersService, UserDetailsService {
         }
     }
 
+
+    @Override
+    public OwnerDTO findByToken(HttpHeaders headers){
+        Optional<OwnerDTO> ownerDTO = this.findByEmail(TokenUtils.get(headers, TokenUtils.TOKEN_EMAIL));
+
+        if (ownerDTO.isEmpty()){
+            throw new ObjectNotFoundException(ExceptionConstant.USERS_GET_OWNER_BY_EMAIL_ERROR_CODE, this.getClass(), ExceptionConstant.USERS_GET_OWNER_BY_EMAIL_ERROR);
+        }
+
+        return ownerDTO.get();
+    }
+
+    @Override
+    public Long getOwnerId(HttpHeaders headers){
+        return this.findByToken(headers).getId();
+    }
+
     @Override
     public OwnerDTO findOrCreateOwner(String email){
 
@@ -71,16 +82,5 @@ public class UsersService implements IUsersService, UserDetailsService {
         return ownerDTO;
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        try{
-            OwnerDTO ownerDTO = this.usersFeign.findByEmail(email).get();
-
-            return PrincipalUserFactory.build(ownerDTO, passwordEncoder.encode(secretPsw));
-        }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
-            throw new UnauthorizedException(ExceptionConstant.USER_NOT_FOUND_ERROR_CODE, this.getClass(), ExceptionConstant.USER_NOT_FOUND_ERROR);
-        }
-    }
 }

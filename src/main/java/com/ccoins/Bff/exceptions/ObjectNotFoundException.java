@@ -8,4 +8,8 @@ public class ObjectNotFoundException extends CustomException {
         super(code, format("{0}NotFound: {1}", object.getSimpleName(), message));
     }
 
+    @Override
+    public Object get() {
+        return null;
+    }
 }

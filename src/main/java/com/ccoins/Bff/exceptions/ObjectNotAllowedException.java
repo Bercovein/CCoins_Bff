@@ -9,4 +9,8 @@ public class ObjectNotAllowedException extends CustomException {
     }
 
 
+    @Override
+    public Object get() {
+        return null;
+    }
 }

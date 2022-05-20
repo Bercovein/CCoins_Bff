@@ -2,7 +2,7 @@ package com.ccoins.Bff.configuration;
 
 import com.ccoins.Bff.configuration.security.jwt.JwtEntryPoint;
 import com.ccoins.Bff.configuration.security.jwt.JwtTokenFilter;
-import com.ccoins.Bff.service.impl.UsersService;
+import com.ccoins.Bff.service.impl.OauthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    UsersService usersService;
+    OauthService oauthService;
 
     @Autowired
     JwtEntryPoint jwtEntryPoint;
@@ -51,7 +51,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(usersService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(oauthService).passwordEncoder(passwordEncoder());
     }
 
     @Override

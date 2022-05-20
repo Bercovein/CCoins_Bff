@@ -1,5 +1,6 @@
 package com.ccoins.Bff.service.impl;
 
+import com.ccoins.Bff.configuration.security.PrincipalUserFactory;
 import com.ccoins.Bff.configuration.security.jwt.JwtProvider;
 import com.ccoins.Bff.dto.TokenDTO;
 import com.ccoins.Bff.dto.users.OwnerDTO;
@@ -8,7 +9,7 @@ import com.ccoins.Bff.exceptions.UnauthorizedException;
 import com.ccoins.Bff.service.IOauthService;
 import com.ccoins.Bff.service.IUsersService;
 import com.ccoins.Bff.utils.ErrorUtils;
-import com.ccoins.Bff.utils.constant.ExceptionConstant;
+import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -21,6 +22,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.api.User;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
@@ -30,22 +35,34 @@ import java.util.Collections;
 
 @Service
 @Slf4j
-public class OauthService implements IOauthService {
+public class OauthService implements IOauthService, UserDetailsService {
 
-    @Value("${google.client.id}")
-    String googleClientId;
+    private final String googleClientId;
 
-    @Value("${secretPsw}")
-    String secretPsw;
+    private final String secretPsw;
+
+    private final IUsersService usersService;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final AuthenticationManager authenticationManager;
+
+    private final JwtProvider jwtProvider;
 
     @Autowired
-    private IUsersService usersService;
-
-    @Autowired
-    AuthenticationManager authenticationManager;
-
-    @Autowired
-    JwtProvider jwtProvider;
+    public OauthService(@Value("${google.client.id}") String googleClientId,
+                        @Value("${secretPsw}") String secretPsw,
+                        IUsersService usersService,
+                        PasswordEncoder passwordEncoder,
+                        AuthenticationManager authenticationManager,
+                        JwtProvider jwtProvider) {
+        this.googleClientId = googleClientId;
+        this.secretPsw = secretPsw;
+        this.usersService = usersService;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtProvider = jwtProvider;
+    }
 
     @Override
     public ResponseEntity<?> google(TokenDTO request) throws CustomException {
@@ -92,6 +109,19 @@ public class OauthService implements IOauthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtProvider.generateToken(authentication);
         return TokenDTO.builder().value(jwt).build();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        try{
+            OwnerDTO ownerDTO = this.usersService.findByEmail(email).get();
+
+            return PrincipalUserFactory.build(ownerDTO, passwordEncoder.encode(secretPsw));
+        }catch(Exception e){
+            log.error(ErrorUtils.parseMethodError(this.getClass()));
+            throw new UnauthorizedException(ExceptionConstant.USER_NOT_FOUND_ERROR_CODE, this.getClass(), ExceptionConstant.USER_NOT_FOUND_ERROR);
+        }
     }
 
 }

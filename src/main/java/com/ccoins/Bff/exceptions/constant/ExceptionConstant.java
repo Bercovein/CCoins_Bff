@@ -1,11 +1,13 @@
-package com.ccoins.Bff.utils.constant;
+package com.ccoins.Bff.exceptions.constant;
 
 public class ExceptionConstant {
 
     //LABELS
     public static final String ERROR_LABEL = "Error when trying to ";
+    public static final String UNAUTHORIZED_LABEL = "User not authorized to ";
     public static final String LOGIN_WITH_ERROR_LABEL = ERROR_LABEL.concat("login with ");
     public static final String GET_ERROR_LABEL = ERROR_LABEL.concat("get ");
+    public static final String GET_UNAUTHORIZED_LABEL = UNAUTHORIZED_LABEL.concat("get ");
     public static final String CREATE_NEW_ERROR_LABEL = ERROR_LABEL.concat("create new ");
 
     public static final String CREATE_OR_REPLACE_ERROR_LABEL = ERROR_LABEL.concat("create or replace ");
@@ -37,5 +39,11 @@ public class ExceptionConstant {
 
     public static final String USER_NOT_FOUND_ERROR_CODE = "0009";
     public static final String USER_NOT_FOUND_ERROR = "User not found.";
+
+    public static final String TOKEN_VARIABLE_NOT_FOUND_ERROR_CODE = "0010";
+    public static final String TOKEN_VARIABLE_NOT_FOUND_ERROR = GET_ERROR_LABEL.concat("variable from Token.");
+
+    public static final String BARS_UNAUTHORIZED_ERROR_CODE = "0011";
+    public static final String BARS_UNAUTHORIZED_ERROR = GET_UNAUTHORIZED_LABEL.concat("bar");
 
 }

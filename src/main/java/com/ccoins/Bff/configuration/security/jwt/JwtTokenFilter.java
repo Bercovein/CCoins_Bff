@@ -1,6 +1,6 @@
 package com.ccoins.Bff.configuration.security.jwt;
 
-import com.ccoins.Bff.service.impl.UsersService;
+import com.ccoins.Bff.service.impl.OauthService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private JwtProvider jwtProvider;
 
     @Autowired
-    private UsersService usersService;
+    private OauthService oauthService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -30,9 +30,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         try{
             String token = getToken(request);
             String email = jwtProvider.getEmailFromToken(token);
-            UserDetails userDetails = usersService.loadUserByUsername(email);
+            UserDetails userDetails = this.oauthService.loadUserByUsername(email);
 
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(email, null,null);
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(),null);
             SecurityContextHolder.getContext().setAuthentication(auth);
 
         }catch (Exception e){

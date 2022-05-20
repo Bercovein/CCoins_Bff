@@ -12,4 +12,8 @@ public class UnauthorizedException extends CustomException {
         super(code, format("{0}: {1}", object.getSimpleName(), message));
     }
 
+    @Override
+    public Object get() {
+        return null;
+    }
 }
