@@ -13,7 +13,7 @@ public class DateUtils {
        return new Date(System.currentTimeMillis());
     }
 
-    public static Date nowPlusDate(int time){
+    public static Date nowPlusDate(long time){
         return new Date(System.currentTimeMillis() + time);
     }
 }

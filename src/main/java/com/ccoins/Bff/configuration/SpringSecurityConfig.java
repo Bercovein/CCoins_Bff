@@ -1,8 +1,9 @@
 package com.ccoins.Bff.configuration;
 
-import com.ccoins.Bff.configuration.security.jwt.JwtEntryPoint;
-import com.ccoins.Bff.configuration.security.jwt.JwtTokenFilter;
-import com.ccoins.Bff.service.impl.OauthService;
+import com.ccoins.Bff.configuration.security.service.OauthService;
+import com.ccoins.Bff.configuration.security.filter.JwtAuthorizationFilter;
+import com.ccoins.Bff.configuration.security.authentication.JwtEntryPoint;
+import com.ccoins.Bff.configuration.security.filter.JwtRefreshFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,11 +17,16 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurity extends WebSecurityConfigurerAdapter {
+public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     OauthService oauthService;
@@ -29,8 +35,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     JwtEntryPoint jwtEntryPoint;
 
     @Bean
-    JwtTokenFilter jwtTokenFilter (){
-        return new JwtTokenFilter();
+    JwtRefreshFilter jwtTokenFilter (){
+        return new JwtRefreshFilter();
     }
 
     @Bean
@@ -62,9 +68,28 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtEntryPoint)
                 .and()
+                .cors().configurationSource(corsConfigurationSource())  // configuramos cors para acceder a los endpoints desde los domininios especificados
+                .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilter(new JwtAuthorizationFilter(authenticationManager()))
+            .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource(){
+
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowedOrigins(Arrays.asList("*"));                   // agregamos nuestros dominios, ej: "http://localhost:4200"
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // configuramos los verbos que vamos a permitir en el backend
+        config.setAllowCredentials(true);
+        config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "Location"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);                            // configurar cors para todos nuestros endpoints
+
+        return source;
     }
 }
 

@@ -1,4 +1,4 @@
-package com.ccoins.Bff.configuration.security.jwt;
+package com.ccoins.Bff.configuration.security.authentication;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;

@@ -46,4 +46,8 @@ public class ExceptionConstant {
     public static final String BARS_UNAUTHORIZED_ERROR_CODE = "0011";
     public static final String BARS_UNAUTHORIZED_ERROR = GET_UNAUTHORIZED_LABEL.concat("bar");
 
+    public static final String JWT_EXPIRED_ERROR_CODE = "0012";
+    public static final String JWT_EXPIRED_ERROR = "Expired token";
+
+
 }

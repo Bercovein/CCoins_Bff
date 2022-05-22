@@ -1,15 +1,15 @@
-package com.ccoins.Bff.service.impl;
+package com.ccoins.Bff.configuration.security.service;
 
-import com.ccoins.Bff.configuration.security.PrincipalUserFactory;
-import com.ccoins.Bff.configuration.security.jwt.JwtProvider;
+import com.ccoins.Bff.configuration.security.PrincipalUser;
+import com.ccoins.Bff.configuration.security.authentication.JwtProvider;
 import com.ccoins.Bff.dto.TokenDTO;
 import com.ccoins.Bff.dto.users.OwnerDTO;
 import com.ccoins.Bff.exceptions.CustomException;
 import com.ccoins.Bff.exceptions.UnauthorizedException;
+import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
+import com.ccoins.Bff.exceptions.utils.ErrorUtils;
 import com.ccoins.Bff.service.IOauthService;
 import com.ccoins.Bff.service.IUsersService;
-import com.ccoins.Bff.exceptions.utils.ErrorUtils;
-import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -117,7 +117,7 @@ public class OauthService implements IOauthService, UserDetailsService {
         try{
             OwnerDTO ownerDTO = this.usersService.findByEmail(email).get();
 
-            return PrincipalUserFactory.build(ownerDTO, passwordEncoder.encode(secretPsw));
+            return PrincipalUser.build(ownerDTO, passwordEncoder.encode(secretPsw));
         }catch(Exception e){
             log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new UnauthorizedException(ExceptionConstant.USER_NOT_FOUND_ERROR_CODE, this.getClass(), ExceptionConstant.USER_NOT_FOUND_ERROR);

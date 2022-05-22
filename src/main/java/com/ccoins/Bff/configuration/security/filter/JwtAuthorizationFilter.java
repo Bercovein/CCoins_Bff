@@ -1,0 +1,60 @@
+package com.ccoins.Bff.configuration.security.filter;
+
+import com.ccoins.Bff.configuration.security.authentication.JwtAuthentication;
+import com.ccoins.Bff.configuration.security.JwtUtils;
+import io.jsonwebtoken.Claims;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+public class JwtAuthorizationFilter extends BasicAuthenticationFilter {  // filtro que se ejecuta cada vez que hagamos un request
+
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager) {
+        super(authenticationManager);
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+
+        String token = request.getHeader(JwtUtils.AUTHORIZATION);    // obtenemos el token del parametro authorization del header
+
+        if(JwtUtils.isRequiredAuthentication(token)){
+            chain.doFilter(request, response);      // continua con la ejecucion de los demas filtros
+            return;
+        }
+        Authentication authentication = null;
+
+        if(JwtUtils.validateToken(token))
+            authentication = getAuthentication(token, response);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication); // asignamos el objeto authentication dentro del contexto, esto autentica al usuario dentro del request
+
+        if(authentication != null)
+            chain.doFilter(request, response); // continuamos con la cadena de ejecucion del request, para los otros filtros y controladores
+    }
+
+    private Authentication getAuthentication(String token, HttpServletResponse response) throws IOException {
+
+        Claims claims = JwtUtils.getClaims(token);
+        String email = String.valueOf(claims.get("email"));
+        Long userId = Long.valueOf(claims.getSubject());
+
+
+        JwtAuthentication authentication = JwtAuthentication.builder()
+                .id(userId)
+                .authorities(JwtUtils.getAuthorities(token))
+                .principal(email)
+                .name(email)
+                .build();
+
+        return authentication;
+    }
+
+}

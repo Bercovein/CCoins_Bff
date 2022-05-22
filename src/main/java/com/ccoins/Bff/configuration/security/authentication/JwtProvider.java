@@ -1,4 +1,4 @@
-package com.ccoins.Bff.configuration.security.jwt;
+package com.ccoins.Bff.configuration.security.authentication;
 
 import com.ccoins.Bff.configuration.security.PrincipalUser;
 import io.jsonwebtoken.*;
@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.spec.SecretKeySpec;
 import java.util.Date;
+
+import static com.ccoins.Bff.configuration.security.JwtUtils.SECRET_KEY;
 
 @Component
 @Slf4j
@@ -24,7 +27,7 @@ public class JwtProvider {
         return Jwts.builder().setSubject(principalUser.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .signWith(new SecretKeySpec(SECRET_KEY.getBytes(), SignatureAlgorithm.HS512.getJcaName()))
                 .compact();
     }
 
