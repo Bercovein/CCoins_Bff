@@ -9,7 +9,7 @@ import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.Bff.feign.BarsFeign;
 import com.ccoins.Bff.service.IBarsService;
 import com.ccoins.Bff.service.IUsersService;
-import com.ccoins.Bff.utils.ErrorUtils;
+import com.ccoins.Bff.exceptions.utils.ErrorUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

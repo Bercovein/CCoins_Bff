@@ -7,7 +7,7 @@ import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.Bff.feign.UsersFeign;
 import com.ccoins.Bff.service.IUsersService;
 import com.ccoins.Bff.utils.DateUtils;
-import com.ccoins.Bff.utils.ErrorUtils;
+import com.ccoins.Bff.exceptions.utils.ErrorUtils;
 import com.ccoins.Bff.utils.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class UsersService implements IUsersService  {
         OwnerDTO ownerDTO;
 
         try{
-            ownerDTO = OwnerDTO.builder().email(email).startDate(DateUtils.now()).build();
+            ownerDTO = OwnerDTO.builder().email(email).startDate(DateUtils.nowLocalDateTime()).build();
             return this.usersFeign.saveOwner(ownerDTO);
         }catch(Exception e){
             log.error(ErrorUtils.parseMethodError(this.getClass()));
@@ -55,6 +55,7 @@ public class UsersService implements IUsersService  {
 
     @Override
     public OwnerDTO findByToken(HttpHeaders headers){
+        log.error(String.valueOf(headers));
         Optional<OwnerDTO> ownerDTO = this.findByEmail(TokenUtils.get(headers, TokenUtils.TOKEN_EMAIL));
 
         if (ownerDTO.isEmpty()){

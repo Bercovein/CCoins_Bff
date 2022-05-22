@@ -1,4 +1,4 @@
-package com.ccoins.Bff.dto.response;
+package com.ccoins.Bff.exceptions.dto;
 
 import lombok.Builder;
 import lombok.Data;

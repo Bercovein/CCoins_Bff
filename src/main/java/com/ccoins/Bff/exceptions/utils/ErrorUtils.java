@@ -1,6 +1,6 @@
-package com.ccoins.Bff.utils;
+package com.ccoins.Bff.exceptions.utils;
 
-import com.ccoins.Bff.dto.response.ExceptionRsDTO;
+import com.ccoins.Bff.exceptions.dto.ExceptionRsDTO;
 
 public class ErrorUtils {
 

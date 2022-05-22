@@ -8,7 +8,7 @@ import com.ccoins.Bff.exceptions.CustomException;
 import com.ccoins.Bff.exceptions.UnauthorizedException;
 import com.ccoins.Bff.service.IOauthService;
 import com.ccoins.Bff.service.IUsersService;
-import com.ccoins.Bff.utils.ErrorUtils;
+import com.ccoins.Bff.exceptions.utils.ErrorUtils;
 import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
