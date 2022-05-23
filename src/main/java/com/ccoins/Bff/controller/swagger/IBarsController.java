@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public interface IBarsController {
     //save or update
     @PostMapping
-    ResponseEntity<BarDTO> saveOrUpdate(@RequestBody BarDTO barDTO, @RequestHeader HttpHeaders headers);
+    ResponseEntity<BarDTO> saveOrUpdate(@RequestBody BarDTO barDTO);
 
     //find by id
     @GetMapping

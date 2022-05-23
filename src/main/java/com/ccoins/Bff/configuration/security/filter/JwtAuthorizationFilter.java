@@ -1,7 +1,7 @@
 package com.ccoins.Bff.configuration.security.filter;
 
-import com.ccoins.Bff.configuration.security.authentication.JwtAuthentication;
 import com.ccoins.Bff.configuration.security.JwtUtils;
+import com.ccoins.Bff.configuration.security.authentication.JwtAuthentication;
 import io.jsonwebtoken.Claims;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -32,7 +32,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {  // filt
         Authentication authentication = null;
 
         if(JwtUtils.validateToken(token))
-            authentication = getAuthentication(token, response);
+            authentication = getAuthentication(token);
 
         SecurityContextHolder.getContext().setAuthentication(authentication); // asignamos el objeto authentication dentro del contexto, esto autentica al usuario dentro del request
 
@@ -40,21 +40,19 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {  // filt
             chain.doFilter(request, response); // continuamos con la cadena de ejecucion del request, para los otros filtros y controladores
     }
 
-    private Authentication getAuthentication(String token, HttpServletResponse response) throws IOException {
+    private Authentication getAuthentication(String token) throws IOException {
 
         Claims claims = JwtUtils.getClaims(token);
-        String email = String.valueOf(claims.get("email"));
-        Long userId = Long.valueOf(claims.getSubject());
+        String email = String.valueOf(claims.get(JwtUtils.EMAIL));
+        Long userId = Long.valueOf(String.valueOf(claims.get(JwtUtils.ID)));
 
 
-        JwtAuthentication authentication = JwtAuthentication.builder()
+        return JwtAuthentication.builder()
                 .id(userId)
-                .authorities(JwtUtils.getAuthorities(token))
+//                .authorities(JwtUtils.getAuthorities(token))
                 .principal(email)
-                .name(email)
+//                .name(email)
                 .build();
-
-        return authentication;
     }
 
 }

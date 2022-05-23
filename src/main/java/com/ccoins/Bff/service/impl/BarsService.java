@@ -6,10 +6,9 @@ import com.ccoins.Bff.dto.bars.BarDTO;
 import com.ccoins.Bff.exceptions.BadRequestException;
 import com.ccoins.Bff.exceptions.UnauthorizedException;
 import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
+import com.ccoins.Bff.exceptions.utils.ErrorUtils;
 import com.ccoins.Bff.feign.BarsFeign;
 import com.ccoins.Bff.service.IBarsService;
-import com.ccoins.Bff.service.IUsersService;
-import com.ccoins.Bff.exceptions.utils.ErrorUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -18,22 +17,20 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class BarsService implements IBarsService {
+public class BarsService extends ContextService implements IBarsService {
 
     private final BarsFeign barsFeign;
 
-    private final IUsersService usersService;
 
     @Autowired
-    public BarsService(BarsFeign barsFeign, IUsersService usersService) {
+    public BarsService(BarsFeign barsFeign) {
         this.barsFeign = barsFeign;
-        this.usersService = usersService;
     }
 
     @Override
-    public ResponseEntity<BarDTO> saveOrUpdate(BarDTO barDTO, HttpHeaders headers) {
+    public ResponseEntity<BarDTO> saveOrUpdate(BarDTO barDTO) {
 
-        Long ownerId = this.usersService.getOwnerId(headers);
+        Long ownerId = super.getLoggedUserId();
 
         try{
             barDTO.setOwner(ownerId);
@@ -47,7 +44,7 @@ public class BarsService implements IBarsService {
     @Override
     public ResponseEntity<BarDTO> findById(IdDTO id, HttpHeaders headers) {
 
-        Long ownerId = this.usersService.getOwnerId(headers);
+        Long ownerId = super.getLoggedUserId();
         BarDTO bar;
 
         try{
@@ -67,7 +64,7 @@ public class BarsService implements IBarsService {
     @Override
     public ResponseEntity<ListDTO> findAllByOwner(HttpHeaders headers) {
 
-        Long ownerId = this.usersService.getOwnerId(headers);
+        Long ownerId = super.getLoggedUserId();
 
         try{
             return this.barsFeign.findAllByOwner(ownerId);

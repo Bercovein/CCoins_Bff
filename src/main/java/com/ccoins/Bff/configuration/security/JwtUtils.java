@@ -37,6 +37,10 @@ public class JwtUtils {
     public static final String POINT=".";
     public static final long EXPIRATION_TIME_SECONDS = 3600L;
 
+    public static final String ID = "id";
+    public static final String EMAIL = "email";
+
+
     public static final String SECRET_KEY = Base64Utils
             .encodeToString((";`.LY\"r7A:hb9a^Fm9]K6[jYd;Vei7Yuu+V~.`R~,Ww|SM?@?rZh4x{0qgiQ#6i" +
                     ",=\\HQajs6/ztWnU%0->tMd-Cp(?Ka<0OS_=cPAx1D-Wd/VxrF'Sa'EtM>0ZQ+`?").getBytes());
@@ -46,14 +50,29 @@ public class JwtUtils {
 
     public static String get(HttpHeaders headers, String variable){
 
-        if (headers == null) {
-            throw new ObjectNotFoundException(
-                    ExceptionConstant.TOKEN_VARIABLE_NOT_FOUND_ERROR_CODE,
+        String value;
+
+        if (headers != null) {
+
+            value = headers.getFirst(variable);
+
+            if(value == null) {
+                throw new ObjectNotFoundException(ExceptionConstant.TOKEN_VARIABLE_NOT_FOUND_ERROR_CODE,
+                        JwtUtils.class,
+                        ExceptionConstant.TOKEN_VARIABLE_NOT_FOUND_ERROR
+                );
+            }
+        }else{
+            throw new ObjectNotFoundException(ExceptionConstant.TOKEN_NOT_FOUND_ERROR_CODE,
                     JwtUtils.class,
-                    ExceptionConstant.TOKEN_VARIABLE_NOT_FOUND_ERROR
+                    ExceptionConstant.TOKEN_NOT_FOUND_ERROR
             );
         }
-        return headers.getFirst(variable);
+        return value;
+    }
+
+    public static Long getId(HttpHeaders headers){
+        return Long.valueOf(JwtUtils.get(headers,JwtUtils.ID));
     }
 
     public static Claims getClaims(String token) {     // claims contiene los datos, roles
@@ -116,5 +135,6 @@ public class JwtUtils {
     public static JwtUserDTO parse(OwnerDTO ownerDTO){
         return (JwtUserDTO) MapperUtils.map(ownerDTO, JwtUserDTO.class);
     }
+
 }
 

@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.*;
 @FeignClient(name = "${feign.bars-ms.name}", url = "${feign.bars-ms.url}")
 @RequestMapping("${feign.bars-ms.req-map}")
 public interface BarsFeign {
-    @PostMapping
+    @PostMapping("/bars")
     ResponseEntity<BarDTO> saveOrUpdate(@RequestBody BarDTO barDTO);
 
-    @GetMapping("/owner/{ownerId}")
+    @GetMapping("/bars/owner/{ownerId}")
     ResponseEntity<ListDTO> findAllByOwner(@PathVariable("ownerId") Long ownerId);
 
-    @GetMapping("/{id}")
+    @GetMapping("/bars/{id}")
     ResponseEntity<BarDTO> findById(@PathVariable("id") Long id);
 }

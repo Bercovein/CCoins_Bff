@@ -25,8 +25,8 @@ public class BarsController implements IBarsController {
     //save or update
     @Override
     @PostMapping("/save")
-    public ResponseEntity<BarDTO> saveOrUpdate(@RequestBody BarDTO barDTO, @RequestHeader HttpHeaders headers){
-        return this.barService.saveOrUpdate(barDTO, headers);
+    public ResponseEntity<BarDTO> saveOrUpdate(@RequestBody BarDTO barDTO){
+        return this.barService.saveOrUpdate(barDTO);
     }
 
     //find by id

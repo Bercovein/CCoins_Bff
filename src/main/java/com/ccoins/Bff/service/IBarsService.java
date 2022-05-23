@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface IBarsService {
 
-    ResponseEntity<BarDTO> saveOrUpdate(BarDTO barDTO, HttpHeaders headers);
+    ResponseEntity<BarDTO> saveOrUpdate(BarDTO barDTO);
 
     ResponseEntity<BarDTO> findById(IdDTO id, HttpHeaders headers);
 

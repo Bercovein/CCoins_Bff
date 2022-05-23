@@ -10,6 +10,8 @@ public class ExceptionConstant {
     public static final String GET_UNAUTHORIZED_LABEL = UNAUTHORIZED_LABEL.concat("get ");
     public static final String CREATE_NEW_ERROR_LABEL = ERROR_LABEL.concat("create new ");
 
+    public static final String READ_ERROR_LABEL = ERROR_LABEL.concat("read ");
+
     public static final String CREATE_OR_REPLACE_ERROR_LABEL = ERROR_LABEL.concat("create or replace ");
 
     //ERRORS
@@ -40,14 +42,18 @@ public class ExceptionConstant {
     public static final String USER_NOT_FOUND_ERROR_CODE = "0009";
     public static final String USER_NOT_FOUND_ERROR = "User not found.";
 
-    public static final String TOKEN_VARIABLE_NOT_FOUND_ERROR_CODE = "0010";
-    public static final String TOKEN_VARIABLE_NOT_FOUND_ERROR = GET_ERROR_LABEL.concat("variable from Token.");
+    public static final String TOKEN_NOT_FOUND_ERROR_CODE = "0010";
+    public static final String TOKEN_NOT_FOUND_ERROR = GET_ERROR_LABEL.concat("Token");
 
     public static final String BARS_UNAUTHORIZED_ERROR_CODE = "0011";
     public static final String BARS_UNAUTHORIZED_ERROR = GET_UNAUTHORIZED_LABEL.concat("bar");
 
     public static final String JWT_EXPIRED_ERROR_CODE = "0012";
     public static final String JWT_EXPIRED_ERROR = "Expired token";
+
+
+    public static final String TOKEN_VARIABLE_NOT_FOUND_ERROR_CODE = "0013";
+    public static final String TOKEN_VARIABLE_NOT_FOUND_ERROR = READ_ERROR_LABEL.concat("variable from Token. Not found.");
 
 
 }
