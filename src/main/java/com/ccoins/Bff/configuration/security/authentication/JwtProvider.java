@@ -1,7 +1,10 @@
 package com.ccoins.Bff.configuration.security.authentication;
 
+import com.ccoins.Bff.configuration.security.JwtUserDTO;
+import com.ccoins.Bff.configuration.security.JwtUtils;
 import com.ccoins.Bff.configuration.security.PrincipalUser;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -22,27 +25,15 @@ public class JwtProvider {
     @Value("${jwt.expiration}")
     private int expiration;
 
-    public String generateToken(Authentication authentication){
+    public String generateToken(Authentication authentication, JwtUserDTO user){
         PrincipalUser principalUser = (PrincipalUser) authentication.getPrincipal();
+
         return Jwts.builder().setSubject(principalUser.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setClaims(JwtUtils.parse(user))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(new SecretKeySpec(SECRET_KEY.getBytes(), SignatureAlgorithm.HS512.getJcaName()))
                 .compact();
     }
 
-    public String getEmailFromToken(String token){
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
-    }
-
-    public boolean validateToken(String token){
-        try{
-            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
-            return true;
-        }catch (MalformedJwtException | UnsupportedJwtException | ExpiredJwtException | IllegalArgumentException | SignatureException e){
-            log.error("Error comprobando el token");
-            e.printStackTrace();
-        }
-        return false;
-    }
 }

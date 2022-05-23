@@ -1,5 +1,7 @@
 package com.ccoins.Bff.configuration.security.service;
 
+import com.ccoins.Bff.configuration.security.JwtUserDTO;
+import com.ccoins.Bff.configuration.security.JwtUtils;
 import com.ccoins.Bff.configuration.security.PrincipalUser;
 import com.ccoins.Bff.configuration.security.authentication.JwtProvider;
 import com.ccoins.Bff.dto.TokenDTO;
@@ -77,7 +79,7 @@ public class OauthService implements IOauthService, UserDetailsService {
             GoogleIdToken.Payload payload = googleIdToken.getPayload();
 
             OwnerDTO ownerDTO = this.usersService.findOrCreateOwner(payload.getEmail());
-            return ResponseEntity.ok(login(ownerDTO));
+            return ResponseEntity.ok(login(JwtUtils.parse(ownerDTO)));
         }catch(Exception e){
             log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new UnauthorizedException(ExceptionConstant.GOOGLE_ERROR_CODE, this.getClass(), ExceptionConstant.GOOGLE_ERROR);
@@ -94,7 +96,8 @@ public class OauthService implements IOauthService, UserDetailsService {
         try{
             user = facebook.fetchObject("me", User.class, fields);
             OwnerDTO ownerDTO = this.usersService.findOrCreateOwner(user.getEmail());
-            return ResponseEntity.ok(login(ownerDTO));
+
+            return ResponseEntity.ok(login(JwtUtils.parse(ownerDTO)));
 
         }catch(Exception e){
             log.error(ErrorUtils.parseMethodError(this.getClass()));
@@ -102,12 +105,13 @@ public class OauthService implements IOauthService, UserDetailsService {
         }
     }
 
-    private TokenDTO login(OwnerDTO user){
+    private TokenDTO login(JwtUserDTO user){
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getEmail(), secretPsw)
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtProvider.generateToken(authentication);
+        String jwt = jwtProvider.generateToken(authentication, user);
         return TokenDTO.builder().value(jwt).build();
     }
 

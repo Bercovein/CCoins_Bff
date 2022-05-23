@@ -5,6 +5,8 @@ import java.util.Date;
 
 public class DateUtils {
 
+    public static final String FORMAT_DDMMYYYY_HHMMSS_WITH_DASH= "DD-MM-YYYY HH:MM:SS";
+
     public static LocalDateTime nowLocalDateTime(){
         return LocalDateTime.now();
     }

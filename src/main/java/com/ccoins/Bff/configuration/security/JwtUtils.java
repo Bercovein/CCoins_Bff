@@ -1,8 +1,10 @@
 package com.ccoins.Bff.configuration.security;
 
+import com.ccoins.Bff.dto.users.OwnerDTO;
 import com.ccoins.Bff.exceptions.ObjectNotFoundException;
 import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.Bff.utils.DateUtils;
+import com.ccoins.Bff.utils.MapperUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -17,6 +19,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 
 public class JwtUtils {
 
@@ -72,6 +75,7 @@ public class JwtUtils {
                 .compact();
     }
 
+
     public static boolean isRequiredAuthentication(String token) {
 
         return token == null || !token.startsWith(PREFIX);
@@ -94,6 +98,23 @@ public class JwtUtils {
         return Arrays.asList(new ObjectMapper()
                 .addMixIn(SimpleGrantedAuthority.class, SimpleGrantedAuthorityMixIn.class)      // addMixIn= convertimos los roles a la clase SimpleGrantedAuthority
                 .readValue(roles.toString().getBytes(), SimpleGrantedAuthority[].class));      // convertimos los roles en una collection de authorities. roles es de tipo object por lo que debemos pasarlo a json como string
+    }
+
+    public static Claims parse(JwtUserDTO user){
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        Map<String, String> mappedUser =
+                mapper.convertValue(user, Map.class);
+
+        Claims claims = Jwts.claims();
+        claims.putAll(mappedUser);
+
+        return claims;
+    }
+
+    public static JwtUserDTO parse(OwnerDTO ownerDTO){
+        return (JwtUserDTO) MapperUtils.map(ownerDTO, JwtUserDTO.class);
     }
 }
 
