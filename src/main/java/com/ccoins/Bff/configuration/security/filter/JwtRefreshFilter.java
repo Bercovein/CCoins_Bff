@@ -1,15 +1,14 @@
 package com.ccoins.Bff.configuration.security.filter;
 
 import com.ccoins.Bff.configuration.security.JwtUtils;
-import com.ccoins.Bff.configuration.security.service.OauthService;
 import com.ccoins.Bff.configuration.security.authentication.JwtProvider;
+import com.ccoins.Bff.configuration.security.service.OauthService;
 import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.Bff.exceptions.utils.ErrorUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -72,33 +71,4 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
     }
 
-//    @Override
-//    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//
-//        try{
-//            String token = getToken(request);
-//            String email = jwtProvider.getEmailFromToken(token);
-//            UserDetails userDetails = this.oauthService.loadUserByUsername(email);
-//
-//            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(),null);
-//            SecurityContextHolder.getContext().setAuthentication(auth);
-//
-//        }catch (Exception e){
-//            log.error("fail en el metodo doFilter");
-//        }
-//        filterChain.doFilter(request,response);
-//    }
-
-    private String getToken(HttpServletRequest request){
-
-        String bearer = "Bearer ";
-        String authorization = "Authorization";
-
-        String authRequest = request.getHeader(authorization);
-        if(authRequest != null && authRequest.startsWith(bearer)){
-            return authRequest.replace(bearer, Strings.EMPTY);
-        }else{
-            return null;
-        }
-    }
 }

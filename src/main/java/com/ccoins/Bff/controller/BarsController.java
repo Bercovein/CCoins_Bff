@@ -42,4 +42,6 @@ public class BarsController implements IBarsController {
     public ResponseEntity<ListDTO> findAllByOwner(@RequestHeader HttpHeaders headers){
         return this.barService.findAllByOwner(headers);
     }
+
+    //delete logico
 }
