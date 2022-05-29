@@ -25,8 +25,12 @@ public class JwtUtils {
 
     public static final String PREFIX = "Bearer ";
     public static final String AUTHORIZATION = "Authorization";
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String LOCATION = "Location";
     public static final String AUTHORITIES = "authorities";
     public static final String BEARER_SPACE = "Bearer ";
+    public static final String HEADER = "header";
+    public static final String TOKEN = "token";
     public static final String APPLICATION_JSON_VALUE="application/json";
     public static final String VALID_JWT="Valid JWT ...";
     public static final String AUTHORITIES_TXT="authorities";

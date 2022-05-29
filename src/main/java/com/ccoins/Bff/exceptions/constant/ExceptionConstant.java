@@ -9,6 +9,7 @@ public class ExceptionConstant {
     public static final String GET_ERROR_LABEL = ERROR_LABEL.concat("get ");
     public static final String GET_UNAUTHORIZED_LABEL = UNAUTHORIZED_LABEL.concat("get ");
     public static final String CREATE_NEW_ERROR_LABEL = ERROR_LABEL.concat("create new ");
+    public static final String ACTIVE_UNACTIVE_ERROR_LABEL = ERROR_LABEL.concat("change state of ");
 
     public static final String READ_ERROR_LABEL = ERROR_LABEL.concat("read ");
 
@@ -51,9 +52,23 @@ public class ExceptionConstant {
     public static final String JWT_EXPIRED_ERROR_CODE = "0012";
     public static final String JWT_EXPIRED_ERROR = "Expired token";
 
-
     public static final String TOKEN_VARIABLE_NOT_FOUND_ERROR_CODE = "0013";
     public static final String TOKEN_VARIABLE_NOT_FOUND_ERROR = READ_ERROR_LABEL.concat("variable from Token. Not found.");
+
+    public static final String TABLE_CREATE_OR_UPDATE_ERROR_CODE = "0014";
+    public static final String TABLE_CREATE_OR_UPDATE_ERROR = CREATE_OR_REPLACE_ERROR_LABEL.concat("table");
+
+    public static final String TABLES_FIND_BY_ID_ERROR_CODE = "0015";
+    public static final String TABLES_FIND_BY_ID_ERROR = GET_ERROR_LABEL.concat("table by id");
+
+    public static final String TABLES_FIND_BY_BAR_ERROR_CODE = "0016";
+    public static final String TABLES_FIND_BY_BAR_ERROR = GET_ERROR_LABEL.concat("tables by bar");
+
+    public static final String TABLES_ACTIVE_ERROR_CODE = "0017";
+    public static final String TABLES_ACTIVE_ERROR = ACTIVE_UNACTIVE_ERROR_LABEL.concat("table");
+
+    public static final String BARS_ACTIVE_ERROR_CODE = "0018";
+    public static final String BARS_ACTIVE_ERROR = ACTIVE_UNACTIVE_ERROR_LABEL.concat("bar");
 
 
 }

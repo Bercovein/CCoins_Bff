@@ -4,6 +4,7 @@ import com.ccoins.Bff.configuration.security.service.OauthService;
 import com.ccoins.Bff.configuration.security.filter.JwtAuthorizationFilter;
 import com.ccoins.Bff.configuration.security.authentication.JwtEntryPoint;
 import com.ccoins.Bff.configuration.security.filter.JwtRefreshFilter;
+import com.google.api.client.http.HttpMethods;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+
+import static com.ccoins.Bff.configuration.security.JwtUtils.*;
 
 @Configuration
 @EnableWebSecurity
@@ -64,6 +67,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeRequests().antMatchers("/oauth/**", "/actuator/**").permitAll()
+                .antMatchers("/**","/my/docs", "/v2/swagger", "/swagger-ui/**", "/swagger-ui.html", "/v2/api-docs", "/swagger-resources/**", "/webjars/**", "/swagger.json").permitAll()      // rutas publicas, no requieren autenticación
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtEntryPoint)
@@ -82,9 +86,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(Arrays.asList("*"));                   // agregamos nuestros dominios, ej: "http://localhost:4200"
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // configuramos los verbos que vamos a permitir en el backend
+        config.setAllowedMethods(Arrays.asList(HttpMethods.GET, HttpMethods.POST, HttpMethods.PUT, HttpMethods.DELETE, HttpMethods.OPTIONS)); // configuramos los verbos que vamos a permitir en el backend
         config.setAllowCredentials(true);
-        config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "Location"));
+        config.setAllowedHeaders(Arrays.asList(CONTENT_TYPE, AUTHORIZATION, LOCATION));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);                            // configurar cors para todos nuestros endpoints

@@ -11,7 +11,6 @@ import com.ccoins.Bff.feign.BarsFeign;
 import com.ccoins.Bff.service.IBarsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +33,7 @@ public class BarsService extends ContextService implements IBarsService {
 
         try{
             barDTO.setOwner(ownerId);
-            return this.barsFeign.saveOrUpdate(barDTO);
+            return this.barsFeign.saveOrUpdateBar(barDTO);
         }catch(Exception e){
             log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.BARS_CREATE_OR_UPDATE_ERROR_CODE, this.getClass(), ExceptionConstant.BARS_CREATE_OR_UPDATE_ERROR);
@@ -42,13 +41,13 @@ public class BarsService extends ContextService implements IBarsService {
     }
 
     @Override
-    public ResponseEntity<BarDTO> findById(IdDTO id, HttpHeaders headers) {
+    public ResponseEntity<BarDTO> findById(IdDTO id) {
 
         Long ownerId = super.getLoggedUserId();
         BarDTO bar;
 
         try{
-            bar = this.barsFeign.findById(id.getId()).getBody();
+            bar = this.barsFeign.findBarById(id.getId()).getBody();
         }catch(Exception e){
             log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.BARS_FIND_BY_ID_ERROR_CODE, this.getClass(), ExceptionConstant.BARS_FIND_BY_ID_ERROR);
@@ -62,15 +61,26 @@ public class BarsService extends ContextService implements IBarsService {
     }
 
     @Override
-    public ResponseEntity<ListDTO> findAllByOwner(HttpHeaders headers) {
+    public ResponseEntity<ListDTO> findAllByOwner() {
 
         Long ownerId = super.getLoggedUserId();
 
         try{
-            return this.barsFeign.findAllByOwner(ownerId);
+            return this.barsFeign.findAllBarsByOwner(ownerId);
         }catch(Exception e){
             log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.BARS_FIND_BY_OWNER_ERROR_CODE, this.getClass(), ExceptionConstant.BARS_FIND_BY_OWNER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<BarDTO> active(IdDTO request) {
+        try{
+            return this.barsFeign.activeBar(request.getId());
+        }catch(Exception e){
+            log.error(ErrorUtils.parseMethodError(this.getClass()));
+            throw new BadRequestException(ExceptionConstant.BARS_ACTIVE_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.BARS_ACTIVE_ERROR);
         }
     }
 }

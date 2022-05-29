@@ -6,42 +6,49 @@ import com.ccoins.Bff.dto.ListDTO;
 import com.ccoins.Bff.dto.bars.BarDTO;
 import com.ccoins.Bff.service.IBarsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequestMapping("/bars")
 @CrossOrigin
 public class BarsController implements IBarsController {
 
-    private final IBarsService barService;
+    private final IBarsService service;
 
     @Autowired
-    public BarsController(IBarsService barService) {
-        this.barService = barService;
+    public BarsController(IBarsService service) {
+        this.service = service;
     }
 
     //save or update
     @Override
     @PostMapping("/save")
-    public ResponseEntity<BarDTO> saveOrUpdate(@RequestBody BarDTO barDTO){
-        return this.barService.saveOrUpdate(barDTO);
+    @ResponseStatus(CREATED)
+    public ResponseEntity<BarDTO> saveOrUpdate(@RequestBody BarDTO request){
+        return this.service.saveOrUpdate(request);
     }
 
-    //find by id
+    //find by request
     @Override
     @GetMapping
-    public ResponseEntity<BarDTO> findById(@RequestBody IdDTO id, @RequestHeader HttpHeaders headers){
-        return this.barService.findById(id, headers);
+    public ResponseEntity<BarDTO> findById(@RequestBody IdDTO request){
+        return this.service.findById(request);
     }
 
     //find all by owner
     @Override
     @GetMapping("/owner")
-    public ResponseEntity<ListDTO> findAllByOwner(@RequestHeader HttpHeaders headers){
-        return this.barService.findAllByOwner(headers);
+    public ResponseEntity<ListDTO> findAllByOwner(){
+        return this.service.findAllByOwner();
     }
 
     //delete logico
+    @Override
+    @GetMapping("/active")
+    public ResponseEntity<BarDTO> active(@RequestBody IdDTO request){
+        return this.service.active(request);
+    }
 }

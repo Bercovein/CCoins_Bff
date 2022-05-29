@@ -1,5 +1,6 @@
 package com.ccoins.Bff.controller;
 
+import com.ccoins.Bff.controller.swagger.IOauthController;
 import com.ccoins.Bff.dto.TokenDTO;
 import com.ccoins.Bff.exceptions.CustomException;
 import com.ccoins.Bff.service.IOauthService;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/oauth")
-public class OauthController {
+public class OauthController implements IOauthController {
 
     private final IOauthService oauthService;
 
@@ -21,11 +22,13 @@ public class OauthController {
         this.oauthService = oauthService;
     }
 
+    @Override
     @PostMapping("/google")
     public ResponseEntity<?> google(@RequestBody TokenDTO request) throws CustomException {
         return this.oauthService.google(request);
     }
 
+    @Override
     @PostMapping("/facebook")
     public ResponseEntity<?> facebook(@RequestBody TokenDTO request) throws CustomException{
         return this.oauthService.facebook(request);
