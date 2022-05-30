@@ -21,7 +21,7 @@ public interface BarsFeign {
     @GetMapping("/bars/{id}")
     ResponseEntity<BarDTO> findBarById(@PathVariable("id") Long id);
 
-    @PatchMapping("/bars/{id}/active")
+    @PutMapping("/bars/{id}/active")
     ResponseEntity<BarDTO> activeBar(@PathVariable("id") Long id);
 
     //TABLES
@@ -35,6 +35,6 @@ public interface BarsFeign {
     @GetMapping("/tables/{id}")
     ResponseEntity<TableDTO> findTableById(@PathVariable("id") Long id);
 
-    @PatchMapping("/tables/{id}/active")
+    @PutMapping("/tables/{id}/active")
     ResponseEntity<TableDTO> activeTable(@PathVariable("id") Long id);
 }

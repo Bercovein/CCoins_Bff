@@ -19,6 +19,6 @@ public interface PrizeFeign {
     @GetMapping("/prizes/{id}")
     ResponseEntity<PrizeDTO> findPrizeById(@PathVariable("id") Long id);
 
-    @PatchMapping("/prizes/{id}/active")
+    @PutMapping("/prizes/{id}/active")
     ResponseEntity<PrizeDTO> activePrize(@PathVariable("id") Long id);
 }
