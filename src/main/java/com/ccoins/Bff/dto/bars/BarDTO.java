@@ -21,6 +21,8 @@ public class BarDTO {
     @NotEmpty
     private String address;
 
+    private boolean active;
+
     private String menuLink;
 
     private Long owner;
