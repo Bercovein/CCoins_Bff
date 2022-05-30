@@ -70,5 +70,17 @@ public class ExceptionConstant {
     public static final String BARS_ACTIVE_ERROR_CODE = "0018";
     public static final String BARS_ACTIVE_ERROR = ACTIVE_UNACTIVE_ERROR_LABEL.concat("bar");
 
+    public static final String PRIZE_CREATE_OR_UPDATE_ERROR_CODE = "0019";
+    public static final String PRIZE_CREATE_OR_UPDATE_ERROR = CREATE_NEW_ERROR_LABEL.concat("prize");
+
+    public static final String PRIZE_FIND_BY_ID_ERROR_CODE = "0020";
+    public static final String PRIZE_FIND_BY_ID_ERROR = GET_ERROR_LABEL.concat("prize by id");
+
+    public static final String PRIZE_FIND_BY_BAR_ERROR_CODE = "0021";
+    public static final String PRIZE_FIND_BY_BAR_ERROR = GET_ERROR_LABEL.concat("prize by bar");
+
+    public static final String PRIZE_UPDATE_ACTIVE_ERROR_CODE = "0022";
+    public static final String PRIZE_UPDATE_ACTIVE_ERROR = ACTIVE_UNACTIVE_ERROR_LABEL.concat("prize");
+
 
 }

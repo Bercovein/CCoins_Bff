@@ -7,7 +7,7 @@ import com.ccoins.Bff.exceptions.BadRequestException;
 import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.Bff.exceptions.utils.ErrorUtils;
 import com.ccoins.Bff.feign.BarsFeign;
-import com.ccoins.Bff.service.ITablesService;
+import com.ccoins.Bff.service.ITableService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +15,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class TablesService extends ContextService implements ITablesService {
+public class TableService extends ContextService implements ITableService {
 
     private final BarsFeign barsFeign;
 
 
     @Autowired
-    public TablesService(BarsFeign barsFeign) {
+    public TableService(BarsFeign barsFeign) {
         this.barsFeign = barsFeign;
     }
 

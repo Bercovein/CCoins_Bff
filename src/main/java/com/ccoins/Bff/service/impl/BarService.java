@@ -8,7 +8,7 @@ import com.ccoins.Bff.exceptions.UnauthorizedException;
 import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.Bff.exceptions.utils.ErrorUtils;
 import com.ccoins.Bff.feign.BarsFeign;
-import com.ccoins.Bff.service.IBarsService;
+import com.ccoins.Bff.service.IBarService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +16,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class BarsService extends ContextService implements IBarsService {
+public class BarService extends ContextService implements IBarService {
 
     private final BarsFeign barsFeign;
 
 
     @Autowired
-    public BarsService(BarsFeign barsFeign) {
+    public BarService(BarsFeign barsFeign) {
         this.barsFeign = barsFeign;
     }
 

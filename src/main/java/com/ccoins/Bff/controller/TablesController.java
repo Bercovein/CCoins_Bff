@@ -4,7 +4,7 @@ import com.ccoins.Bff.controller.swagger.ITablesController;
 import com.ccoins.Bff.dto.IdDTO;
 import com.ccoins.Bff.dto.ListDTO;
 import com.ccoins.Bff.dto.bars.TableDTO;
-import com.ccoins.Bff.service.ITablesService;
+import com.ccoins.Bff.service.ITableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,37 +14,33 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 public class TablesController implements ITablesController {
 
-    private final ITablesService service;
+    private final ITableService service;
 
     @Autowired
-    public TablesController(ITablesService service) {
+    public TablesController(ITableService service) {
         this.service = service;
     }
 
-    //save or update
     @Override
     @PostMapping("/save")
     public ResponseEntity<TableDTO> saveOrUpdate(@RequestBody TableDTO request){
         return this.service.saveOrUpdate(request);
     }
 
-    //find by id
     @Override
-    @GetMapping
+    @PostMapping("/id")
     public ResponseEntity<TableDTO> findById(@RequestBody IdDTO id){
         return this.service.findById(id);
     }
 
-    //find all by owner
     @Override
-    @GetMapping("/bar")
+    @PostMapping("/bar")
     public ResponseEntity<ListDTO> findAllByBar(@RequestBody IdDTO request){
         return this.service.findAllByBar(request);
     }
 
-    //delete logico
     @Override
-    @GetMapping("/active")
+    @PatchMapping("/active")
     public ResponseEntity<TableDTO> active(@RequestBody IdDTO id){
         return this.service.active(id);
     }

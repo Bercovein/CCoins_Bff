@@ -5,7 +5,7 @@ import com.ccoins.Bff.exceptions.BadRequestException;
 import com.ccoins.Bff.exceptions.ObjectNotFoundException;
 import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.Bff.feign.UsersFeign;
-import com.ccoins.Bff.service.IUsersService;
+import com.ccoins.Bff.service.IUserService;
 import com.ccoins.Bff.utils.DateUtils;
 import com.ccoins.Bff.exceptions.utils.ErrorUtils;
 import com.ccoins.Bff.configuration.security.JwtUtils;
@@ -18,12 +18,12 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class UsersService implements IUsersService  {
+public class UserService implements IUserService {
 
     private final UsersFeign usersFeign;
 
     @Autowired
-    public UsersService(UsersFeign usersFeign) {
+    public UserService(UsersFeign usersFeign) {
         this.usersFeign = usersFeign;
     }
 

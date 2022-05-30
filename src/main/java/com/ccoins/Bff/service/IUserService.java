@@ -5,7 +5,7 @@ import org.springframework.http.HttpHeaders;
 
 import java.util.Optional;
 
-public interface IUsersService {
+public interface IUserService {
 
     OwnerDTO newOwner(String email);
 
