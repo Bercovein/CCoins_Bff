@@ -1,5 +1,6 @@
 package com.ccoins.Bff.service.impl;
 
+import com.ccoins.Bff.configuration.security.JwtUtils;
 import com.ccoins.Bff.dto.users.OwnerDTO;
 import com.ccoins.Bff.exceptions.BadRequestException;
 import com.ccoins.Bff.exceptions.ObjectNotFoundException;
@@ -7,8 +8,6 @@ import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.Bff.feign.UsersFeign;
 import com.ccoins.Bff.service.IUserService;
 import com.ccoins.Bff.utils.DateUtils;
-import com.ccoins.Bff.exceptions.utils.ErrorUtils;
-import com.ccoins.Bff.configuration.security.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -36,7 +35,6 @@ public class UserService implements IUserService {
             ownerDTO = OwnerDTO.builder().email(email).startDate(DateUtils.nowLocalDateTime()).build();
             return this.usersFeign.saveOwner(ownerDTO);
         }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.USERS_NEW_OWNER_ERROR_CODE, this.getClass(), ExceptionConstant.USERS_NEW_OWNER_ERROR);
         }
     }
@@ -47,7 +45,6 @@ public class UserService implements IUserService {
         try{
             return this.usersFeign.findByEmail(email);
         }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.USERS_GET_OWNER_BY_EMAIL_ERROR_CODE, this.getClass(), ExceptionConstant.USERS_GET_OWNER_BY_EMAIL_ERROR);
         }
     }
@@ -55,7 +52,6 @@ public class UserService implements IUserService {
 
     @Override
     public OwnerDTO findByToken(HttpHeaders headers){
-        log.error(String.valueOf(headers));
         Optional<OwnerDTO> ownerDTO = this.findByEmail(JwtUtils.get(headers, JwtUtils.TOKEN_EMAIL));
 
         if (ownerDTO.isEmpty()){

@@ -5,7 +5,6 @@ import com.ccoins.Bff.dto.ListDTO;
 import com.ccoins.Bff.dto.bars.TableDTO;
 import com.ccoins.Bff.exceptions.BadRequestException;
 import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
-import com.ccoins.Bff.exceptions.utils.ErrorUtils;
 import com.ccoins.Bff.feign.BarsFeign;
 import com.ccoins.Bff.service.ITableService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +30,6 @@ public class TableService extends ContextService implements ITableService {
         try{
             return this.barsFeign.saveOrUpdateTable(request);
         }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.TABLE_CREATE_OR_UPDATE_ERROR_CODE,
                     this.getClass(), ExceptionConstant.TABLE_CREATE_OR_UPDATE_ERROR);
         }
@@ -46,7 +44,6 @@ public class TableService extends ContextService implements ITableService {
         try{
             table = this.barsFeign.findTableById(request.getId()).getBody();
         }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.TABLES_FIND_BY_ID_ERROR_CODE, this.getClass(), ExceptionConstant.TABLES_FIND_BY_ID_ERROR);
         }
 
@@ -65,7 +62,6 @@ public class TableService extends ContextService implements ITableService {
         try{
             return this.barsFeign.findAllTablesByBar(request.getId());
         }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.TABLES_FIND_BY_BAR_ERROR_CODE,
                     this.getClass(), ExceptionConstant.TABLES_FIND_BY_BAR_ERROR);
         }
@@ -76,7 +72,6 @@ public class TableService extends ContextService implements ITableService {
         try{
             return this.barsFeign.activeTable(request.getId());
         }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.TABLES_ACTIVE_ERROR_CODE,
                     this.getClass(), ExceptionConstant.TABLES_ACTIVE_ERROR);
         }

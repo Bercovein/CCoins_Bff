@@ -5,7 +5,6 @@ import com.ccoins.Bff.dto.ListDTO;
 import com.ccoins.Bff.dto.prizes.PrizeDTO;
 import com.ccoins.Bff.exceptions.BadRequestException;
 import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
-import com.ccoins.Bff.exceptions.utils.ErrorUtils;
 import com.ccoins.Bff.feign.PrizeFeign;
 import com.ccoins.Bff.service.IPrizeService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,6 @@ public class PrizeService extends ContextService implements IPrizeService {
 
     private final PrizeFeign prizeFeign;
 
-
     @Autowired
     public PrizeService(PrizeFeign prizeFeign) {
         this.prizeFeign = prizeFeign;
@@ -31,7 +29,6 @@ public class PrizeService extends ContextService implements IPrizeService {
         try{
             return this.prizeFeign.saveOrUpdatePrize(request);
         }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.PRIZE_CREATE_OR_UPDATE_ERROR_CODE,
                     this.getClass(), ExceptionConstant.PRIZE_CREATE_OR_UPDATE_ERROR);
         }
@@ -45,7 +42,6 @@ public class PrizeService extends ContextService implements IPrizeService {
         try{
             prize = this.prizeFeign.findPrizeById(request.getId()).getBody();
         }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.PRIZE_FIND_BY_ID_ERROR_CODE,
                     this.getClass(), ExceptionConstant.PRIZE_FIND_BY_ID_ERROR);
         }
@@ -59,7 +55,6 @@ public class PrizeService extends ContextService implements IPrizeService {
         try{
             return this.prizeFeign.findAllPrizesByBar(request.getId());
         }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.PRIZE_FIND_BY_BAR_ERROR_CODE,
                     this.getClass(), ExceptionConstant.PRIZE_FIND_BY_BAR_ERROR);
         }
@@ -70,7 +65,6 @@ public class PrizeService extends ContextService implements IPrizeService {
         try{
             return this.prizeFeign.activePrize(request.getId());
         }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.PRIZE_UPDATE_ACTIVE_ERROR_CODE,
                     this.getClass(), ExceptionConstant.PRIZE_UPDATE_ACTIVE_ERROR);
         }
