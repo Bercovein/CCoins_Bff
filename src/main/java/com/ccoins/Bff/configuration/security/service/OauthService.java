@@ -9,7 +9,6 @@ import com.ccoins.Bff.dto.users.OwnerDTO;
 import com.ccoins.Bff.exceptions.CustomException;
 import com.ccoins.Bff.exceptions.UnauthorizedException;
 import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
-import com.ccoins.Bff.exceptions.utils.ErrorUtils;
 import com.ccoins.Bff.service.IOauthService;
 import com.ccoins.Bff.service.IUserService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -81,7 +80,6 @@ public class OauthService implements IOauthService, UserDetailsService {
             OwnerDTO ownerDTO = this.usersService.findOrCreateOwner(payload.getEmail());
             return ResponseEntity.ok(login(JwtUtils.parse(ownerDTO)));
         }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new UnauthorizedException(ExceptionConstant.GOOGLE_ERROR_CODE, this.getClass(), ExceptionConstant.GOOGLE_ERROR);
         }
     }
@@ -100,7 +98,6 @@ public class OauthService implements IOauthService, UserDetailsService {
             return ResponseEntity.ok(login(JwtUtils.parse(ownerDTO)));
 
         }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new UnauthorizedException(ExceptionConstant.FACEBOOK_ERROR_CODE, this.getClass(), ExceptionConstant.FACEBOOK_ERROR);
         }
     }
@@ -123,7 +120,6 @@ public class OauthService implements IOauthService, UserDetailsService {
 
             return PrincipalUser.build(ownerDTO, passwordEncoder.encode(secretPsw));
         }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new UnauthorizedException(ExceptionConstant.USER_NOT_FOUND_ERROR_CODE, this.getClass(), ExceptionConstant.USER_NOT_FOUND_ERROR);
         }
     }
