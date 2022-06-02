@@ -17,12 +17,12 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class UserService implements IUserService {
+public class UsersService implements IUserService {
 
     private final UsersFeign usersFeign;
 
     @Autowired
-    public UserService(UsersFeign usersFeign) {
+    public UsersService(UsersFeign usersFeign) {
         this.usersFeign = usersFeign;
     }
 

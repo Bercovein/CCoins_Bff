@@ -5,7 +5,7 @@ import com.ccoins.Bff.dto.ListDTO;
 import com.ccoins.Bff.dto.prizes.PrizeDTO;
 import org.springframework.http.ResponseEntity;
 
-public interface IPrizeService {
+public interface IPrizesService {
 
     ResponseEntity<PrizeDTO> saveOrUpdate(PrizeDTO request);
 

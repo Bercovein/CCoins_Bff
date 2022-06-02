@@ -4,7 +4,7 @@ import com.ccoins.Bff.controller.swagger.ITablesController;
 import com.ccoins.Bff.dto.IdDTO;
 import com.ccoins.Bff.dto.ListDTO;
 import com.ccoins.Bff.dto.bars.TableDTO;
-import com.ccoins.Bff.service.ITableService;
+import com.ccoins.Bff.service.ITablesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 public class TablesController implements ITablesController {
 
-    private final ITableService service;
+    private final ITablesService service;
 
     @Autowired
-    public TablesController(ITableService service) {
+    public TablesController(ITablesService service) {
         this.service = service;
     }
 

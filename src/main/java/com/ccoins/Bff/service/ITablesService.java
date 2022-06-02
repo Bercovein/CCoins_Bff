@@ -5,7 +5,7 @@ import com.ccoins.Bff.dto.ListDTO;
 import com.ccoins.Bff.dto.bars.TableDTO;
 import org.springframework.http.ResponseEntity;
 
-public interface ITableService {
+public interface ITablesService {
 
     ResponseEntity<TableDTO> saveOrUpdate(TableDTO request);
     ResponseEntity<TableDTO> findById(IdDTO request);

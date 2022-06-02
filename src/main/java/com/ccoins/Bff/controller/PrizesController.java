@@ -4,7 +4,7 @@ import com.ccoins.Bff.controller.swagger.IPrizesController;
 import com.ccoins.Bff.dto.IdDTO;
 import com.ccoins.Bff.dto.ListDTO;
 import com.ccoins.Bff.dto.prizes.PrizeDTO;
-import com.ccoins.Bff.service.IPrizeService;
+import com.ccoins.Bff.service.IPrizesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +16,10 @@ import static org.springframework.http.HttpStatus.CREATED;
 @CrossOrigin
 public class PrizesController implements IPrizesController {
 
-    private final IPrizeService service;
+    private final IPrizesService service;
 
     @Autowired
-    public PrizesController(IPrizeService service) {
+    public PrizesController(IPrizesService service) {
         this.service = service;
     }
 

@@ -4,7 +4,7 @@ import com.ccoins.Bff.controller.swagger.IBarsController;
 import com.ccoins.Bff.dto.IdDTO;
 import com.ccoins.Bff.dto.ListDTO;
 import com.ccoins.Bff.dto.bars.BarDTO;
-import com.ccoins.Bff.service.IBarService;
+import com.ccoins.Bff.service.IBarsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +16,10 @@ import static org.springframework.http.HttpStatus.CREATED;
 @CrossOrigin
 public class BarsController implements IBarsController {
 
-    private final IBarService service;
+    private final IBarsService service;
 
     @Autowired
-    public BarsController(IBarService service) {
+    public BarsController(IBarsService service) {
         this.service = service;
     }
 

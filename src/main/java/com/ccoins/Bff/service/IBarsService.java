@@ -5,7 +5,7 @@ import com.ccoins.Bff.dto.ListDTO;
 import com.ccoins.Bff.dto.bars.BarDTO;
 import org.springframework.http.ResponseEntity;
 
-public interface IBarService {
+public interface IBarsService {
 
     ResponseEntity<BarDTO> saveOrUpdate(BarDTO barDTO);
 

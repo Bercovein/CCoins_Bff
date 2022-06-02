@@ -2,6 +2,7 @@ package com.ccoins.Bff.feign;
 
 import com.ccoins.Bff.dto.ListDTO;
 import com.ccoins.Bff.dto.bars.BarDTO;
+import com.ccoins.Bff.dto.bars.GameDTO;
 import com.ccoins.Bff.dto.bars.TableDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +25,8 @@ public interface BarsFeign {
     @PutMapping("/bars/{id}/active")
     ResponseEntity<BarDTO> activeBar(@PathVariable("id") Long id);
 
-    //TABLES
 
+    //TABLES
     @PostMapping("/tables")
     ResponseEntity<TableDTO> saveOrUpdateTable(@RequestBody TableDTO tableDTO);
 
@@ -37,4 +38,21 @@ public interface BarsFeign {
 
     @PutMapping("/tables/{id}/active")
     ResponseEntity<TableDTO> activeTable(@PathVariable("id") Long id);
+
+
+    //GAMES
+    @PostMapping("/games")
+    ResponseEntity<GameDTO> saveOrUpdateGame(@RequestBody GameDTO barDTO);
+
+    @GetMapping("/games/bar/{id}")
+    ResponseEntity<ListDTO> findAllGamesByBar(@PathVariable("id") Long id);
+
+    @GetMapping("/games/{id}")
+    ResponseEntity<GameDTO> findGameById(@PathVariable("id") Long id);
+
+    @PutMapping("/games/{id}/active")
+    ResponseEntity<GameDTO> activeGame(@PathVariable("id") Long id);
+
+    @GetMapping("/games/types")
+    ResponseEntity<ListDTO> findAllGamesTypes();
 }

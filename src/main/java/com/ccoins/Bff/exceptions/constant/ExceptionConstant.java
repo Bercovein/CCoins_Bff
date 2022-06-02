@@ -82,5 +82,19 @@ public class ExceptionConstant {
     public static final String PRIZE_UPDATE_ACTIVE_ERROR_CODE = "0022";
     public static final String PRIZE_UPDATE_ACTIVE_ERROR = ACTIVE_UNACTIVE_ERROR_LABEL.concat("prize");
 
+    public static final String GAME_CREATE_OR_UPDATE_ERROR_CODE = "0024";
+    public static final String GAME_CREATE_OR_UPDATE_ERROR = CREATE_OR_REPLACE_ERROR_LABEL.concat("game");
+
+
+    public static final String GAME_FIND_BY_ID_ERROR_CODE = "0025";
+    public static final String GAME_FIND_BY_ID_ERROR = GET_ERROR_LABEL.concat("game by id");
+
+
+    public static final String GAME_FIND_BY_OWNER_ERROR_CODE = "0026";
+    public static final String GAME_FIND_BY_OWNER_ERROR = GET_ERROR_LABEL.concat("games by bar");
+
+    public static final String GAME_ACTIVE_ERROR_CODE = "0027";
+    public static final String GAME_ACTIVE_ERROR = ACTIVE_UNACTIVE_ERROR_LABEL.concat("game");
+
 
 }

@@ -6,7 +6,7 @@ import com.ccoins.Bff.dto.prizes.PrizeDTO;
 import com.ccoins.Bff.exceptions.BadRequestException;
 import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.Bff.feign.PrizeFeign;
-import com.ccoins.Bff.service.IPrizeService;
+import com.ccoins.Bff.service.IPrizesService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +14,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class PrizeService extends ContextService implements IPrizeService {
+public class PrizesService extends ContextService implements IPrizesService {
 
     private final PrizeFeign prizeFeign;
 
     @Autowired
-    public PrizeService(PrizeFeign prizeFeign) {
+    public PrizesService(PrizeFeign prizeFeign) {
         this.prizeFeign = prizeFeign;
     }
 
