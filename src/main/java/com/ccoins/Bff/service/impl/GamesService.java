@@ -70,4 +70,15 @@ public class GamesService extends ContextService implements IGamesService {
                     this.getClass(), ExceptionConstant.GAME_ACTIVE_ERROR);
         }
     }
+
+    @Override
+    public ResponseEntity<ListDTO> findAllGamesTypes() {
+
+        try{
+            return this.barsFeign.findAllGamesTypes();
+        }catch(Exception e){
+            throw new BadRequestException(ExceptionConstant.GAME_FIND_GAME_TYPES_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.GAME_FIND_GAME_TYPES_ERROR);
+        }
+    }
 }

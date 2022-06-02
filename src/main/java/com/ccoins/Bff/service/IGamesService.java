@@ -14,4 +14,6 @@ public interface IGamesService {
     ResponseEntity<ListDTO> findAllByBar(Long id);
 
     ResponseEntity<GameDTO> active(IdDTO id);
+
+    ResponseEntity<ListDTO> findAllGamesTypes();
 }

@@ -7,6 +7,7 @@ public class SwaggerConstants {
     public static final String PRIZE = "Prize";
     public static final String BAR = "Bar";
     public static final String OWNER = "Owner";
+    public static final String GAME = "Game";
     public static final String LOGIN = "Login";
     public static final String GOOGLE = "Google";
     public static final String FACEBOOK = "facebook";

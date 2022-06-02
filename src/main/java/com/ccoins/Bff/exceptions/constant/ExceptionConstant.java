@@ -97,4 +97,8 @@ public class ExceptionConstant {
     public static final String GAME_ACTIVE_ERROR = ACTIVE_UNACTIVE_ERROR_LABEL.concat("game");
 
 
+    public static final String GAME_FIND_GAME_TYPES_ERROR_CODE = "0028";
+    public static final String GAME_FIND_GAME_TYPES_ERROR = GET_ERROR_LABEL.concat("games types");
+
+
 }
