@@ -60,6 +60,12 @@ public class ExceptionControllerAdvice { // se encarga de enviar una respuesta c
         return this.buildResponse(CONFLICT, e);
     }
 
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(BAD_REQUEST)
+    public ResponseEntity<?> handle(CustomException e){
+        this.exceptionLog(e);
+        return this.buildResponse(BAD_REQUEST, e);
+    }
     private ResponseEntity<?> buildResponse(HttpStatus status, CustomException e) {
 
         String code = e.getCode();

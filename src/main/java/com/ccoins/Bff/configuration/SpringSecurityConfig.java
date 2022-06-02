@@ -85,7 +85,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(Arrays.asList("*","http://localhost:4200/","https://localhost:4200/", "https://chop-coins.web.app/"));                   // agregamos nuestros dominios, ej: "http://localhost:4200"
+        config.setAllowedOrigins(Arrays.asList("http://localhost:4200", "https://chop-coins.web.app"));                   // agregamos nuestros dominios, ej: "http://localhost:4200"
         config.setAllowedMethods(Arrays.asList(HttpMethods.GET, HttpMethods.POST, HttpMethods.PUT, HttpMethods.DELETE, HttpMethods.OPTIONS)); // configuramos los verbos que vamos a permitir en el backend
         config.setAllowCredentials(true);
         config.setAllowedHeaders(Arrays.asList(CONTENT_TYPE, AUTHORIZATION, LOCATION));

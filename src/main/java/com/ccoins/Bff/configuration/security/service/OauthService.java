@@ -72,11 +72,13 @@ public class OauthService implements IOauthService, UserDetailsService {
         final JacksonFactory jacksonFactory = JacksonFactory.getDefaultInstance();
 
         try{
+            log.error("LOGUEANDO EN GOOGLE");
             GoogleIdTokenVerifier.Builder verifier = new GoogleIdTokenVerifier.Builder(transport, jacksonFactory)
                     .setAudience(Collections.singletonList(googleClientId));
+            log.error("Parseando token");
             final GoogleIdToken googleIdToken = GoogleIdToken.parse(verifier.getJsonFactory(),request.getValue());
             GoogleIdToken.Payload payload = googleIdToken.getPayload();
-
+            log.error("Creando/Buscando usuario");
             OwnerDTO ownerDTO = this.usersService.findOrCreateOwner(payload.getEmail());
             return ResponseEntity.ok(login(JwtUtils.parse(ownerDTO)));
         }catch(Exception e){
@@ -87,11 +89,13 @@ public class OauthService implements IOauthService, UserDetailsService {
     @Override
     public ResponseEntity<?> facebook(TokenDTO request) throws CustomException{
 
+        log.error("LOGUEANDO EN FACEBOOK");
         Facebook facebook = new FacebookTemplate(request.getValue());
         final String[] fields = {"email", "picture"}; //agrega el email y la foto para devolver a front
         User user;
 
         try{
+            log.error("Creando/Buscando usuario");
             user = facebook.fetchObject("me", User.class, fields);
             OwnerDTO ownerDTO = this.usersService.findOrCreateOwner(user.getEmail());
 
