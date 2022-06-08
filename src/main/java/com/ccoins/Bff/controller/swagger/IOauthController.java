@@ -12,11 +12,9 @@ import static com.ccoins.Bff.controller.swagger.SwaggerConstants.*;
 @Api(tags = LOGIN)
 public interface IOauthController {
 
-    @ApiOperation(value = LOGIN_REGISTER_WITH + GOOGLE,
-            notes = LOGIN_REGISTER_WITH + GOOGLE)
+    @ApiOperation(value = LOGIN_REGISTER_WITH + GOOGLE)
     ResponseEntity<?> google(@RequestBody TokenDTO request) throws CustomException;
 
-    @ApiOperation(value = LOGIN_REGISTER_WITH + FACEBOOK,
-            notes = LOGIN_REGISTER_WITH + FACEBOOK)
+    @ApiOperation(value = LOGIN_REGISTER_WITH + FACEBOOK)
     ResponseEntity<?> facebook(@RequestBody TokenDTO request) throws CustomException;
 }

@@ -13,19 +13,15 @@ import static com.ccoins.Bff.controller.swagger.SwaggerConstants.*;
 @Api(tags = TABLE)
 public interface ITablesController {
 
-    @ApiOperation(value = SAVE_OR_UPDATE,
-            notes = SAVE_OR_UPDATE_NOTE)
+    @ApiOperation(value = SAVE_OR_UPDATE)
     ResponseEntity<TableDTO> saveOrUpdate(@RequestBody TableDTO request);
 
-    @ApiOperation(value = FIND_BY_ID,
-            notes= FIND_BY_ID_NOTE)
+    @ApiOperation(value = FIND_BY_ID)
     ResponseEntity<TableDTO> findById(@RequestBody IdDTO id);
 
-    @ApiOperation(value = FIND_ALL_BY + BAR,
-            notes= FIND_ALL_BY_NOTE + BAR)
+    @ApiOperation(value = FIND_ALL_BY + BAR)
     ResponseEntity<ListDTO> findAllByBar(@RequestBody IdDTO request);
 
-    @ApiOperation(value = ACTIVATE_DEACTIVATE,
-            notes= ACTIVATE_DEACTIVATE_NOTE)
+    @ApiOperation(value = ACTIVATE_DEACTIVATE)
     ResponseEntity<TableDTO> active(@RequestBody IdDTO id);
 }

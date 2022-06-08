@@ -13,20 +13,16 @@ import static com.ccoins.Bff.controller.swagger.SwaggerConstants.*;
 @Api(tags = GAME)
 public interface IGamesController {
 
-    @ApiOperation(value = SAVE_OR_UPDATE,
-            notes = SAVE_OR_UPDATE_NOTE)
+    @ApiOperation(value = SAVE_OR_UPDATE)
     ResponseEntity<GameDTO> saveOrUpdate(@RequestBody GameDTO request);
 
-    @ApiOperation(value = FIND_BY_ID,
-            notes= FIND_BY_ID_NOTE)
+    @ApiOperation(value = FIND_BY_ID)
     ResponseEntity<GameDTO> findById(@RequestBody IdDTO id);
 
-    @ApiOperation(value = FIND_ALL_BY + GAME,
-            notes= FIND_ALL_BY_NOTE + GAME)
+    @ApiOperation(value = FIND_ALL_BY + GAME)
     ResponseEntity<ListDTO> findAllByBar(Long id);
 
 
-    @ApiOperation(value = ACTIVATE_DEACTIVATE,
-            notes= ACTIVATE_DEACTIVATE_NOTE)
+    @ApiOperation(value = ACTIVATE_DEACTIVATE)
     ResponseEntity<GameDTO> active(@RequestBody IdDTO id);
 }

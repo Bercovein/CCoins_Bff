@@ -80,6 +80,7 @@ public class OauthService implements IOauthService, UserDetailsService {
             GoogleIdToken.Payload payload = googleIdToken.getPayload();
             log.error("Creando/Buscando usuario");
             OwnerDTO ownerDTO = this.usersService.findOrCreateOwner(payload.getEmail());
+            log.error("Parseando y devolviendo token");
             return ResponseEntity.ok(login(JwtUtils.parse(ownerDTO)));
         }catch(Exception e){
             throw new UnauthorizedException(ExceptionConstant.GOOGLE_ERROR_CODE, this.getClass(), ExceptionConstant.GOOGLE_ERROR);

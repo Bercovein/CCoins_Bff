@@ -13,19 +13,15 @@ import static com.ccoins.Bff.controller.swagger.SwaggerConstants.*;
 @Api(tags = PRIZE)
 public interface IPrizesController {
 
-    @ApiOperation(value = SAVE_OR_UPDATE,
-            notes = SAVE_OR_UPDATE_NOTE)
+    @ApiOperation(value = SAVE_OR_UPDATE)
     ResponseEntity<PrizeDTO> saveOrUpdate(@RequestBody PrizeDTO request);
 
-    @ApiOperation(value = FIND_BY_ID,
-            notes= FIND_BY_ID_NOTE)
+    @ApiOperation(value = FIND_BY_ID)
     ResponseEntity<PrizeDTO> findById(@RequestBody IdDTO id);
 
-    @ApiOperation(value = FIND_ALL_BY + PRIZE,
-            notes= FIND_ALL_BY_NOTE + PRIZE)
+    @ApiOperation(value = FIND_ALL_BY + PRIZE)
     ResponseEntity<ListDTO> findAllByBar(@RequestBody IdDTO request);
 
-    @ApiOperation(value = ACTIVATE_DEACTIVATE,
-            notes= ACTIVATE_DEACTIVATE_NOTE)
+    @ApiOperation(value = ACTIVATE_DEACTIVATE)
     ResponseEntity<PrizeDTO> active(@RequestBody IdDTO id);
 }

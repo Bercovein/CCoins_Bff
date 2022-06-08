@@ -43,8 +43,10 @@ public class UsersService implements IUserService {
     public Optional<OwnerDTO> findByEmail(String email) {
 
         try{
+            log.error("Buscando usuario por email");
             return this.usersFeign.findByEmail(email);
         }catch(Exception e){
+            log.error("Error al ir contra feign");
             throw new BadRequestException(ExceptionConstant.USERS_GET_OWNER_BY_EMAIL_ERROR_CODE, this.getClass(), ExceptionConstant.USERS_GET_OWNER_BY_EMAIL_ERROR);
         }
     }
@@ -72,12 +74,12 @@ public class UsersService implements IUserService {
         Optional<OwnerDTO> ownerOpt = this.findByEmail(email);
         OwnerDTO ownerDTO;
         if(ownerOpt.isEmpty()){
+            log.error("Nuevo usuario");
             ownerDTO = this.newOwner(email);
         }else{
             ownerDTO = ownerOpt.get();
         }
         return ownerDTO;
     }
-
 
 }

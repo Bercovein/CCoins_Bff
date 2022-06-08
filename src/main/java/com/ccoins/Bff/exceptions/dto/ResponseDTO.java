@@ -5,9 +5,9 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ExceptionRsDTO {
+public class ResponseDTO<T> {
 
     private String code;
     private Object message;
-
+    private T data;
 }
