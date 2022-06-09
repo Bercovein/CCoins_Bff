@@ -13,7 +13,9 @@
 	<version>1.0.0</version>
 	<name>Bff</name>
 	<description>Demo project for Spring Boot</description>
+	<packaging>war</packaging>
 	<properties>
+		<app.name>bff-app</app.name>
 		<java.version>11</java.version>
 		<spring-cloud.version>2020.0.3</spring-cloud.version>
 		<google-client.version>1.34.1</google-client.version>
@@ -226,6 +228,12 @@
 			<artifactId>spring-boot-starter-freemarker</artifactId>
 		</dependency>
 
+		<!-- TOMCAT -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
@@ -241,6 +249,7 @@
 	</dependencyManagement>
 
 	<build>
+		<finalName>${app.name}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -256,28 +265,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<packaging>${packaging.type}</packaging>
-	<profiles>
-		<profile>
-			<id>jar</id>
-			<properties>
-				<packaging.type>jar</packaging.type>
-				<spring.profiles.active>dev</spring.profiles.active>
-			</properties>
-		</profile>
-		<profile>
-			<id>war</id>
-			<properties>
-				<packaging.type>war</packaging.type>
-				<spring.profiles.active>ds</spring.profiles.active>
-			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-tomcat</artifactId>
-					<scope>provided</scope>
-				</dependency>
-			</dependencies>
-		</profile>
-	</profiles>
 </project>
