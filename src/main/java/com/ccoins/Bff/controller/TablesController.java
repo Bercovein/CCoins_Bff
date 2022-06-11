@@ -1,9 +1,11 @@
 package com.ccoins.Bff.controller;
 
 import com.ccoins.Bff.controller.swagger.ITablesController;
+import com.ccoins.Bff.dto.GenericRsDTO;
 import com.ccoins.Bff.dto.IdDTO;
 import com.ccoins.Bff.dto.ListDTO;
 import com.ccoins.Bff.dto.bars.TableDTO;
+import com.ccoins.Bff.dto.bars.TableQuantityDTO;
 import com.ccoins.Bff.service.ITablesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -43,5 +45,11 @@ public class TablesController implements ITablesController {
     @PatchMapping("/active")
     public ResponseEntity<TableDTO> active(@RequestBody IdDTO id){
         return this.service.active(id);
+    }
+
+    @Override
+    @PostMapping("/save/quantity")
+    public ResponseEntity<GenericRsDTO> createByQuantity(@RequestBody TableQuantityDTO request){
+        return this.service.createByQuantity(request);
     }
 }

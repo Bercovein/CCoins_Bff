@@ -8,12 +8,7 @@ public class ErrorUtils {
 
     public static ResponseDTO buildMessage(String code, Object message){
 
-        return ResponseDTO.builder().code(code).data(null).message(message).build();
-    }
-
-    public static ResponseDTO buildMessage(String code, Object message, Object data){
-
-        return ResponseDTO.builder().code(code).data(data).message(message).build();
+        return ResponseDTO.builder().code(code).message(message).build();
     }
 
 }

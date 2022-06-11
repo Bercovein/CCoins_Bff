@@ -14,6 +14,7 @@ public class SwaggerConstants {
 
     //
     public static final String SAVE_OR_UPDATE = "Save / Update";
+    public static final String SAVE_BY_QUANTITY = "Save by quantity";
 
     public static final String FIND_BY_ID = "Find by id";
     public static final String FIND_ALL_BY = "Find All by ";

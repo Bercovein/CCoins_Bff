@@ -1,8 +1,10 @@
 package com.ccoins.Bff.controller.swagger;
 
+import com.ccoins.Bff.dto.GenericRsDTO;
 import com.ccoins.Bff.dto.IdDTO;
 import com.ccoins.Bff.dto.ListDTO;
 import com.ccoins.Bff.dto.bars.TableDTO;
+import com.ccoins.Bff.dto.bars.TableQuantityDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
@@ -24,4 +26,7 @@ public interface ITablesController {
 
     @ApiOperation(value = ACTIVATE_DEACTIVATE)
     ResponseEntity<TableDTO> active(@RequestBody IdDTO id);
+
+    @ApiOperation(value = SAVE_BY_QUANTITY)
+    ResponseEntity<GenericRsDTO> createByQuantity(@RequestBody TableQuantityDTO request);
 }

@@ -1,8 +1,10 @@
 package com.ccoins.Bff.service.impl;
 
+import com.ccoins.Bff.dto.GenericRsDTO;
 import com.ccoins.Bff.dto.IdDTO;
 import com.ccoins.Bff.dto.ListDTO;
 import com.ccoins.Bff.dto.bars.TableDTO;
+import com.ccoins.Bff.dto.bars.TableQuantityDTO;
 import com.ccoins.Bff.exceptions.BadRequestException;
 import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.Bff.feign.BarsFeign;
@@ -75,5 +77,10 @@ public class TablesService extends ContextService implements ITablesService {
             throw new BadRequestException(ExceptionConstant.TABLES_ACTIVE_ERROR_CODE,
                     this.getClass(), ExceptionConstant.TABLES_ACTIVE_ERROR);
         }
+    }
+
+    @Override
+    public ResponseEntity<GenericRsDTO> createByQuantity(TableQuantityDTO request){
+        return this.barsFeign.createByQuantity(request);
     }
 }

@@ -1,13 +1,17 @@
 package com.ccoins.Bff.exceptions.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class ResponseDTO<T> {
+public class ResponseDTO {
 
     private String code;
     private Object message;
-    private T data;
+
 }

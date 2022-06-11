@@ -1,9 +1,11 @@
 package com.ccoins.Bff.feign;
 
+import com.ccoins.Bff.dto.GenericRsDTO;
 import com.ccoins.Bff.dto.ListDTO;
 import com.ccoins.Bff.dto.bars.BarDTO;
 import com.ccoins.Bff.dto.bars.GameDTO;
 import com.ccoins.Bff.dto.bars.TableDTO;
+import com.ccoins.Bff.dto.bars.TableQuantityDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +41,8 @@ public interface BarsFeign {
     @PutMapping("/tables/{id}/active")
     ResponseEntity<TableDTO> activeTable(@PathVariable("id") Long id);
 
+    @PostMapping("/tables/quantity")
+    ResponseEntity<GenericRsDTO> createByQuantity(@RequestBody TableQuantityDTO request);
 
     //GAMES
     @PostMapping("/games")

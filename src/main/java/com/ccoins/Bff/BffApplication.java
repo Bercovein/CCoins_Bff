@@ -8,7 +8,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients
-public class BffApplication extends SpringBootServletInitializer {
+public class BffApplication
+		extends SpringBootServletInitializer
+{
 
 	public static void main(String[] args) {
 		SpringApplication.run(BffApplication.class, args);
