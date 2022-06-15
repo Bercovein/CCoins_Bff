@@ -52,4 +52,10 @@ public class TablesController implements ITablesController {
     public ResponseEntity<GenericRsDTO> createByQuantity(@RequestBody TableQuantityDTO request){
         return this.service.createByQuantity(request);
     }
+
+    @Override
+    @DeleteMapping("/quantity")
+    public ResponseEntity<GenericRsDTO> deleteByQuantity(@RequestBody TableQuantityDTO request){
+        return this.service.deleteByQuantity(request);
+    }
 }

@@ -8,6 +8,7 @@ import com.ccoins.Bff.dto.bars.TableQuantityDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import static com.ccoins.Bff.controller.swagger.SwaggerConstants.*;
@@ -29,4 +30,7 @@ public interface ITablesController {
 
     @ApiOperation(value = SAVE_BY_QUANTITY)
     ResponseEntity<GenericRsDTO> createByQuantity(@RequestBody TableQuantityDTO request);
+
+    @DeleteMapping("/quantity")
+    ResponseEntity<GenericRsDTO> deleteByQuantity(@RequestBody TableQuantityDTO request);
 }

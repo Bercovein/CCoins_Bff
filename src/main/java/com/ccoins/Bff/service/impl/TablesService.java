@@ -83,4 +83,9 @@ public class TablesService extends ContextService implements ITablesService {
     public ResponseEntity<GenericRsDTO> createByQuantity(TableQuantityDTO request){
         return this.barsFeign.createByQuantity(request);
     }
+
+    @Override
+    public ResponseEntity<GenericRsDTO> deleteByQuantity(TableQuantityDTO request) {
+        return this.barsFeign.deleteByQuantity(request);
+    }
 }

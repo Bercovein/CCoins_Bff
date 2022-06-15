@@ -44,6 +44,9 @@ public interface BarsFeign {
     @PostMapping("/tables/quantity")
     ResponseEntity<GenericRsDTO> createByQuantity(@RequestBody TableQuantityDTO request);
 
+    @DeleteMapping("/tables/quantity")
+    ResponseEntity<GenericRsDTO> deleteByQuantity(@RequestBody TableQuantityDTO request);
+
     //GAMES
     @PostMapping("/games")
     ResponseEntity<GameDTO> saveOrUpdateGame(@RequestBody GameDTO barDTO);

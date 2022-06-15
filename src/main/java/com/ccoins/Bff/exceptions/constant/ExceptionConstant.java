@@ -10,6 +10,7 @@ public class ExceptionConstant {
     public static final String GET_UNAUTHORIZED_LABEL = UNAUTHORIZED_LABEL.concat("get ");
     public static final String CREATE_NEW_ERROR_LABEL = ERROR_LABEL.concat("create new ");
     public static final String ACTIVE_UNACTIVE_ERROR_LABEL = ERROR_LABEL.concat("change state of ");
+    public static final String GENERATE_ERROR_LABEL = ERROR_LABEL.concat("generate new ");
 
     public static final String READ_ERROR_LABEL = ERROR_LABEL.concat("read ");
 
@@ -99,6 +100,9 @@ public class ExceptionConstant {
 
     public static final String GAME_FIND_GAME_TYPES_ERROR_CODE = "0028";
     public static final String GAME_FIND_GAME_TYPES_ERROR = GET_ERROR_LABEL.concat("games types");
+
+    public static final String QR_CODE_GENERATION_ERROR_CODE = "0029";
+    public static final String QR_CODE_GENERATION_ERROR = GENERATE_ERROR_LABEL.concat("qr code");
 
 
 }

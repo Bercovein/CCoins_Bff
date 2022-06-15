@@ -15,4 +15,6 @@ public interface ITablesService {
     ResponseEntity<TableDTO> active(IdDTO request);
 
     ResponseEntity<GenericRsDTO> createByQuantity(TableQuantityDTO request);
+
+    ResponseEntity<GenericRsDTO> deleteByQuantity(TableQuantityDTO request);
 }
