@@ -3,6 +3,7 @@ package com.ccoins.Bff.controller;
 import com.ccoins.Bff.controller.swagger.IImageController;
 import com.ccoins.Bff.dto.TableListQrRsDTO;
 import com.ccoins.Bff.service.IImageService;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class ImageController implements IImageController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void generatePDFWithQRCodes(@RequestBody TableListQrRsDTO tableList){
+    public void generatePDFWithQRCodes(@RequestBody TableListQrRsDTO tableList) throws JRException {
         this.service.generatePDFWithQRCodes(tableList);
     }
 

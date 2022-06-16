@@ -30,7 +30,6 @@ public class BarsController implements IBarsController {
         return this.service.saveOrUpdate(request);
     }
 
-
     @Override
     @PostMapping("/id")
     public ResponseEntity<BarDTO> findById(@RequestBody IdDTO request){
@@ -48,4 +47,6 @@ public class BarsController implements IBarsController {
     public ResponseEntity<BarDTO> active(@RequestBody IdDTO request){
         return this.service.active(request);
     }
+
+
 }
