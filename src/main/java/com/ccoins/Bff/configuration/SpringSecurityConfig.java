@@ -6,6 +6,7 @@ import com.ccoins.Bff.configuration.security.authentication.JwtEntryPoint;
 import com.ccoins.Bff.configuration.security.filter.JwtRefreshFilter;
 import com.google.api.client.http.HttpMethods;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -38,6 +39,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     JwtEntryPoint jwtEntryPoint;
+
+    @Value("${api.url.path}")
+    private String API_PATH;
+
+    @Value("${api.url.path.localhost}")
+    private String API_LOCALHOST_PATH;
 
     @Bean
     JwtRefreshFilter jwtTokenFilter (){
@@ -87,10 +94,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(Arrays.asList("http://localhost:4200", "https://chop-coins.web.app"));                   // agregamos nuestros dominios, ej: "http://localhost:4200"
-        config.setAllowedMethods(Arrays.asList(HttpMethods.GET, HttpMethods.POST, HttpMethods.PUT, HttpMethods.DELETE, HttpMethods.OPTIONS)); // configuramos los verbos que vamos a permitir en el backend
+        config.setAllowedOrigins(Arrays.asList(API_PATH, API_LOCALHOST_PATH));                   // agregamos nuestros dominios, ej: "http://localhost:4200"
+        config.setAllowedMethods(Arrays.asList(HttpMethods.GET, HttpMethods.POST, HttpMethods.PUT, HttpMethods.PATCH, HttpMethods.DELETE, HttpMethods.OPTIONS)); // configuramos los verbos que vamos a permitir en el backend
         config.setAllowCredentials(true);
         config.setAllowedHeaders(Arrays.asList(CONTENT_TYPE, AUTHORIZATION, LOCATION));
+        config.setExposedHeaders(Arrays.asList(ACCESS_CONTROL_EXPOSE_HEADERS, AUTHORIZATION));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);                            // configurar cors para todos nuestros endpoints

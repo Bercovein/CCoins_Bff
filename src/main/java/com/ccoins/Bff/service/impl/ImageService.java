@@ -58,7 +58,7 @@ public class ImageService extends ContextService implements IImageService {
     public InputStream createQRImage(String text, String fileName) {
 
         try {
-            BufferedImage bufferedImage = this.generateQr(text, 350, 350);
+            BufferedImage bufferedImage = this.generateQr(text, 1000, 1000);
             String filePath = IMAGE_FOLDER_PATH.concat(fileName.concat(".").concat(JPG));
             File qrCodeFile = new File(filePath);
             ImageIO.write(bufferedImage, JPG, qrCodeFile);
