@@ -7,6 +7,13 @@ import com.ccoins.Bff.dto.image.ImageToPdfDTO;
 import com.ccoins.Bff.exceptions.BadRequestException;
 import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.Bff.service.IImageService;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.client.j2se.MatrixToImageConfig;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import lombok.extern.slf4j.Slf4j;
 import net.glxn.qrgen.javase.QRCode;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -19,13 +26,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -37,10 +47,17 @@ public class ImageService extends ContextService implements IImageService {
     @Value("${jasper-report.qr.path}")
     private String JASPER_REPORT_QR_PATH;
 
+    @Value("${folder.temp.path}")
+    private String TEMP_FOLDER_PATH;
+
     @Value("${folder.images.path}")
-    private String IMAGE_FOLDER_PATH;
+    private String IMAGES_FOLDER_PATH;
+
+    @Value("${folder.images.logo.name}")
+    private String LOGO_NAME;
 
     private final static String JPG = "jpg";
+    private final static String PNG = "png";
 
     @Override
     public BufferedImage generateQr(final String qrCodeText, final int width, final int height) throws Exception {
@@ -54,20 +71,7 @@ public class ImageService extends ContextService implements IImageService {
         return ImageIO.read(byteArrayInputStream);
     }
 
-    @Override
-    public InputStream createQRImage(String text, String fileName) {
 
-        try {
-            BufferedImage bufferedImage = this.generateQr(text, 1000, 1000);
-            String filePath = IMAGE_FOLDER_PATH.concat(fileName.concat(".").concat(JPG));
-            File qrCodeFile = new File(filePath);
-            ImageIO.write(bufferedImage, JPG, qrCodeFile);
-            return Files.newInputStream(Path.of(filePath), new StandardOpenOption[]{StandardOpenOption.DELETE_ON_CLOSE});
-        }catch(Exception e){
-            throw new BadRequestException(ExceptionConstant.QR_CODE_GENERATION_ERROR_CODE,
-                    this.getClass(), ExceptionConstant.QR_CODE_GENERATION_ERROR);
-        }
-    }
 
     @Override
     public void generatePDFWithQRCodes(TableListQrRsDTO tableList)  {
@@ -107,4 +111,42 @@ public class ImageService extends ContextService implements IImageService {
             }
         });
     }
+
+    @Override
+    public InputStream createQRImage(String text, String fileName) {
+
+        Map hints = new HashMap();
+        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+        QRCodeWriter writer = new QRCodeWriter();
+        BitMatrix bitMatrix = null;
+
+        try {
+            bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, 250, 250, hints);
+            MatrixToImageConfig config = new MatrixToImageConfig(MatrixToImageConfig.BLACK, MatrixToImageConfig.WHITE);
+
+            BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix, config);
+
+            File file = new File(IMAGES_FOLDER_PATH.concat(LOGO_NAME));
+            BufferedImage logoImage = ImageIO.read(file);
+
+            int deltaHeight = qrImage.getHeight() - logoImage.getHeight();
+            int deltaWidth = qrImage.getWidth() - logoImage.getWidth();
+
+            BufferedImage combined = new BufferedImage(qrImage.getHeight(), qrImage.getWidth(), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = (Graphics2D) combined.getGraphics();
+            g.drawImage(qrImage, 0, 0, null);
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+
+            g.drawImage(logoImage, (int) Math.round(deltaWidth / 2), (int) Math.round(deltaHeight / 2), null);
+
+            String filePath = TEMP_FOLDER_PATH.concat(fileName.concat(".").concat(PNG));
+            ImageIO.write(combined, PNG, new File(filePath));
+
+            return Files.newInputStream(Path.of(filePath), new StandardOpenOption[]{StandardOpenOption.DELETE_ON_CLOSE});
+        }catch(Exception e){
+            throw new BadRequestException(ExceptionConstant.QR_CODE_GENERATION_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.QR_CODE_GENERATION_ERROR);
+        }
+    }
+
 }

@@ -12,7 +12,6 @@ public class BffApplication
 {
 
 	public static void main(String[] args) {
-//		SpringApplication.run(BffApplication.class, args);
 
 		SpringApplicationBuilder builder = new SpringApplicationBuilder(BffApplication.class);
 		builder.headless(false);
