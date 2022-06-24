@@ -4,6 +4,7 @@ import com.ccoins.Bff.BffApplication;
 import com.ccoins.Bff.dto.TableListQrRsDTO;
 import com.ccoins.Bff.dto.TableQrRsDTO;
 import com.ccoins.Bff.dto.image.ImageToPdfDTO;
+import com.ccoins.Bff.dto.image.RowToPdfDTO;
 import com.ccoins.Bff.exceptions.BadRequestException;
 import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.Bff.service.IImageService;
@@ -32,10 +33,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -93,13 +92,47 @@ public class ImageService extends ContextService implements IImageService {
     public void generatePdfFromList(List<ImageToPdfDTO> list) {
         try {
             JasperReport report = JasperCompileManager.compileReport(BffApplication.class.getResourceAsStream(JASPER_REPORT_QR_PATH));
-            JRBeanCollectionDataSource jcd = new JRBeanCollectionDataSource(list);
+
+            List<RowToPdfDTO> rowList = this.imagesToRows(list);
+
+            JRBeanCollectionDataSource jcd = new JRBeanCollectionDataSource(rowList);
             JasperPrint print = JasperFillManager.fillReport(report, null, jcd);
             JasperViewer.viewReport(print, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    private List<RowToPdfDTO> imagesToRows(List<ImageToPdfDTO> list) {
+
+        List<RowToPdfDTO> rowList = new ArrayList<>();
+
+        Iterator<ImageToPdfDTO> iterator = list.iterator();
+
+        while(iterator.hasNext()){
+            RowToPdfDTO row = new RowToPdfDTO();
+
+            ImageToPdfDTO imageLeft = iterator.next();
+            row.setNumberLeft(imageLeft.getNumber());
+            row.setImageLeft(imageLeft.getImage());
+
+            if(iterator.hasNext()){
+                ImageToPdfDTO imageMedium = iterator.next();
+                row.setNumberMedium(imageMedium.getNumber());
+                row.setImageMedium(imageMedium.getImage());
+
+                if(iterator.hasNext()){
+                    ImageToPdfDTO imageRight = iterator.next();
+                    row.setNumberRight(imageRight.getNumber());
+                    row.setImageRight(imageRight.getImage());
+                }
+            }
+            rowList.add(row);
+        }
+
+        return rowList;
+    }
+
 
     public void deleteImagesByList(List<ImageToPdfDTO> imageList){
 
