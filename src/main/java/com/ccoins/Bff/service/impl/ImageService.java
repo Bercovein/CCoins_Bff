@@ -17,10 +17,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import lombok.extern.slf4j.Slf4j;
 import net.glxn.qrgen.javase.QRCode;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
 import org.springframework.beans.factory.annotation.Value;
@@ -97,6 +94,10 @@ public class ImageService extends ContextService implements IImageService {
 
             JRBeanCollectionDataSource jcd = new JRBeanCollectionDataSource(rowList);
             JasperPrint print = JasperFillManager.fillReport(report, null, jcd);
+
+            OutputStream output = new FileOutputStream(TEMP_FOLDER_PATH.concat("JR.pdf"));
+            JasperExportManager.exportReportToPdfStream(print, output);
+
             JasperViewer.viewReport(print, false);
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,7 +130,6 @@ public class ImageService extends ContextService implements IImageService {
             }
             rowList.add(row);
         }
-
         return rowList;
     }
 
