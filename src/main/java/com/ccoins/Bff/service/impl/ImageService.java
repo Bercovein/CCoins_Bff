@@ -73,7 +73,7 @@ public class ImageService extends ContextService implements IImageService {
 
 
     @Override
-    public  ResponseEntity<Resource> generatePDFWithQRCodes(TableListQrRsDTO tableList) throws JRException, IOException {
+    public  ResponseEntity<byte[]> generatePDFWithQRCodes(TableListQrRsDTO tableList) throws JRException, IOException {
 
         List<TableQrRsDTO> list = tableList.getList();
         List<ImageToPdfDTO> imageList = new ArrayList<>();
@@ -84,25 +84,14 @@ public class ImageService extends ContextService implements IImageService {
             imageList.add(ImageToPdfDTO.builder().number(table.getNumber()).image(inputStream).build());
         }
 
-        ResponseEntity<Resource> response = this.generatePdfFromList(imageList);
+        ResponseEntity<byte[]> response = this.generatePdfFromList(imageList);
 
         this.deleteImagesByList(imageList);
-
-//        // retrieve contents of "C:/tmp/report.pdf" that were written in showHelp
-//        byte[] contents = (...);
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_PDF);
-//        // Here you have to set the actual filename of your pdf
-//        String filename = "output.pdf";
-//        headers.setContentDispositionFormData(filename, filename);
-//        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-//        ResponseEntity<byte[]> response = new ResponseEntity<>(contents, headers, HttpStatus.OK);
 
         return response;
     }
 
-    public  ResponseEntity<Resource> generatePdfFromList(List<ImageToPdfDTO> list) throws JRException, IOException {
+    public  ResponseEntity<byte[]> generatePdfFromList(List<ImageToPdfDTO> list) throws JRException, IOException {
         try {
             JasperReport report = JasperCompileManager.compileReport(BffApplication.class.getResourceAsStream(JASPER_REPORT_QR_PATH));
 
@@ -125,16 +114,16 @@ public class ImageService extends ContextService implements IImageService {
         }
     }
 
-    private ResponseEntity<Resource> generateResponseFile(String path) throws FileNotFoundException {
+    private ResponseEntity<byte[]> generateResponseFile(String path) throws IOException {
 
         File file = new File(path);
 
-        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+        byte[] bytes = Files.readAllBytes(file.toPath());
 
         return ResponseEntity.ok()
                 .contentLength(file.length())
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(resource);
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(bytes);
     }
 
     private List<RowToPdfDTO> imagesToRows(List<ImageToPdfDTO> list) {

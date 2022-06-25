@@ -2,7 +2,6 @@ package com.ccoins.Bff.service;
 
 import com.ccoins.Bff.dto.TableListQrRsDTO;
 import net.sf.jasperreports.engine.JRException;
-import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 
 import java.awt.image.BufferedImage;
@@ -15,5 +14,5 @@ public interface IImageService {
 
     InputStream createQRImage(String text, String fileName) throws Exception;
 
-    ResponseEntity<Resource> generatePDFWithQRCodes(TableListQrRsDTO tableList) throws JRException, IOException;
+    ResponseEntity<byte[]> generatePDFWithQRCodes(TableListQrRsDTO tableList) throws JRException, IOException;
 }
