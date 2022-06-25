@@ -19,8 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 import net.glxn.qrgen.javase.QRCode;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.view.JasperViewer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -70,7 +73,7 @@ public class ImageService extends ContextService implements IImageService {
 
 
     @Override
-    public void generatePDFWithQRCodes(TableListQrRsDTO tableList)  {
+    public  ResponseEntity<Resource> generatePDFWithQRCodes(TableListQrRsDTO tableList) throws JRException, IOException {
 
         List<TableQrRsDTO> list = tableList.getList();
         List<ImageToPdfDTO> imageList = new ArrayList<>();
@@ -81,12 +84,25 @@ public class ImageService extends ContextService implements IImageService {
             imageList.add(ImageToPdfDTO.builder().number(table.getNumber()).image(inputStream).build());
         }
 
-        this.generatePdfFromList(imageList);
+        ResponseEntity<Resource> response = this.generatePdfFromList(imageList);
 
         this.deleteImagesByList(imageList);
+
+//        // retrieve contents of "C:/tmp/report.pdf" that were written in showHelp
+//        byte[] contents = (...);
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_PDF);
+//        // Here you have to set the actual filename of your pdf
+//        String filename = "output.pdf";
+//        headers.setContentDispositionFormData(filename, filename);
+//        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+//        ResponseEntity<byte[]> response = new ResponseEntity<>(contents, headers, HttpStatus.OK);
+
+        return response;
     }
 
-    public void generatePdfFromList(List<ImageToPdfDTO> list) {
+    public  ResponseEntity<Resource> generatePdfFromList(List<ImageToPdfDTO> list) throws JRException, IOException {
         try {
             JasperReport report = JasperCompileManager.compileReport(BffApplication.class.getResourceAsStream(JASPER_REPORT_QR_PATH));
 
@@ -95,13 +111,30 @@ public class ImageService extends ContextService implements IImageService {
             JRBeanCollectionDataSource jcd = new JRBeanCollectionDataSource(rowList);
             JasperPrint print = JasperFillManager.fillReport(report, null, jcd);
 
-            OutputStream output = new FileOutputStream(TEMP_FOLDER_PATH.concat("JR.pdf"));
-            JasperExportManager.exportReportToPdfStream(print, output);
+            String tempPath = TEMP_FOLDER_PATH.concat("JR.pdf");
 
-            JasperViewer.viewReport(print, false);
+            OutputStream output = new FileOutputStream(tempPath);
+            JasperExportManager.exportReportToPdfStream(print, output);
+            output.close();
+
+            return this.generateResponseFile(tempPath);
+
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
+    }
+
+    private ResponseEntity<Resource> generateResponseFile(String path) throws FileNotFoundException {
+
+        File file = new File(path);
+
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+
+        return ResponseEntity.ok()
+                .contentLength(file.length())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
 
     private List<RowToPdfDTO> imagesToRows(List<ImageToPdfDTO> list) {
