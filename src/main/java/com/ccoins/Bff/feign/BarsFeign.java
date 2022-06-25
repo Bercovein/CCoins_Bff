@@ -47,6 +47,9 @@ public interface BarsFeign {
     @DeleteMapping("/tables/quantity")
     ResponseEntity<GenericRsDTO> deleteByQuantity(@RequestBody TableQuantityDTO request);
 
+    @PutMapping("/tables")
+    ResponseEntity<GenericRsDTO> activeByList(@RequestBody ListDTO request);
+
     //GAMES
     @PostMapping("/games")
     ResponseEntity<GameDTO> saveOrUpdateGame(@RequestBody GameDTO barDTO);
@@ -62,4 +65,5 @@ public interface BarsFeign {
 
     @GetMapping("/games/types")
     ResponseEntity<ListDTO> findAllGamesTypes();
+
 }

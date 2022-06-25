@@ -1,6 +1,7 @@
 package com.ccoins.Bff.service.impl;
 
 import com.ccoins.Bff.BffApplication;
+import com.ccoins.Bff.dto.ListDTO;
 import com.ccoins.Bff.dto.TableListQrRsDTO;
 import com.ccoins.Bff.dto.TableQrRsDTO;
 import com.ccoins.Bff.dto.image.ImageToPdfDTO;
@@ -20,8 +21,6 @@ import net.glxn.qrgen.javase.QRCode;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

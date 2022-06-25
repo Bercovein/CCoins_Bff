@@ -58,4 +58,9 @@ public class TablesController implements ITablesController {
     public ResponseEntity<GenericRsDTO> deleteByQuantity(@RequestBody TableQuantityDTO request){
         return this.service.deleteByQuantity(request);
     }
+
+    @PutMapping
+    ResponseEntity<GenericRsDTO> activeByList(@RequestBody ListDTO request){
+        return this.service.activeByList(request);
+    }
 }
