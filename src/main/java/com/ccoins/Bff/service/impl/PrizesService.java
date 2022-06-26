@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 public class PrizesService extends ContextService implements IPrizesService {
@@ -50,10 +52,10 @@ public class PrizesService extends ContextService implements IPrizesService {
     }
 
     @Override
-    public ResponseEntity<ListDTO> findAllByBar(IdDTO request) {
+    public ResponseEntity<ListDTO> findAllByBar(IdDTO request, Optional<String> status) {
 
         try{
-            return this.prizeFeign.findAllPrizesByBar(request.getId());
+            return this.prizeFeign.findAllPrizesByBar(request.getId(),status);
         }catch(Exception e){
             throw new BadRequestException(ExceptionConstant.PRIZE_FIND_BY_BAR_ERROR_CODE,
                     this.getClass(), ExceptionConstant.PRIZE_FIND_BY_BAR_ERROR);

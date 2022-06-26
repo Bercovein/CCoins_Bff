@@ -7,11 +7,15 @@ import com.ccoins.Bff.dto.bars.TableDTO;
 import com.ccoins.Bff.dto.bars.TableQuantityDTO;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Optional;
+
 public interface ITablesService {
 
     ResponseEntity<TableDTO> saveOrUpdate(TableDTO request);
     ResponseEntity<TableDTO> findById(IdDTO request);
-    ResponseEntity<ListDTO> findAllByBar(IdDTO request);
+
+    ResponseEntity<ListDTO> findAllByBar(IdDTO request, Optional<String> status);
+
     ResponseEntity<TableDTO> active(IdDTO request);
 
     ResponseEntity<GenericRsDTO> createByQuantity(TableQuantityDTO request);

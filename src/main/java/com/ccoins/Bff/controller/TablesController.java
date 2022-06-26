@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/tables")
 @CrossOrigin
@@ -36,9 +38,9 @@ public class TablesController implements ITablesController {
     }
 
     @Override
-    @PostMapping("/bar")
-    public ResponseEntity<ListDTO> findAllByBar(@RequestBody IdDTO request){
-        return this.service.findAllByBar(request);
+    @PostMapping({"/bar", "/bar/{status}"})
+    public ResponseEntity<ListDTO> findAllByBar(@RequestBody IdDTO request, @PathVariable("status") Optional<String> status){
+        return this.service.findAllByBar(request,status);
     }
 
     @Override

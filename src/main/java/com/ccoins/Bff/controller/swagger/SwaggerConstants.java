@@ -20,6 +20,7 @@ public class SwaggerConstants {
 
     public static final String FIND_BY_ID = "Find by id";
     public static final String FIND_ALL_BY = "Find All by ";
+    public static final String AND_OR_STATUS = " and/or status";
 
     public static final String ACTIVATE_DEACTIVATE = "Activate / Deactivate";
 

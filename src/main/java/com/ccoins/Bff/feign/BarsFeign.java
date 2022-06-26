@@ -10,6 +10,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @FeignClient(name = "${feign.bars-ms.name}", url = "${feign.bars-ms.url}")
 @RequestMapping("${feign.bars-ms.req-map}")
 public interface BarsFeign {
@@ -34,6 +36,11 @@ public interface BarsFeign {
 
     @GetMapping("/tables/bar/{barId}")
     ResponseEntity<ListDTO> findAllTablesByBar(@PathVariable("barId") Long barId);
+
+    @GetMapping({"/bar/{barId}", "/bar/{barId}/{status}"})
+    ResponseEntity<ListDTO> findAllByBarAndOptStatus(
+            @PathVariable("barId") Long barId,
+            @PathVariable("status") Optional<String> status);
 
     @GetMapping("/tables/{id}")
     ResponseEntity<TableDTO> findTableById(@PathVariable("id") Long id);

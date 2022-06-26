@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 public class TablesService extends ContextService implements ITablesService {
@@ -57,12 +59,11 @@ public class TablesService extends ContextService implements ITablesService {
     }
 
     @Override
-    public ResponseEntity<ListDTO> findAllByBar(IdDTO request) {
-
-//        Long ownerId = super.getLoggedUserId();
+    public ResponseEntity<ListDTO> findAllByBar(IdDTO request, Optional<String> status) {
 
         try{
-            return this.barsFeign.findAllTablesByBar(request.getId());
+            return this.barsFeign.findAllByBarAndOptStatus(request.getId(),status);
+
         }catch(Exception e){
             throw new BadRequestException(ExceptionConstant.TABLES_FIND_BY_BAR_ERROR_CODE,
                     this.getClass(), ExceptionConstant.TABLES_FIND_BY_BAR_ERROR);

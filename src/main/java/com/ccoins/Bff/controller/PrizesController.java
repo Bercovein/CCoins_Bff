@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
@@ -37,9 +39,9 @@ public class PrizesController implements IPrizesController {
     }
 
     @Override
-    @GetMapping("/bar")
-    public ResponseEntity<ListDTO> findAllByBar(@RequestBody IdDTO request){
-        return this.service.findAllByBar(request);
+    @GetMapping({"/bar", "/bar/{status}"})
+    public ResponseEntity<ListDTO> findAllByBar(@RequestBody IdDTO request, @PathVariable("status") Optional<String> status){
+        return this.service.findAllByBar(request,status);
     }
 
     @Override
