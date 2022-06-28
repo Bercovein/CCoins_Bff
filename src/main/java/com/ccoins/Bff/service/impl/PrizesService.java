@@ -55,7 +55,12 @@ public class PrizesService extends ContextService implements IPrizesService {
     public ResponseEntity<ListDTO> findAllByBar(IdDTO request, Optional<String> status) {
 
         try{
-            return this.prizeFeign.findAllPrizesByBar(request.getId(),status);
+            if(status.isPresent()) {
+                return this.prizeFeign.findAllPrizesByBarAndOptStatus(request.getId(),status);
+            } else {
+                return this.prizeFeign.findAllPrizesByBar(request.getId());
+            }
+            
         }catch(Exception e){
             throw new BadRequestException(ExceptionConstant.PRIZE_FIND_BY_BAR_ERROR_CODE,
                     this.getClass(), ExceptionConstant.PRIZE_FIND_BY_BAR_ERROR);

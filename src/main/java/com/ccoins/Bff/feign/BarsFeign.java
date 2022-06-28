@@ -37,8 +37,8 @@ public interface BarsFeign {
     @GetMapping("/tables/bar/{barId}")
     ResponseEntity<ListDTO> findAllTablesByBar(@PathVariable("barId") Long barId);
 
-    @GetMapping({"/bar/{barId}", "/bar/{barId}/{status}"})
-    ResponseEntity<ListDTO> findAllByBarAndOptStatus(
+    @GetMapping({"/tables/bar/{barId}/{status}"})
+    ResponseEntity<ListDTO> findAllTablesByBarAndOptStatus(
             @PathVariable("barId") Long barId,
             @PathVariable("status") Optional<String> status);
 
