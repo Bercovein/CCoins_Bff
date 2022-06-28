@@ -61,6 +61,12 @@ public class TablesService extends ContextService implements ITablesService {
     public ResponseEntity<ListDTO> findAllByBar(IdDTO request) {
 
 //        Long ownerId = super.getLoggedUserId();
+        try{
+            if(status.isPresent()) {
+                return this.barsFeign.findAllTablesByBarAndOptStatus(request.getId(), status);
+            } else {
+                return this.barsFeign.findAllTablesByBar(request.getId());
+            }
 
         try{
             return this.barsFeign.findAllTablesByBar(request.getId());
