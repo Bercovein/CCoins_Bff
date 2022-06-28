@@ -1,7 +1,7 @@
 package com.ccoins.Bff.service.impl;
 
 import com.ccoins.Bff.BffApplication;
-import com.ccoins.Bff.dto.ListDTO;
+import com.ccoins.Bff.dto.LongListDTO;
 import com.ccoins.Bff.dto.bars.BarTableDTO;
 import com.ccoins.Bff.dto.image.ImageToPdfDTO;
 import com.ccoins.Bff.dto.image.RowToPdfDTO;
@@ -80,7 +80,7 @@ public class ImageService extends ContextService implements IImageService {
 
 
     @Override
-    public  ResponseEntity<byte[]> generatePDFWithQRCodes(ListDTO request) throws JRException, IOException {
+    public  ResponseEntity<byte[]> generatePDFWithQRCodes(LongListDTO request) throws JRException, IOException {
 
         List<ImageToPdfDTO> imageList = new ArrayList<>();
 

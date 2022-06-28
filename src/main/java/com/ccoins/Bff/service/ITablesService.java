@@ -3,6 +3,7 @@ package com.ccoins.Bff.service;
 import com.ccoins.Bff.dto.GenericRsDTO;
 import com.ccoins.Bff.dto.IdDTO;
 import com.ccoins.Bff.dto.ListDTO;
+import com.ccoins.Bff.dto.LongListDTO;
 import com.ccoins.Bff.dto.bars.BarTableDTO;
 import com.ccoins.Bff.dto.bars.TableDTO;
 import com.ccoins.Bff.dto.bars.TableQuantityDTO;
@@ -25,9 +26,9 @@ public interface ITablesService {
 
     ResponseEntity<GenericRsDTO> deleteByQuantity(TableQuantityDTO request);
 
-    ResponseEntity<GenericRsDTO> activeByList(ListDTO request);
+    ResponseEntity<GenericRsDTO> activeByList(LongListDTO request);
 
-    ResponseEntity<ResponseDTO> generateCodesByList(ListDTO request);
+    ResponseEntity<ResponseDTO> generateCodesByList(LongListDTO request);
 
-    List<BarTableDTO> findByIdIn(ListDTO list);
+    List<BarTableDTO> findByIdIn(LongListDTO list);
 }

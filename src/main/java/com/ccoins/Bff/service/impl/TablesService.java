@@ -3,6 +3,7 @@ package com.ccoins.Bff.service.impl;
 import com.ccoins.Bff.dto.GenericRsDTO;
 import com.ccoins.Bff.dto.IdDTO;
 import com.ccoins.Bff.dto.ListDTO;
+import com.ccoins.Bff.dto.LongListDTO;
 import com.ccoins.Bff.dto.bars.BarTableDTO;
 import com.ccoins.Bff.dto.bars.TableDTO;
 import com.ccoins.Bff.dto.bars.TableQuantityDTO;
@@ -99,19 +100,19 @@ public class TablesService extends ContextService implements ITablesService {
     }
 
     @Override
-    public ResponseEntity<GenericRsDTO> activeByList(ListDTO request) {
+    public ResponseEntity<GenericRsDTO> activeByList(LongListDTO request) {
         return this.barsFeign.activeByList(request);
     }
 
     @Override
-    public ResponseEntity<ResponseDTO> generateCodesByList(ListDTO request){
+    public ResponseEntity<ResponseDTO> generateCodesByList(LongListDTO request){
 
 
         return this.barsFeign.generateCodesByList(request);
     }
 
     @Override
-    public List<BarTableDTO> findByIdIn(ListDTO request) {
+    public List<BarTableDTO> findByIdIn(LongListDTO request) {
         return (List<BarTableDTO>) this.barsFeign.findByIdIn(request).getBody().getData();
     }
 }

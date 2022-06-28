@@ -4,6 +4,7 @@ import com.ccoins.Bff.controller.swagger.ITablesController;
 import com.ccoins.Bff.dto.GenericRsDTO;
 import com.ccoins.Bff.dto.IdDTO;
 import com.ccoins.Bff.dto.ListDTO;
+import com.ccoins.Bff.dto.LongListDTO;
 import com.ccoins.Bff.dto.bars.TableDTO;
 import com.ccoins.Bff.dto.bars.TableQuantityDTO;
 import com.ccoins.Bff.exceptions.dto.ResponseDTO;
@@ -63,12 +64,12 @@ public class TablesController implements ITablesController {
     }
 
     @PutMapping
-    ResponseEntity<GenericRsDTO> activeByList(@RequestBody ListDTO request){
+    ResponseEntity<GenericRsDTO> activeByList(@RequestBody LongListDTO request){
         return this.service.activeByList(request);
     }
 
     @PutMapping("/codes")
-    ResponseEntity<ResponseDTO> generateCodesByList(@RequestBody ListDTO request){
+    ResponseEntity<ResponseDTO> generateCodesByList(@RequestBody LongListDTO request){
         return this.service.generateCodesByList(request);
     }
 }

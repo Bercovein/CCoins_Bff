@@ -1,6 +1,6 @@
 package com.ccoins.Bff.controller.swagger;
 
-import com.ccoins.Bff.dto.ListDTO;
+import com.ccoins.Bff.dto.LongListDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.sf.jasperreports.engine.JRException;
@@ -16,5 +16,5 @@ import static com.ccoins.Bff.controller.swagger.SwaggerConstants.TABLE;
 public interface IImageController {
 
     @ApiOperation(value = GENERATE_QR_PDF)
-    ResponseEntity<byte[]> generatePDFWithQRCodes(@RequestBody ListDTO tableList) throws JRException, IOException;
+    ResponseEntity<byte[]> generatePDFWithQRCodes(@RequestBody LongListDTO tableList) throws JRException, IOException;
 }

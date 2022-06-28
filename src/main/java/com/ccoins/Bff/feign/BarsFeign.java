@@ -2,6 +2,7 @@ package com.ccoins.Bff.feign;
 
 import com.ccoins.Bff.dto.GenericRsDTO;
 import com.ccoins.Bff.dto.ListDTO;
+import com.ccoins.Bff.dto.LongListDTO;
 import com.ccoins.Bff.dto.bars.BarDTO;
 import com.ccoins.Bff.dto.bars.GameDTO;
 import com.ccoins.Bff.dto.bars.TableDTO;
@@ -56,13 +57,13 @@ public interface BarsFeign {
     ResponseEntity<GenericRsDTO> deleteByQuantity(@RequestBody TableQuantityDTO request);
 
     @PutMapping("/tables")
-    ResponseEntity<GenericRsDTO> activeByList(@RequestBody ListDTO request);
+    ResponseEntity<GenericRsDTO> activeByList(@RequestBody LongListDTO request);
 
     @PutMapping("/tables/codes")
-    ResponseEntity<ResponseDTO> generateCodesByList(@RequestBody ListDTO request);
+    ResponseEntity<ResponseDTO> generateCodesByList(@RequestBody LongListDTO request);
 
     @PostMapping("/tables/list")
-    ResponseEntity<GenericRsDTO> findByIdIn(@RequestBody ListDTO request);
+    ResponseEntity<GenericRsDTO> findByIdIn(@RequestBody LongListDTO request);
 
     //GAMES
     @PostMapping("/games")
