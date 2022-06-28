@@ -23,7 +23,6 @@ public class BarsController implements IBarsController {
         this.service = service;
     }
 
-    //save or update
     @Override
     @PostMapping("/save")
     @ResponseStatus(CREATED)
@@ -31,24 +30,23 @@ public class BarsController implements IBarsController {
         return this.service.saveOrUpdate(request);
     }
 
-    //find by request
     @Override
-    @GetMapping
+    @PostMapping("/id")
     public ResponseEntity<BarDTO> findById(@RequestBody IdDTO request){
         return this.service.findById(request);
     }
 
-    //find all by owner
     @Override
     @GetMapping("/owner")
     public ResponseEntity<ListDTO> findAllByOwner(){
         return this.service.findAllByOwner();
     }
 
-    //delete logico
     @Override
-    @GetMapping("/active")
+    @PatchMapping("/active")
     public ResponseEntity<BarDTO> active(@RequestBody IdDTO request){
         return this.service.active(request);
     }
+
+
 }

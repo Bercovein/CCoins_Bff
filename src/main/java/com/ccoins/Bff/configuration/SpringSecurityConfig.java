@@ -6,6 +6,7 @@ import com.ccoins.Bff.configuration.security.authentication.JwtEntryPoint;
 import com.ccoins.Bff.configuration.security.filter.JwtRefreshFilter;
 import com.google.api.client.http.HttpMethods;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +19,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -29,6 +31,7 @@ import static com.ccoins.Bff.configuration.security.JwtUtils.*;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@CrossOrigin
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -36,6 +39,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     JwtEntryPoint jwtEntryPoint;
+
+    @Value("${api.url.path}")
+    private String API_PATH;
+
+    @Value("${api.url.path.localhost}")
+    private String API_LOCALHOST_PATH;
 
     @Bean
     JwtRefreshFilter jwtTokenFilter (){
@@ -67,7 +76,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeRequests().antMatchers("/oauth/**", "/actuator/**").permitAll()
-                .antMatchers("/**","/my/docs", "/v2/swagger", "/swagger-ui/**", "/swagger-ui.html", "/v2/api-docs", "/swagger-resources/**", "/webjars/**", "/swagger.json").permitAll()      // rutas publicas, no requieren autenticación
+                .antMatchers("/","/my/docs", "/v2/swagger", "/swagger-ui/**", "/swagger-ui.html", "/v2/api-docs", "/swagger-resources/**", "/webjars/**", "/swagger.json").permitAll()      // rutas publicas, no requieren autenticación
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtEntryPoint)
@@ -85,10 +94,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(Arrays.asList("*"));                   // agregamos nuestros dominios, ej: "http://localhost:4200"
-        config.setAllowedMethods(Arrays.asList(HttpMethods.GET, HttpMethods.POST, HttpMethods.PUT, HttpMethods.DELETE, HttpMethods.OPTIONS)); // configuramos los verbos que vamos a permitir en el backend
+        config.setAllowedOrigins(Arrays.asList(API_PATH, API_LOCALHOST_PATH));                   // agregamos nuestros dominios, ej: "http://localhost:4200"
+        config.setAllowedMethods(Arrays.asList(HttpMethods.GET, HttpMethods.POST, HttpMethods.PUT, HttpMethods.PATCH, HttpMethods.DELETE, HttpMethods.OPTIONS)); // configuramos los verbos que vamos a permitir en el backend
         config.setAllowCredentials(true);
         config.setAllowedHeaders(Arrays.asList(CONTENT_TYPE, AUTHORIZATION, LOCATION));
+        config.setExposedHeaders(Arrays.asList(ACCESS_CONTROL_EXPOSE_HEADERS, AUTHORIZATION));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);                            // configurar cors para todos nuestros endpoints

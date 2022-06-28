@@ -1,14 +1,13 @@
 package com.ccoins.Bff.service.impl;
 
+import com.ccoins.Bff.configuration.security.JwtUtils;
 import com.ccoins.Bff.dto.users.OwnerDTO;
 import com.ccoins.Bff.exceptions.BadRequestException;
 import com.ccoins.Bff.exceptions.ObjectNotFoundException;
 import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.Bff.feign.UsersFeign;
-import com.ccoins.Bff.service.IUsersService;
+import com.ccoins.Bff.service.IUserService;
 import com.ccoins.Bff.utils.DateUtils;
-import com.ccoins.Bff.exceptions.utils.ErrorUtils;
-import com.ccoins.Bff.configuration.security.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +17,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class UsersService implements IUsersService  {
+public class UsersService implements IUserService {
 
     private final UsersFeign usersFeign;
 
@@ -36,7 +35,6 @@ public class UsersService implements IUsersService  {
             ownerDTO = OwnerDTO.builder().email(email).startDate(DateUtils.nowLocalDateTime()).build();
             return this.usersFeign.saveOwner(ownerDTO);
         }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.USERS_NEW_OWNER_ERROR_CODE, this.getClass(), ExceptionConstant.USERS_NEW_OWNER_ERROR);
         }
     }
@@ -45,9 +43,10 @@ public class UsersService implements IUsersService  {
     public Optional<OwnerDTO> findByEmail(String email) {
 
         try{
+            log.error("Buscando usuario por email");
             return this.usersFeign.findByEmail(email);
         }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
+            log.error("Error al ir contra feign");
             throw new BadRequestException(ExceptionConstant.USERS_GET_OWNER_BY_EMAIL_ERROR_CODE, this.getClass(), ExceptionConstant.USERS_GET_OWNER_BY_EMAIL_ERROR);
         }
     }
@@ -55,7 +54,6 @@ public class UsersService implements IUsersService  {
 
     @Override
     public OwnerDTO findByToken(HttpHeaders headers){
-        log.error(String.valueOf(headers));
         Optional<OwnerDTO> ownerDTO = this.findByEmail(JwtUtils.get(headers, JwtUtils.TOKEN_EMAIL));
 
         if (ownerDTO.isEmpty()){
@@ -76,12 +74,12 @@ public class UsersService implements IUsersService  {
         Optional<OwnerDTO> ownerOpt = this.findByEmail(email);
         OwnerDTO ownerDTO;
         if(ownerOpt.isEmpty()){
+            log.error("Nuevo usuario");
             ownerDTO = this.newOwner(email);
         }else{
             ownerDTO = ownerOpt.get();
         }
         return ownerDTO;
     }
-
 
 }

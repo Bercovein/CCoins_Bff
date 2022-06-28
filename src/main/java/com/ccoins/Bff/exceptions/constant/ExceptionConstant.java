@@ -10,6 +10,7 @@ public class ExceptionConstant {
     public static final String GET_UNAUTHORIZED_LABEL = UNAUTHORIZED_LABEL.concat("get ");
     public static final String CREATE_NEW_ERROR_LABEL = ERROR_LABEL.concat("create new ");
     public static final String ACTIVE_UNACTIVE_ERROR_LABEL = ERROR_LABEL.concat("change state of ");
+    public static final String GENERATE_ERROR_LABEL = ERROR_LABEL.concat("generate new ");
 
     public static final String READ_ERROR_LABEL = ERROR_LABEL.concat("read ");
 
@@ -69,6 +70,39 @@ public class ExceptionConstant {
 
     public static final String BARS_ACTIVE_ERROR_CODE = "0018";
     public static final String BARS_ACTIVE_ERROR = ACTIVE_UNACTIVE_ERROR_LABEL.concat("bar");
+
+    public static final String PRIZE_CREATE_OR_UPDATE_ERROR_CODE = "0019";
+    public static final String PRIZE_CREATE_OR_UPDATE_ERROR = CREATE_NEW_ERROR_LABEL.concat("prize");
+
+    public static final String PRIZE_FIND_BY_ID_ERROR_CODE = "0020";
+    public static final String PRIZE_FIND_BY_ID_ERROR = GET_ERROR_LABEL.concat("prize by id");
+
+    public static final String PRIZE_FIND_BY_BAR_ERROR_CODE = "0021";
+    public static final String PRIZE_FIND_BY_BAR_ERROR = GET_ERROR_LABEL.concat("prize by bar");
+
+    public static final String PRIZE_UPDATE_ACTIVE_ERROR_CODE = "0022";
+    public static final String PRIZE_UPDATE_ACTIVE_ERROR = ACTIVE_UNACTIVE_ERROR_LABEL.concat("prize");
+
+    public static final String GAME_CREATE_OR_UPDATE_ERROR_CODE = "0024";
+    public static final String GAME_CREATE_OR_UPDATE_ERROR = CREATE_OR_REPLACE_ERROR_LABEL.concat("game");
+
+
+    public static final String GAME_FIND_BY_ID_ERROR_CODE = "0025";
+    public static final String GAME_FIND_BY_ID_ERROR = GET_ERROR_LABEL.concat("game by id");
+
+
+    public static final String GAME_FIND_BY_OWNER_ERROR_CODE = "0026";
+    public static final String GAME_FIND_BY_OWNER_ERROR = GET_ERROR_LABEL.concat("games by bar");
+
+    public static final String GAME_ACTIVE_ERROR_CODE = "0027";
+    public static final String GAME_ACTIVE_ERROR = ACTIVE_UNACTIVE_ERROR_LABEL.concat("game");
+
+
+    public static final String GAME_FIND_GAME_TYPES_ERROR_CODE = "0028";
+    public static final String GAME_FIND_GAME_TYPES_ERROR = GET_ERROR_LABEL.concat("games types");
+
+    public static final String QR_CODE_GENERATION_ERROR_CODE = "0029";
+    public static final String QR_CODE_GENERATION_ERROR = GENERATE_ERROR_LABEL.concat("qr code");
 
 
 }

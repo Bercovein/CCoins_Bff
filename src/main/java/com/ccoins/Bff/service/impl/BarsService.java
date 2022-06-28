@@ -6,7 +6,6 @@ import com.ccoins.Bff.dto.bars.BarDTO;
 import com.ccoins.Bff.exceptions.BadRequestException;
 import com.ccoins.Bff.exceptions.UnauthorizedException;
 import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
-import com.ccoins.Bff.exceptions.utils.ErrorUtils;
 import com.ccoins.Bff.feign.BarsFeign;
 import com.ccoins.Bff.service.IBarsService;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +34,6 @@ public class BarsService extends ContextService implements IBarsService {
             barDTO.setOwner(ownerId);
             return this.barsFeign.saveOrUpdateBar(barDTO);
         }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.BARS_CREATE_OR_UPDATE_ERROR_CODE, this.getClass(), ExceptionConstant.BARS_CREATE_OR_UPDATE_ERROR);
         }
     }
@@ -49,7 +47,6 @@ public class BarsService extends ContextService implements IBarsService {
         try{
             bar = this.barsFeign.findBarById(id.getId()).getBody();
         }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.BARS_FIND_BY_ID_ERROR_CODE, this.getClass(), ExceptionConstant.BARS_FIND_BY_ID_ERROR);
         }
 
@@ -68,7 +65,6 @@ public class BarsService extends ContextService implements IBarsService {
         try{
             return this.barsFeign.findAllBarsByOwner(ownerId);
         }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.BARS_FIND_BY_OWNER_ERROR_CODE, this.getClass(), ExceptionConstant.BARS_FIND_BY_OWNER_ERROR);
         }
     }
@@ -78,7 +74,6 @@ public class BarsService extends ContextService implements IBarsService {
         try{
             return this.barsFeign.activeBar(request.getId());
         }catch(Exception e){
-            log.error(ErrorUtils.parseMethodError(this.getClass()));
             throw new BadRequestException(ExceptionConstant.BARS_ACTIVE_ERROR_CODE,
                     this.getClass(), ExceptionConstant.BARS_ACTIVE_ERROR);
         }

@@ -1,13 +1,17 @@
 package com.ccoins.Bff.controller;
 
 import com.ccoins.Bff.controller.swagger.ITablesController;
+import com.ccoins.Bff.dto.GenericRsDTO;
 import com.ccoins.Bff.dto.IdDTO;
 import com.ccoins.Bff.dto.ListDTO;
 import com.ccoins.Bff.dto.bars.TableDTO;
+import com.ccoins.Bff.dto.bars.TableQuantityDTO;
 import com.ccoins.Bff.service.ITablesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/tables")
@@ -21,31 +25,44 @@ public class TablesController implements ITablesController {
         this.service = service;
     }
 
-    //save or update
     @Override
     @PostMapping("/save")
     public ResponseEntity<TableDTO> saveOrUpdate(@RequestBody TableDTO request){
         return this.service.saveOrUpdate(request);
     }
 
-    //find by id
     @Override
-    @GetMapping
+    @PostMapping("/id")
     public ResponseEntity<TableDTO> findById(@RequestBody IdDTO id){
         return this.service.findById(id);
     }
 
-    //find all by owner
     @Override
-    @GetMapping("/bar")
-    public ResponseEntity<ListDTO> findAllByBar(@RequestBody IdDTO request){
-        return this.service.findAllByBar(request);
+    @PostMapping({"/bar", "/bar/{status}"})
+    public ResponseEntity<ListDTO> findAllByBar(@RequestBody IdDTO request, @PathVariable("status") Optional<String> status){
+        return this.service.findAllByBar(request,status);
     }
 
-    //delete logico
     @Override
-    @GetMapping("/active")
+    @PatchMapping("/active")
     public ResponseEntity<TableDTO> active(@RequestBody IdDTO id){
         return this.service.active(id);
+    }
+
+    @Override
+    @PostMapping("/save/quantity")
+    public ResponseEntity<GenericRsDTO> createByQuantity(@RequestBody TableQuantityDTO request){
+        return this.service.createByQuantity(request);
+    }
+
+    @Override
+    @DeleteMapping("/quantity")
+    public ResponseEntity<GenericRsDTO> deleteByQuantity(@RequestBody TableQuantityDTO request){
+        return this.service.deleteByQuantity(request);
+    }
+
+    @PutMapping
+    ResponseEntity<GenericRsDTO> activeByList(@RequestBody ListDTO request){
+        return this.service.activeByList(request);
     }
 }
