@@ -6,10 +6,12 @@ import com.ccoins.Bff.dto.bars.BarDTO;
 import com.ccoins.Bff.dto.bars.GameDTO;
 import com.ccoins.Bff.dto.bars.TableDTO;
 import com.ccoins.Bff.dto.bars.TableQuantityDTO;
+import com.ccoins.Bff.exceptions.dto.ResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @FeignClient(name = "${feign.bars-ms.name}", url = "${feign.bars-ms.url}")
@@ -37,8 +39,8 @@ public interface BarsFeign {
     @GetMapping("/tables/bar/{barId}")
     ResponseEntity<ListDTO> findAllTablesByBar(@PathVariable("barId") Long barId);
 
-    @GetMapping({"/bar/{barId}", "/bar/{barId}/{status}"})
-    ResponseEntity<ListDTO> findAllByBarAndOptStatus(
+    @GetMapping("/tables/bar/{barId}/{status}")
+    ResponseEntity<ListDTO> findAllTablesByBarAndOptStatus(
             @PathVariable("barId") Long barId,
             @PathVariable("status") Optional<String> status);
 
@@ -56,6 +58,12 @@ public interface BarsFeign {
 
     @PutMapping("/tables")
     ResponseEntity<GenericRsDTO> activeByList(@RequestBody ListDTO request);
+
+    @PutMapping("/tables/codes")
+    ResponseEntity<ResponseDTO> generateCodesByList(List<Long> request);
+
+    @PostMapping("/tables/list")
+    ResponseEntity<GenericRsDTO> findByIdIn(List<Long> list);
 
     //GAMES
     @PostMapping("/games")

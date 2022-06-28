@@ -2,13 +2,13 @@ package com.ccoins.Bff.service.impl;
 
 import com.ccoins.Bff.BffApplication;
 import com.ccoins.Bff.dto.ListDTO;
-import com.ccoins.Bff.dto.TableListQrRsDTO;
-import com.ccoins.Bff.dto.TableQrRsDTO;
+import com.ccoins.Bff.dto.bars.BarTableDTO;
 import com.ccoins.Bff.dto.image.ImageToPdfDTO;
 import com.ccoins.Bff.dto.image.RowToPdfDTO;
 import com.ccoins.Bff.exceptions.BadRequestException;
 import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.Bff.service.IImageService;
+import com.ccoins.Bff.service.ITablesService;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.client.j2se.MatrixToImageConfig;
@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.glxn.qrgen.javase.QRCode;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -54,8 +55,15 @@ public class ImageService extends ContextService implements IImageService {
     @Value("${folder.images.logo.name}")
     private String LOGO_NAME;
 
-    private final static String JPG = "jpg";
-    private final static String PNG = "png";
+    private static final String JPG = "jpg";
+    private static final String PNG = "png";
+
+    private final ITablesService tablesService;
+
+    @Autowired
+    public ImageService(ITablesService tablesService) {
+        this.tablesService = tablesService;
+    }
 
     @Override
     public BufferedImage generateQr(final String qrCodeText, final int width, final int height) throws Exception {
@@ -72,13 +80,14 @@ public class ImageService extends ContextService implements IImageService {
 
 
     @Override
-    public  ResponseEntity<byte[]> generatePDFWithQRCodes(TableListQrRsDTO tableList) throws JRException, IOException {
+    public  ResponseEntity<byte[]> generatePDFWithQRCodes(ListDTO tableList) throws JRException, IOException {
 
-        List<TableQrRsDTO> list = tableList.getList();
         List<ImageToPdfDTO> imageList = new ArrayList<>();
 
+        List<BarTableDTO> listed = this.tablesService.findByIdIn((List<Long>)tableList.getList());
+
         //generar QRs
-        for (TableQrRsDTO table : list) {
+        for (BarTableDTO table : listed) {
             InputStream inputStream = this.createQRImage(this.URL.concat("/").concat(table.getCode()), table.getCode());
             imageList.add(ImageToPdfDTO.builder().number(table.getNumber()).image(inputStream).build());
         }

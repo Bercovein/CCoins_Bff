@@ -6,6 +6,7 @@ import com.ccoins.Bff.dto.IdDTO;
 import com.ccoins.Bff.dto.ListDTO;
 import com.ccoins.Bff.dto.bars.TableDTO;
 import com.ccoins.Bff.dto.bars.TableQuantityDTO;
+import com.ccoins.Bff.exceptions.dto.ResponseDTO;
 import com.ccoins.Bff.service.ITablesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -64,5 +65,10 @@ public class TablesController implements ITablesController {
     @PutMapping
     ResponseEntity<GenericRsDTO> activeByList(@RequestBody ListDTO request){
         return this.service.activeByList(request);
+    }
+
+    @PutMapping("/codes")
+    ResponseEntity<ResponseDTO> generateCodesByList(@RequestBody ListDTO request){
+        return this.service.generateCodesByList(request);
     }
 }

@@ -3,10 +3,13 @@ package com.ccoins.Bff.service;
 import com.ccoins.Bff.dto.GenericRsDTO;
 import com.ccoins.Bff.dto.IdDTO;
 import com.ccoins.Bff.dto.ListDTO;
+import com.ccoins.Bff.dto.bars.BarTableDTO;
 import com.ccoins.Bff.dto.bars.TableDTO;
 import com.ccoins.Bff.dto.bars.TableQuantityDTO;
+import com.ccoins.Bff.exceptions.dto.ResponseDTO;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ITablesService {
@@ -23,4 +26,8 @@ public interface ITablesService {
     ResponseEntity<GenericRsDTO> deleteByQuantity(TableQuantityDTO request);
 
     ResponseEntity<GenericRsDTO> activeByList(ListDTO request);
+
+    ResponseEntity<ResponseDTO> generateCodesByList(ListDTO request);
+
+    List<BarTableDTO> findByIdIn(List<Long> list);
 }

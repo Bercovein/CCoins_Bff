@@ -3,10 +3,12 @@ package com.ccoins.Bff.service.impl;
 import com.ccoins.Bff.dto.GenericRsDTO;
 import com.ccoins.Bff.dto.IdDTO;
 import com.ccoins.Bff.dto.ListDTO;
+import com.ccoins.Bff.dto.bars.BarTableDTO;
 import com.ccoins.Bff.dto.bars.TableDTO;
 import com.ccoins.Bff.dto.bars.TableQuantityDTO;
 import com.ccoins.Bff.exceptions.BadRequestException;
 import com.ccoins.Bff.exceptions.constant.ExceptionConstant;
+import com.ccoins.Bff.exceptions.dto.ResponseDTO;
 import com.ccoins.Bff.feign.BarsFeign;
 import com.ccoins.Bff.service.ITablesService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -59,7 +62,7 @@ public class TablesService extends ContextService implements ITablesService {
     }
 
     @Override
-    public ResponseEntity<ListDTO> findAllByBar(IdDTO request) {
+    public ResponseEntity<ListDTO> findAllByBar(IdDTO request, Optional<String> status) {
 
 //        Long ownerId = super.getLoggedUserId();
         try{
@@ -98,5 +101,15 @@ public class TablesService extends ContextService implements ITablesService {
     @Override
     public ResponseEntity<GenericRsDTO> activeByList(ListDTO request) {
         return this.barsFeign.activeByList(request);
+    }
+
+    @Override
+    public ResponseEntity<ResponseDTO> generateCodesByList(ListDTO request){
+        return this.barsFeign.generateCodesByList((List<Long>)request.getList());
+    }
+
+    @Override
+    public List<BarTableDTO> findByIdIn(List<Long> list) {
+        return (List<BarTableDTO>) this.barsFeign.findByIdIn(list).getBody().getData();
     }
 }
