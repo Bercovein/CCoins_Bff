@@ -80,11 +80,11 @@ public class ImageService extends ContextService implements IImageService {
 
 
     @Override
-    public  ResponseEntity<byte[]> generatePDFWithQRCodes(ListDTO tableList) throws JRException, IOException {
+    public  ResponseEntity<byte[]> generatePDFWithQRCodes(ListDTO request) throws JRException, IOException {
 
         List<ImageToPdfDTO> imageList = new ArrayList<>();
 
-        List<BarTableDTO> listed = this.tablesService.findByIdIn((List<Long>)tableList.getList());
+        List<BarTableDTO> listed = this.tablesService.findByIdIn(request);
 
         //generar QRs
         for (BarTableDTO table : listed) {

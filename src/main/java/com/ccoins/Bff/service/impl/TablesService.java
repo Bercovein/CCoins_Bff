@@ -105,11 +105,13 @@ public class TablesService extends ContextService implements ITablesService {
 
     @Override
     public ResponseEntity<ResponseDTO> generateCodesByList(ListDTO request){
-        return this.barsFeign.generateCodesByList((List<Long>)request.getList());
+
+
+        return this.barsFeign.generateCodesByList(request);
     }
 
     @Override
-    public List<BarTableDTO> findByIdIn(List<Long> list) {
-        return (List<BarTableDTO>) this.barsFeign.findByIdIn(list).getBody().getData();
+    public List<BarTableDTO> findByIdIn(ListDTO request) {
+        return (List<BarTableDTO>) this.barsFeign.findByIdIn(request).getBody().getData();
     }
 }

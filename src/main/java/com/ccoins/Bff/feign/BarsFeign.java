@@ -11,7 +11,6 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @FeignClient(name = "${feign.bars-ms.name}", url = "${feign.bars-ms.url}")
@@ -60,10 +59,10 @@ public interface BarsFeign {
     ResponseEntity<GenericRsDTO> activeByList(@RequestBody ListDTO request);
 
     @PutMapping("/tables/codes")
-    ResponseEntity<ResponseDTO> generateCodesByList(List<Long> request);
+    ResponseEntity<ResponseDTO> generateCodesByList(@RequestBody ListDTO request);
 
     @PostMapping("/tables/list")
-    ResponseEntity<GenericRsDTO> findByIdIn(List<Long> list);
+    ResponseEntity<GenericRsDTO> findByIdIn(@RequestBody ListDTO request);
 
     //GAMES
     @PostMapping("/games")
