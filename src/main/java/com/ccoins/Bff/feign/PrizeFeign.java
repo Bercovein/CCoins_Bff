@@ -16,8 +16,11 @@ public interface PrizeFeign {
     @PostMapping
     ResponseEntity<PrizeDTO> saveOrUpdatePrize(@RequestBody PrizeDTO request);
 
-    @GetMapping({"/prizes/owner/{barId}","/prizes/owner/{barId}/{status}"})
-    ResponseEntity<ListDTO> findAllPrizesByBar(@PathVariable("barId") Long id, @PathVariable("status") Optional<String> status);
+    @GetMapping("/prizes/owner/{barId}")
+    ResponseEntity<ListDTO> findAllPrizesByBar(@PathVariable("barId") Long id);
+
+    @GetMapping("/prizes/owner/{barId}/{status}")
+    ResponseEntity<ListDTO> findAllPrizesByBarAndStatus(@PathVariable("barId") Long id, @PathVariable("status") Optional<String> status);
 
     @GetMapping("/prizes/{id}")
     ResponseEntity<PrizeDTO> findPrizeById(@PathVariable("id") Long id);

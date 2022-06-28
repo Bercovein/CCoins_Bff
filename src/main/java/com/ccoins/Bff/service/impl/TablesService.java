@@ -59,10 +59,15 @@ public class TablesService extends ContextService implements ITablesService {
     }
 
     @Override
-    public ResponseEntity<ListDTO> findAllByBar(IdDTO request, Optional<String> status) {
+    public ResponseEntity<ListDTO> findAllByBar(IdDTO request) {
 
+//        Long ownerId = super.getLoggedUserId();
         try{
-            return this.barsFeign.findAllByBarAndOptStatus(request.getId(),status);
+            if(status.isPresent()) {
+                return this.barsFeign.findAllTablesByBarAndOptStatus(request.getId(), status);
+            } else {
+                return this.barsFeign.findAllTablesByBar(request.getId());
+            }
 
         }catch(Exception e){
             throw new BadRequestException(ExceptionConstant.TABLES_FIND_BY_BAR_ERROR_CODE,
