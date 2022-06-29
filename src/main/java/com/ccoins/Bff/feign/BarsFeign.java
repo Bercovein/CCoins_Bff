@@ -3,15 +3,13 @@ package com.ccoins.Bff.feign;
 import com.ccoins.Bff.dto.GenericRsDTO;
 import com.ccoins.Bff.dto.ListDTO;
 import com.ccoins.Bff.dto.LongListDTO;
-import com.ccoins.Bff.dto.bars.BarDTO;
-import com.ccoins.Bff.dto.bars.GameDTO;
-import com.ccoins.Bff.dto.bars.TableDTO;
-import com.ccoins.Bff.dto.bars.TableQuantityDTO;
+import com.ccoins.Bff.dto.bars.*;
 import com.ccoins.Bff.exceptions.dto.ResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @FeignClient(name = "${feign.bars-ms.name}", url = "${feign.bars-ms.url}")
@@ -63,7 +61,7 @@ public interface BarsFeign {
     ResponseEntity<ResponseDTO> generateCodesByList(@RequestBody LongListDTO request);
 
     @PostMapping("/tables/list")
-    ResponseEntity<GenericRsDTO> findByIdIn(@RequestBody LongListDTO request);
+    List<BarTableDTO> findByIdIn(@RequestBody LongListDTO request);
 
     //GAMES
     @PostMapping("/games")
