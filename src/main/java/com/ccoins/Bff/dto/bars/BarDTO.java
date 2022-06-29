@@ -36,4 +36,6 @@ public class BarDTO {
 
     @JsonFormat(pattern = HH_MM)
     private LocalTime closeTime;
+
+    private String location;
 }
