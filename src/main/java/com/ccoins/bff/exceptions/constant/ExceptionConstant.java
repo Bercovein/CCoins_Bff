@@ -104,5 +104,11 @@ public class ExceptionConstant {
     public static final String QR_CODE_GENERATION_ERROR_CODE = "0029";
     public static final String QR_CODE_GENERATION_ERROR = GENERATE_ERROR_LABEL.concat("qr code");
 
+    public static final String USERS_NEW_CLIENT_ERROR_CODE = "0030";
+    public static final String USERS_NEW_CLIENT_ERROR = CREATE_NEW_ERROR_LABEL.concat("client");
+
+    public static final String USERS_GET_CLIENT_ERROR_CODE = "0031";
+    public static final String USERS_GET_CLIENT_ERROR = GET_ERROR_LABEL.concat("client");
+
 
 }

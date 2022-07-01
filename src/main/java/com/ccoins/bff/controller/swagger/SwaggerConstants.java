@@ -4,6 +4,8 @@ public class SwaggerConstants {
 
     //API TAGS
     public static final String TABLE = "Table";
+
+    public static final String CLIENT = "Client";
     public static final String PRIZE = "Prize";
     public static final String BAR = "Bar";
     public static final String OWNER = "Owner";

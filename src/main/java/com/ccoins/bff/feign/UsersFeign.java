@@ -1,5 +1,6 @@
 package com.ccoins.bff.feign;
 
+import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.dto.users.OwnerDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -15,4 +16,10 @@ public interface UsersFeign {
 
     @GetMapping("/owner/email/{email}")
     Optional<OwnerDTO> findByEmail(@PathVariable("email") String email);
+
+    @PostMapping("/client")
+    ClientDTO saveClient(ClientDTO request);
+
+    @GetMapping("/client/{id}")
+    Optional<ClientDTO> findActiveById(@PathVariable("id")Long id);
 }

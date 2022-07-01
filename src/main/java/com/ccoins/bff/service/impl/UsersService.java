@@ -1,6 +1,7 @@
 package com.ccoins.bff.service.impl;
 
 import com.ccoins.bff.configuration.security.JwtUtils;
+import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.dto.users.OwnerDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.ObjectNotFoundException;
@@ -80,6 +81,51 @@ public class UsersService implements IUserService {
             ownerDTO = ownerOpt.get();
         }
         return ownerDTO;
+    }
+
+    @Override
+    public ClientDTO findOrCreateClient(ClientDTO request){
+
+        Optional<ClientDTO> opt = this.findActiveById(request.getId());
+        ClientDTO response;
+        if(opt.isEmpty()){
+            log.error("Nuevo cliente");
+            response = this.newClient(request);
+        }else{
+            response = opt.get();
+        }
+        return response;
+    }
+
+    @Override
+    public Optional<ClientDTO> findActiveById(Long id) {
+        try{
+            return this.usersFeign.findActiveById(id);
+        }catch(Exception e){
+            throw new BadRequestException(ExceptionConstant.USERS_GET_CLIENT_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.USERS_GET_CLIENT_ERROR);
+        }
+    }
+
+
+    @Override
+    public ClientDTO newClient(ClientDTO request) {
+        try{
+            return this.usersFeign.saveClient(request);
+        }catch(Exception e){
+            throw new BadRequestException(ExceptionConstant.USERS_NEW_CLIENT_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.USERS_NEW_CLIENT_ERROR);
+        }
+    }
+
+    @Override
+    public void loginClient(ClientDTO request) {
+
+        ClientDTO client = this.findOrCreateClient(request);
+
+        //la mesa tiene party?
+            //no, crear party
+        //asignar cliente a la party
     }
 
 }
