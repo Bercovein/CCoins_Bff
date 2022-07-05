@@ -44,10 +44,10 @@ public class TablesService extends ContextService implements ITablesService {
     }
 
     @Override
-    public ResponseEntity<TableDTO> findById(IdDTO request) {
+    public ResponseEntity<BarTableDTO> findById(IdDTO request) {
 
         Long ownerId = super.getLoggedUserId();
-        TableDTO table;
+        BarTableDTO table;
 
         try{
             table = this.barsFeign.findTableById(request.getId()).getBody();

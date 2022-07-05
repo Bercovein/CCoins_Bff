@@ -43,7 +43,7 @@ public interface BarsFeign {
             @PathVariable("status") Optional<String> status);
 
     @GetMapping("/tables/{id}")
-    ResponseEntity<TableDTO> findTableById(@PathVariable("id") Long id);
+    ResponseEntity<BarTableDTO> findTableById(@PathVariable("id") Long id);
 
     @PutMapping("/tables/{id}/active")
     ResponseEntity<TableDTO> activeTable(@PathVariable("id") Long id);

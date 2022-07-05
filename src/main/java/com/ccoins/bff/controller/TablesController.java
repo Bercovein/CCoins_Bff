@@ -6,6 +6,7 @@ import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.LongListDTO;
 import com.ccoins.bff.dto.bars.TableDTO;
+import com.ccoins.bff.dto.bars.BarTableDTO;
 import com.ccoins.bff.dto.bars.TableQuantityDTO;
 import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.service.ITablesService;
@@ -35,7 +36,7 @@ public class TablesController implements ITablesController {
 
     @Override
     @PostMapping("/id")
-    public ResponseEntity<TableDTO> findById(@RequestBody IdDTO id){
+    public ResponseEntity<BarTableDTO> findById(@RequestBody IdDTO id){
         return this.service.findById(id);
     }
 
