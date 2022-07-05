@@ -16,7 +16,7 @@ import java.util.Optional;
 public interface ITablesService {
 
     ResponseEntity<TableDTO> saveOrUpdate(TableDTO request);
-    ResponseEntity<TableDTO> findById(IdDTO request);
+    ResponseEntity<BarTableDTO> findById(IdDTO request);
 
     ResponseEntity<ListDTO> findAllByBar(IdDTO request, Optional<String> status);
 

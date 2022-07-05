@@ -3,6 +3,7 @@ package com.ccoins.bff.controller.swagger;
 import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ListDTO;
+import com.ccoins.bff.dto.bars.BarTableDTO;
 import com.ccoins.bff.dto.bars.TableDTO;
 import com.ccoins.bff.dto.bars.TableQuantityDTO;
 import io.swagger.annotations.Api;
@@ -22,7 +23,7 @@ public interface ITablesController {
     ResponseEntity<TableDTO> saveOrUpdate(@RequestBody TableDTO request);
 
     @ApiOperation(value = FIND_BY_ID)
-    ResponseEntity<TableDTO> findById(@RequestBody IdDTO id);
+    ResponseEntity<BarTableDTO> findById(@RequestBody IdDTO id);
 
     @ApiOperation(value = FIND_ALL_BY + BAR + AND_OR_STATUS)
     ResponseEntity<ListDTO> findAllByBar(@RequestBody IdDTO request, @PathVariable("status") Optional<String> status);
