@@ -31,4 +31,6 @@ public interface ITablesService {
     ResponseEntity<ResponseDTO> generateCodesByList(LongListDTO request);
 
     List<BarTableDTO> findByIdIn(LongListDTO list);
+
+    BarTableDTO findByCode(String code);
 }

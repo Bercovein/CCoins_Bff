@@ -1,6 +1,6 @@
 package com.ccoins.bff.configuration;
 
-import com.ccoins.bff.configuration.security.service.OauthService;
+import com.ccoins.bff.service.impl.LoginService;
 import com.ccoins.bff.configuration.security.filter.JwtAuthorizationFilter;
 import com.ccoins.bff.configuration.security.authentication.JwtEntryPoint;
 import com.ccoins.bff.configuration.security.filter.JwtRefreshFilter;
@@ -35,7 +35,7 @@ import static com.ccoins.bff.configuration.security.JwtUtils.*;
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    OauthService oauthService;
+    LoginService loginService;
 
     @Autowired
     JwtEntryPoint jwtEntryPoint;
@@ -69,7 +69,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(oauthService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(loginService).passwordEncoder(passwordEncoder());
     }
 
     @Override

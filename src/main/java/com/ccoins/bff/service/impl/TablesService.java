@@ -115,4 +115,9 @@ public class TablesService extends ContextService implements ITablesService {
 
         return this.barsFeign.findByIdIn(request);
     }
+
+    @Override
+    public BarTableDTO findByCode(String code) {
+        return this.barsFeign.findByCode(code);
+    }
 }

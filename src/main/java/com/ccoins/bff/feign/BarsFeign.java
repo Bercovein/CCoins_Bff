@@ -63,6 +63,9 @@ public interface BarsFeign {
     @PostMapping("/tables/list")
     List<BarTableDTO> findByIdIn(@RequestBody LongListDTO request);
 
+    @GetMapping("/tables/code/{code}")
+    BarTableDTO findByCode(@PathVariable("code")String code);
+
     //GAMES
     @PostMapping("/games")
     ResponseEntity<GameDTO> saveOrUpdateGame(@RequestBody GameDTO barDTO);

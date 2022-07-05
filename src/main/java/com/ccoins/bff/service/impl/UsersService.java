@@ -118,14 +118,4 @@ public class UsersService implements IUserService {
         }
     }
 
-    @Override
-    public void loginClient(ClientDTO request) {
-
-        ClientDTO client = this.findOrCreateClient(request);
-
-        //la mesa tiene party?
-            //no, crear party
-        //asignar cliente a la party
-    }
-
 }

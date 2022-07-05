@@ -2,7 +2,7 @@ package com.ccoins.bff.controller;
 
 import com.ccoins.bff.controller.swagger.IClientsController;
 import com.ccoins.bff.dto.users.ClientDTO;
-import com.ccoins.bff.service.IUserService;
+import com.ccoins.bff.service.ILoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ClientsController implements IClientsController {
 
     @Autowired
-    private IUserService service;
+    private ILoginService service;
 
     public void login(ClientDTO request){
         this.service.loginClient(request);

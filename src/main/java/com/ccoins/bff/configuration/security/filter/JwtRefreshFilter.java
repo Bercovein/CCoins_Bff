@@ -2,7 +2,7 @@ package com.ccoins.bff.configuration.security.filter;
 
 import com.ccoins.bff.configuration.security.JwtUtils;
 import com.ccoins.bff.configuration.security.authentication.JwtProvider;
-import com.ccoins.bff.configuration.security.service.OauthService;
+import com.ccoins.bff.service.impl.LoginService;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.exceptions.utils.ErrorUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,7 +33,7 @@ public class JwtRefreshFilter extends OncePerRequestFilter {
     private JwtProvider jwtProvider;
 
     @Autowired
-    private OauthService oauthService;
+    private LoginService loginService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

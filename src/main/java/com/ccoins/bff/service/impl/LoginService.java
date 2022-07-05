@@ -1,15 +1,19 @@
-package com.ccoins.bff.configuration.security.service;
+package com.ccoins.bff.service.impl;
 
 import com.ccoins.bff.configuration.security.JwtUserDTO;
 import com.ccoins.bff.configuration.security.JwtUtils;
 import com.ccoins.bff.configuration.security.PrincipalUser;
 import com.ccoins.bff.configuration.security.authentication.JwtProvider;
 import com.ccoins.bff.dto.TokenDTO;
+import com.ccoins.bff.dto.users.ClientDTO;
+import com.ccoins.bff.dto.users.ClientTableDTO;
 import com.ccoins.bff.dto.users.OwnerDTO;
 import com.ccoins.bff.exceptions.CustomException;
 import com.ccoins.bff.exceptions.UnauthorizedException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.service.IOauthService;
+import com.ccoins.bff.service.IPartiesService;
+import com.ccoins.bff.service.ITablesService;
 import com.ccoins.bff.service.IUserService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
@@ -33,10 +37,11 @@ import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 @Slf4j
-public class OauthService implements IOauthService, UserDetailsService {
+public class LoginService implements IOauthService, UserDetailsService {
 
     private final String googleClientId;
 
@@ -50,19 +55,22 @@ public class OauthService implements IOauthService, UserDetailsService {
 
     private final JwtProvider jwtProvider;
 
+    private final IPartiesService partyService;
+
     @Autowired
-    public OauthService(@Value("${google.client.id}") String googleClientId,
+    public LoginService(@Value("${google.client.id}") String googleClientId,
                         @Value("${secretPsw}") String secretPsw,
                         IUserService usersService,
                         PasswordEncoder passwordEncoder,
                         AuthenticationManager authenticationManager,
-                        JwtProvider jwtProvider) {
+                        JwtProvider jwtProvider, ITablesService partyService) {
         this.googleClientId = googleClientId;
         this.secretPsw = secretPsw;
         this.usersService = usersService;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtProvider = jwtProvider;
+        this.partyService = partyService;
     }
 
     @Override
@@ -81,7 +89,7 @@ public class OauthService implements IOauthService, UserDetailsService {
             log.error("Creando/Buscando usuario");
             OwnerDTO ownerDTO = this.usersService.findOrCreateOwner(payload.getEmail());
             log.error("Parseando y devolviendo token");
-            return ResponseEntity.ok(login(JwtUtils.parse(ownerDTO)));
+            return ResponseEntity.ok(loginOwner(JwtUtils.parse(ownerDTO)));
         }catch(Exception e){
             throw new UnauthorizedException(ExceptionConstant.GOOGLE_ERROR_CODE, this.getClass(), ExceptionConstant.GOOGLE_ERROR);
         }
@@ -100,14 +108,14 @@ public class OauthService implements IOauthService, UserDetailsService {
             user = facebook.fetchObject("me", User.class, fields);
             OwnerDTO ownerDTO = this.usersService.findOrCreateOwner(user.getEmail());
 
-            return ResponseEntity.ok(login(JwtUtils.parse(ownerDTO)));
+            return ResponseEntity.ok(loginOwner(JwtUtils.parse(ownerDTO)));
 
         }catch(Exception e){
             throw new UnauthorizedException(ExceptionConstant.FACEBOOK_ERROR_CODE, this.getClass(), ExceptionConstant.FACEBOOK_ERROR);
         }
     }
 
-    private TokenDTO login(JwtUserDTO user){
+    private TokenDTO loginOwner(JwtUserDTO user){
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getEmail(), secretPsw)
@@ -129,4 +137,16 @@ public class OauthService implements IOauthService, UserDetailsService {
         }
     }
 
+    @Override
+    public void loginClient(ClientTableDTO request) {
+
+        Optional<ClientDTO> clientOpt = this.usersService.findActiveById(request.getClientId());
+
+        if(clientOpt.isEmpty()){
+            // retornar a front que pida el nombre
+        }
+
+        this.partyService.asignOrCreatePartyByCode(request.getTableCode(), clientOpt.get());
+
+    }
 }

@@ -6,7 +6,7 @@ import org.springframework.http.HttpHeaders;
 
 import java.util.Optional;
 
-public interface IUserService {
+public interface ILoginService {
 
     OwnerDTO newOwner(String email);
 
@@ -24,4 +24,5 @@ public interface IUserService {
 
     ClientDTO newClient(ClientDTO request);
 
+    void loginClient(ClientDTO request);
 }
