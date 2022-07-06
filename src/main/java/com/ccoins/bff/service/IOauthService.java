@@ -1,8 +1,6 @@
 package com.ccoins.bff.service;
 
 import com.ccoins.bff.dto.TokenDTO;
-import com.ccoins.bff.dto.users.ClientDTO;
-import com.ccoins.bff.dto.users.ClientTableDTO;
 import com.ccoins.bff.exceptions.CustomException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +14,4 @@ public interface IOauthService {
 
     UserDetails loadUserByUsername(String email) throws UsernameNotFoundException;
 
-    void loginClient(ClientDTO request);
-
-    void loginClient(ClientTableDTO request);
 }

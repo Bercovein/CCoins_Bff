@@ -110,5 +110,8 @@ public class ExceptionConstant {
     public static final String USERS_GET_CLIENT_ERROR_CODE = "0031";
     public static final String USERS_GET_CLIENT_ERROR = GET_ERROR_LABEL.concat("client");
 
+    public static final String PARTY_FIND_BY_TABLE_ERROR_CODE = "0032";
+    public static final String PARTY_FIND_BY_TABLE_ERROR = GET_ERROR_LABEL.concat("party by table code");
+
 
 }

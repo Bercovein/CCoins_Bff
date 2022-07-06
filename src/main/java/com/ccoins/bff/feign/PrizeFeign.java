@@ -37,4 +37,7 @@ public interface PrizeFeign {
 
     @PostMapping("/parties")
     PartyDTO createParty(Long id);
+
+    @PostMapping({"/parties/{partyId}/client/{clientId}"})
+    void asignClientToParty(@PathVariable("partyId") Long partyId, @PathVariable("clientId") Long clientId);
 }

@@ -44,7 +44,6 @@ public class PartiesService extends ContextService implements IPartiesService {
             party = partyOpt.get();
         }
 
-        this.prizeFeign.asignClientToParty(party.getId(),clientDTO);
-
+        this.prizeFeign.asignClientToParty(party.getId(),clientDTO.getId());
     }
 }
