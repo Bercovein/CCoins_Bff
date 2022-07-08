@@ -114,4 +114,7 @@ public class ExceptionConstant {
     public static final String PARTY_FIND_BY_TABLE_ERROR = GET_ERROR_LABEL.concat("party by table code");
 
 
+    public static final String CLIENT_NOT_FOUND_ERROR_CODE = "0033";
+    public static final String CLIENT_NOT_FOUND_ERROR = GET_ERROR_LABEL.concat("client");
+
 }

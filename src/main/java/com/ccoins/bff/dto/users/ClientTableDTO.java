@@ -14,4 +14,6 @@ public class ClientTableDTO {
     private Long clientId;
 
     private String tableCode;
+
+    private String name;
 }

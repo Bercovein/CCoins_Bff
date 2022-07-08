@@ -86,25 +86,35 @@ public class UsersService implements IUserService {
     @Override
     public ClientDTO findOrCreateClient(ClientDTO request){
 
-        Optional<ClientDTO> opt = this.findActiveById(request.getId());
         ClientDTO response;
-        if(opt.isEmpty()){
+
+        try {
+            response = this.findActiveById(request.getId());
+        }catch(ObjectNotFoundException e) {
             log.error("Nuevo cliente");
             response = this.newClient(request);
-        }else{
-            response = opt.get();
         }
         return response;
     }
 
     @Override
-    public Optional<ClientDTO> findActiveById(Long id) {
+    public ClientDTO findActiveById(Long id) {
+
+        Optional<ClientDTO> clientOpt;
+
         try{
-            return this.usersFeign.findActiveById(id);
+            clientOpt = this.usersFeign.findActiveById(id);
         }catch(Exception e){
             throw new BadRequestException(ExceptionConstant.USERS_GET_CLIENT_ERROR_CODE,
                     this.getClass(), ExceptionConstant.USERS_GET_CLIENT_ERROR);
         }
+
+        if(clientOpt.isEmpty()){
+            throw new ObjectNotFoundException(ExceptionConstant.CLIENT_NOT_FOUND_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.CLIENT_NOT_FOUND_ERROR);
+        }
+
+        return clientOpt.get();
     }
 
 
