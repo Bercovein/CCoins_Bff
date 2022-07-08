@@ -28,7 +28,7 @@ public class PartiesService extends ContextService implements IPartiesService {
 
 
     @Override
-    public void asignOrCreatePartyByCode(String code, ClientDTO clientDTO) {
+    public Long asignOrCreatePartyByCode(String code, ClientDTO clientDTO) {
 
         PartyDTO party;
 
@@ -45,5 +45,7 @@ public class PartiesService extends ContextService implements IPartiesService {
         }
 
         this.prizeFeign.asignClientToParty(party.getId(),clientDTO.getId());
+
+        return party.getId();
     }
 }

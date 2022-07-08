@@ -30,9 +30,9 @@ public class LoginService implements ILoginService {
 
         clientDTO = this.usersService.findOrCreateClient(clientDTO);
 
-        this.partyService.asignOrCreatePartyByCode(request.getTableCode(), clientDTO);
+        Long partyId = this.partyService.asignOrCreatePartyByCode(request.getTableCode(), clientDTO);
 
-        return ClientTableDTO.builder().clientId(clientDTO.getId()).tableCode(request.getTableCode()).name(clientDTO.getNickName()).build();
+        return ClientTableDTO.builder().partyId(partyId).clientId(clientDTO.getId()).tableCode(request.getTableCode()).name(clientDTO.getNickName()).build();
     }
 
 }
