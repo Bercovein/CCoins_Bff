@@ -24,27 +24,15 @@ public class LoginService implements ILoginService {
 
 
     @Override
-    public void loginClient(ClientTableDTO request) {
+    public ClientTableDTO loginClient(ClientTableDTO request) {
 
-        ClientDTO clientDTO = this.usersService.findActiveById(request.getClientId());
+        ClientDTO clientDTO = ClientDTO.builder().id(request.getClientId()).build();
+
+        clientDTO = this.usersService.findOrCreateClient(clientDTO);
 
         this.partyService.asignOrCreatePartyByCode(request.getTableCode(), clientDTO);
 
+        return ClientTableDTO.builder().clientId(clientDTO.getId()).tableCode(request.getTableCode()).name(clientDTO.getNickName()).build();
     }
 
-
-    @Override
-    public void registerClient(ClientTableDTO request) {
-
-        //dar de alta el cliente
-        ClientDTO clientDTO = ClientDTO.builder().nickName(request.getName()).build();
-
-        this.usersService.newClient(clientDTO);
-
-        //Prepara la request para loguear al usuario
-        ClientTableDTO loginRequest = ClientTableDTO.builder().clientId(clientDTO.getId()).tableCode(request.getTableCode()).build();
-
-        //loguea al usuario
-        this.loginClient(loginRequest);
-    }
 }

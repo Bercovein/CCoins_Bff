@@ -4,7 +4,6 @@ import com.ccoins.bff.dto.users.ClientTableDTO;
 
 public interface ILoginService {
 
-    void loginClient(ClientTableDTO request);
+    ClientTableDTO loginClient(ClientTableDTO request);
 
-    void registerClient(ClientTableDTO request);
 }
