@@ -11,6 +11,7 @@ public class ExceptionConstant {
     public static final String CREATE_NEW_ERROR_LABEL = ERROR_LABEL.concat("create new ");
     public static final String ACTIVE_UNACTIVE_ERROR_LABEL = ERROR_LABEL.concat("change state of ");
     public static final String GENERATE_ERROR_LABEL = ERROR_LABEL.concat("generate new ");
+    public static final String ADD_ERROR_LABEL = ERROR_LABEL.concat("add ");
 
     public static final String READ_ERROR_LABEL = ERROR_LABEL.concat("read ");
 
@@ -119,5 +120,14 @@ public class ExceptionConstant {
 
     public static final String RANDOM_NAME_ERROR_CODE = "0034";
     public static final String RANDOM_NAME_ERROR = CREATE_NEW_ERROR_LABEL.concat("random name");
+
+    public static final String PARTY_BY_BAR_ERROR_CODE = "0035";
+    public static final String PARTY_BY_BAR_ERROR = GET_ERROR_LABEL.concat("party by bar");
+
+    public static final String CREATE_PARTY_ERROR_CODE = "0036";
+    public static final String CREATE_PARTY_ERROR = CREATE_NEW_ERROR_LABEL.concat("party");
+
+    public static final String ADD_CLIENT_TO_PARTY_ERROR_CODE = "0037";
+    public static final String ADD_CLIENT_TO_PARTY_ERROR = ADD_ERROR_LABEL.concat("client to party");
 
 }
