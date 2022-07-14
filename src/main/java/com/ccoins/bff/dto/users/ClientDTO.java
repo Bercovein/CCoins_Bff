@@ -14,10 +14,12 @@ import java.time.LocalDateTime;
 @Builder
 public class ClientDTO {
 
-    private Long id;
+    private String ip;
 
     @NotEmpty
     private String nickName;
+
+    private Long id;
 
     private boolean active;
 

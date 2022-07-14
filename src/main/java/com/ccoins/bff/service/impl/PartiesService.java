@@ -5,6 +5,7 @@ import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.feign.PrizeFeign;
 import com.ccoins.bff.service.IPartiesService;
+import com.ccoins.bff.service.IRandomNameService;
 import com.ccoins.bff.service.ITablesService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,13 @@ public class PartiesService extends ContextService implements IPartiesService {
 
     private final ITablesService tablesService;
 
+    private final IRandomNameService randomizer;
+
     @Autowired
-    public PartiesService(PrizeFeign prizeFeign, ITablesService tablesService) {
+    public PartiesService(PrizeFeign prizeFeign, ITablesService tablesService, IRandomNameService randomizer) {
         this.prizeFeign = prizeFeign;
         this.tablesService = tablesService;
+        this.randomizer = randomizer;
     }
 
 
@@ -39,7 +43,10 @@ public class PartiesService extends ContextService implements IPartiesService {
         Optional<PartyDTO> partyOpt = this.prizeFeign.findActivePartyByTable(barTableDTO.getId());
 
         if(partyOpt.isEmpty()){ //no -> crear party
-            party = this.prizeFeign.createParty(barTableDTO.getId());
+            party = this.prizeFeign.createParty(PartyDTO.builder()
+                    .table(barTableDTO.getId())
+                    .name(this.randomizer.randomGroupName())
+                    .build());
         }else{
             party = partyOpt.get();
         }

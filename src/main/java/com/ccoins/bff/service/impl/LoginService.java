@@ -26,13 +26,13 @@ public class LoginService implements ILoginService {
     @Override
     public ClientTableDTO loginClient(ClientTableDTO request) {
 
-        ClientDTO clientDTO = ClientDTO.builder().id(request.getClientId()).build();
+        ClientDTO clientDTO = ClientDTO.builder().ip(request.getClientIp()).build();
 
         clientDTO = this.usersService.findOrCreateClient(clientDTO);
 
         Long partyId = this.partyService.asignOrCreatePartyByCode(request.getTableCode(), clientDTO);
 
-        return ClientTableDTO.builder().partyId(partyId).clientId(clientDTO.getId()).tableCode(request.getTableCode()).name(clientDTO.getNickName()).build();
+        return ClientTableDTO.builder().partyId(partyId).clientIp(clientDTO.getIp()).tableCode(request.getTableCode()).nickName(clientDTO.getNickName()).build();
     }
 
 }

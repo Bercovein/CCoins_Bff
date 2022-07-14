@@ -117,4 +117,7 @@ public class ExceptionConstant {
     public static final String CLIENT_NOT_FOUND_ERROR_CODE = "0033";
     public static final String CLIENT_NOT_FOUND_ERROR = GET_ERROR_LABEL.concat("client");
 
+    public static final String RANDOM_NAME_ERROR_CODE = "0034";
+    public static final String RANDOM_NAME_ERROR = CREATE_NEW_ERROR_LABEL.concat("random name");
+
 }

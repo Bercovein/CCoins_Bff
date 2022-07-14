@@ -33,10 +33,10 @@ public interface PrizeFeign {
     ResponseEntity<GenericRsDTO> activePrizesByList(@RequestBody ListDTO request);
 
     @GetMapping("/parties/table/{id}")
-    Optional<PartyDTO> findActivePartyByTable(Long id);
+    Optional<PartyDTO> findActivePartyByTable(@PathVariable("id")Long id);
 
-    @PostMapping("/parties")
-    PartyDTO createParty(Long id);
+    @PostMapping("/parties/table")
+    PartyDTO createParty(PartyDTO partyDTO);
 
     @PostMapping({"/parties/{partyId}/client/{clientId}"})
     void asignClientToParty(@PathVariable("partyId") Long partyId, @PathVariable("clientId") Long clientId);

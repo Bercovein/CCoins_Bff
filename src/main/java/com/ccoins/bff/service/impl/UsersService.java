@@ -7,6 +7,7 @@ import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.ObjectNotFoundException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.UsersFeign;
+import com.ccoins.bff.service.IRandomNameService;
 import com.ccoins.bff.service.IUserService;
 import com.ccoins.bff.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +23,12 @@ public class UsersService implements IUserService {
 
     private final UsersFeign usersFeign;
 
+    private final IRandomNameService randomize;
+
     @Autowired
-    public UsersService(UsersFeign usersFeign) {
+    public UsersService(UsersFeign usersFeign, IRandomNameService randomize) {
         this.usersFeign = usersFeign;
+        this.randomize = randomize;
     }
 
     @Override
@@ -89,21 +93,22 @@ public class UsersService implements IUserService {
         ClientDTO response;
 
         try {
-            response = this.findActiveById(request.getId());
+            response = this.findActiveByIp(request.getIp());
         }catch(ObjectNotFoundException e) {
             log.error("Nuevo cliente");
+            request.setNickName(this.randomize.randomDefaultName());
             response = this.newClient(request);
         }
         return response;
     }
 
     @Override
-    public ClientDTO findActiveById(Long id) {
+    public ClientDTO findActiveByIp(String ip) {
 
         Optional<ClientDTO> clientOpt;
 
         try{
-            clientOpt = this.usersFeign.findActiveById(id);
+            clientOpt = this.usersFeign.findActiveByIp(ip);
         }catch(Exception e){
             throw new BadRequestException(ExceptionConstant.USERS_GET_CLIENT_ERROR_CODE,
                     this.getClass(), ExceptionConstant.USERS_GET_CLIENT_ERROR);

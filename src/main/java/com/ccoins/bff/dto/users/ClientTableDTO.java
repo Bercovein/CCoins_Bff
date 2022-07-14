@@ -5,17 +5,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotEmpty;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class ClientTableDTO {
 
-    private Long clientId;
+    @NotEmpty
+    private String clientIp;
 
+    @NotEmpty
     private String tableCode;
 
-    private String name;
+    private String nickName;
 
     private Long partyId;
 }

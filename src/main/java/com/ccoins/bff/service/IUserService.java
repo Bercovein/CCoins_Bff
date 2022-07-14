@@ -20,7 +20,7 @@ public interface IUserService {
 
     ClientDTO findOrCreateClient(ClientDTO request);
 
-    ClientDTO findActiveById(Long id);
+    ClientDTO findActiveByIp(String ip);
 
     ClientDTO newClient(ClientDTO request);
 

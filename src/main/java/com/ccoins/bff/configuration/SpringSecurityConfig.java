@@ -1,9 +1,9 @@
 package com.ccoins.bff.configuration;
 
-import com.ccoins.bff.service.impl.LoginService;
-import com.ccoins.bff.configuration.security.filter.JwtAuthorizationFilter;
 import com.ccoins.bff.configuration.security.authentication.JwtEntryPoint;
+import com.ccoins.bff.configuration.security.filter.JwtAuthorizationFilter;
 import com.ccoins.bff.configuration.security.filter.JwtRefreshFilter;
+import com.ccoins.bff.service.impl.OAuthService;
 import com.google.api.client.http.HttpMethods;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +35,7 @@ import static com.ccoins.bff.configuration.security.JwtUtils.*;
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    LoginService loginService;
+    OAuthService loginService;
 
     @Autowired
     JwtEntryPoint jwtEntryPoint;
@@ -75,7 +75,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
-                .authorizeRequests().antMatchers("/oauth/**", "/actuator/**").permitAll()
+                .authorizeRequests().antMatchers("/oauth/**", "/actuator/**","/clients/**").permitAll()
                 .antMatchers("/","/my/docs", "/v2/swagger", "/swagger-ui/**", "/swagger-ui.html", "/v2/api-docs", "/swagger-resources/**", "/webjars/**", "/swagger.json").permitAll()      // rutas publicas, no requieren autenticación
                 .anyRequest().authenticated()
                 .and()
