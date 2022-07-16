@@ -11,7 +11,7 @@ import com.ccoins.bff.exceptions.UnauthorizedException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.service.IOauthService;
 import com.ccoins.bff.service.ITablesService;
-import com.ccoins.bff.service.IUserService;
+import com.ccoins.bff.service.IOwnerService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -43,7 +43,7 @@ public class OAuthService implements IOauthService, UserDetailsService {
 
     private final String secretPsw;
 
-    private final IUserService usersService;
+    private final IOwnerService usersService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -54,7 +54,7 @@ public class OAuthService implements IOauthService, UserDetailsService {
     @Autowired
     public OAuthService(@Value("${google.client.id}") String googleClientId,
                         @Value("${secretPsw}") String secretPsw,
-                        IUserService usersService,
+                        IOwnerService usersService,
                         PasswordEncoder passwordEncoder,
                         AuthenticationManager authenticationManager,
                         JwtProvider jwtProvider, ITablesService partyService) {

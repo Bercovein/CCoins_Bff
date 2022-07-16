@@ -22,4 +22,8 @@ public interface UsersFeign {
 
     @GetMapping("/client/ip/{id}")
     Optional<ClientDTO> findActiveByIp(@PathVariable("id")String id);
+
+    @PutMapping("/client/name")
+    void updateName(ClientDTO request);
+
 }

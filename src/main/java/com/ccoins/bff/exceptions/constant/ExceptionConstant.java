@@ -17,6 +17,8 @@ public class ExceptionConstant {
 
     public static final String CREATE_OR_REPLACE_ERROR_LABEL = ERROR_LABEL.concat("create or replace ");
 
+    public static final String UPDATE_ERROR_LABEL = ERROR_LABEL.concat("update ");
+
     //ERRORS
     public static final String GENERIC_ERROR_CODE = "0001";
     public static final String GENERIC_ERROR = "Something went wrong! Check with your administrator";
@@ -129,5 +131,8 @@ public class ExceptionConstant {
 
     public static final String ADD_CLIENT_TO_PARTY_ERROR_CODE = "0037";
     public static final String ADD_CLIENT_TO_PARTY_ERROR = ADD_ERROR_LABEL.concat("client to party");
+
+    public static final String UPDATE_CLIENT_NAME_ERROR_CODE = "0038";
+    public static final String UPDATE_CLIENT_NAME_ERROR = UPDATE_ERROR_LABEL.concat("client nickname");
 
 }

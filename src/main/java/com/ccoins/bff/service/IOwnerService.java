@@ -1,12 +1,11 @@
 package com.ccoins.bff.service;
 
-import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.dto.users.OwnerDTO;
 import org.springframework.http.HttpHeaders;
 
 import java.util.Optional;
 
-public interface IUserService {
+public interface IOwnerService {
 
     OwnerDTO newOwner(String email);
 
@@ -18,10 +17,5 @@ public interface IUserService {
 
     OwnerDTO findOrCreateOwner(String email);
 
-    ClientDTO findOrCreateClient(ClientDTO request);
-
-    ClientDTO findActiveByIp(String ip);
-
-    ClientDTO newClient(ClientDTO request);
 
 }
