@@ -14,7 +14,7 @@ import java.util.Optional;
 @RequestMapping("${feign.prizes-ms.req-map}")
 public interface PrizeFeign {
 
-    @PostMapping
+    @PostMapping("/prizes")
     ResponseEntity<PrizeDTO> saveOrUpdatePrize(@RequestBody PrizeDTO request);
 
     @GetMapping("/prizes/owner/{barId}")
