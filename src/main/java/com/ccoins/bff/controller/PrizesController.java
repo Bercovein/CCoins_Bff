@@ -39,7 +39,7 @@ public class PrizesController implements IPrizesController {
     }
 
     @Override
-    @GetMapping({"/bar", "/bar/{status}"})
+    @PostMapping({"/bar", "/bar/{status}"})
     public ResponseEntity<ListDTO> findAllByBar(@RequestBody IdDTO request, @PathVariable("status") Optional<String> status){
         return this.service.findAllByBar(request,status);
     }
