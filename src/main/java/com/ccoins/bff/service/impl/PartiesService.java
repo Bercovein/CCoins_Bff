@@ -1,11 +1,13 @@
 package com.ccoins.bff.service.impl;
 
 import com.ccoins.bff.dto.bars.BarTableDTO;
+import com.ccoins.bff.dto.LongDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.PrizeFeign;
+import com.ccoins.bff.service.ICoinsService;
 import com.ccoins.bff.service.IPartiesService;
 import com.ccoins.bff.service.IRandomNameService;
 import com.ccoins.bff.service.ITablesService;
@@ -23,12 +25,15 @@ public class PartiesService extends ContextService implements IPartiesService {
 
     private final ITablesService tablesService;
 
+    private final ICoinsService coinsService;
+
     private final IRandomNameService randomizer;
 
     @Autowired
-    public PartiesService(PrizeFeign prizeFeign, ITablesService tablesService, IRandomNameService randomizer) {
+    public PartiesService(PrizeFeign prizeFeign, ITablesService tablesService, ICoinsService coinsService, IRandomNameService randomizer) {
         this.prizeFeign = prizeFeign;
         this.tablesService = tablesService;
+        this.coinsService = coinsService;
         this.randomizer = randomizer;
     }
 
@@ -74,7 +79,6 @@ public class PartiesService extends ContextService implements IPartiesService {
                     .table(tableId)
                     .name(this.randomizer.randomGroupName())
                     .build());
-
         }catch (Exception e){
             throw new BadRequestException(ExceptionConstant.CREATE_PARTY_ERROR_CODE,
                     this.getClass(), ExceptionConstant.CREATE_PARTY_ERROR);
@@ -91,5 +95,11 @@ public class PartiesService extends ContextService implements IPartiesService {
             throw new BadRequestException(ExceptionConstant.PARTY_BY_BAR_ERROR_CODE,
                     this.getClass(), ExceptionConstant.PARTY_BY_BAR_ERROR);
         }
+    }
+
+    @Override
+    public LongDTO countCoinsByParty(Long id){
+        Long quantity = this.coinsService.countCoinsByParty(id);
+        return LongDTO.builder().value(quantity).build();
     }
 }

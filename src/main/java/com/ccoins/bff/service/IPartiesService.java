@@ -1,5 +1,6 @@
 package com.ccoins.bff.service;
 
+import com.ccoins.bff.dto.LongDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.dto.users.ClientDTO;
 
@@ -14,4 +15,6 @@ public interface IPartiesService {
     PartyDTO createParty(Long tableId);
 
     Optional<PartyDTO> findActivePartyByTable(Long id);
+
+    LongDTO countCoinsByParty(Long id);
 }

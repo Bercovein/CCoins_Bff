@@ -12,6 +12,7 @@ public class ExceptionConstant {
     public static final String ACTIVE_UNACTIVE_ERROR_LABEL = ERROR_LABEL.concat("change state of ");
     public static final String GENERATE_ERROR_LABEL = ERROR_LABEL.concat("generate new ");
     public static final String ADD_ERROR_LABEL = ERROR_LABEL.concat("add ");
+    public static final String COUNT_ERROR_LABEL = ERROR_LABEL.concat("count ");
 
     public static final String READ_ERROR_LABEL = ERROR_LABEL.concat("read ");
 
@@ -134,5 +135,8 @@ public class ExceptionConstant {
 
     public static final String UPDATE_CLIENT_NAME_ERROR_CODE = "0038";
     public static final String UPDATE_CLIENT_NAME_ERROR = UPDATE_ERROR_LABEL.concat("client nickname");
+
+    public static final String COUNT_COINS_BY_PARTY_ERROR_CODE = "0039";
+    public static final String COUNT_COINS_BY_PARTY_ERROR = COUNT_ERROR_LABEL.concat("coins by party");
 
 }
