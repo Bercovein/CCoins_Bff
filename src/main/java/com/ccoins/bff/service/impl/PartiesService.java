@@ -102,4 +102,14 @@ public class PartiesService extends ContextService implements IPartiesService {
         Long quantity = this.coinsService.countCoinsByParty(id);
         return LongDTO.builder().value(quantity).build();
     }
+
+    @Override
+    public PartyDTO findById(Long id) {
+        try {
+            return this.prizeFeign.findById(id).get();
+        }catch(Exception e){
+            throw new BadRequestException(ExceptionConstant.PARTY_ID_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.PARTY_ID_ERROR);
+        }
+    }
 }

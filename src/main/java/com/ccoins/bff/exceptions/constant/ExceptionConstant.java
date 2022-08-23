@@ -139,4 +139,7 @@ public class ExceptionConstant {
     public static final String COUNT_COINS_BY_PARTY_ERROR_CODE = "0039";
     public static final String COUNT_COINS_BY_PARTY_ERROR = COUNT_ERROR_LABEL.concat("coins by party");
 
+    public static final String PARTY_ID_ERROR_CODE = "0040";
+    public static final String PARTY_ID_ERROR = GET_ERROR_LABEL.concat("party by id");
+
 }

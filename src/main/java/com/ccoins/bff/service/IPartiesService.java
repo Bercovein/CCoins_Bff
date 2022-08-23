@@ -17,4 +17,6 @@ public interface IPartiesService {
     Optional<PartyDTO> findActivePartyByTable(Long id);
 
     LongDTO countCoinsByParty(Long id);
+
+    PartyDTO findById(Long id);
 }

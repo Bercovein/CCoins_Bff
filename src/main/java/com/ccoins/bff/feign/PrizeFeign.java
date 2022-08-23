@@ -40,4 +40,7 @@ public interface PrizeFeign {
 
     @PostMapping({"/parties/{partyId}/client/{clientId}"})
     void asignClientToParty(@PathVariable("partyId") Long partyId, @PathVariable("clientId") Long clientId);
+
+    @GetMapping("/parties/{id}")
+    Optional<PartyDTO> findById(@PathVariable("id")Long id);
 }
