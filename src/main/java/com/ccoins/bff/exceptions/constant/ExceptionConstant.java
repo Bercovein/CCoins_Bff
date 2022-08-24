@@ -142,4 +142,10 @@ public class ExceptionConstant {
     public static final String PARTY_ID_ERROR_CODE = "0040";
     public static final String PARTY_ID_ERROR = GET_ERROR_LABEL.concat("party by id");
 
+    public static final String PARTY_CLIENTS_ERROR_CODE = "0041";
+    public static final String PARTY_CLIENTS_ERROR = GET_ERROR_LABEL.concat("party clients");
+
+    public static final String CLIENTS_LIST_ERROR_CODE = "0042";
+    public static final String CLIENTS_LIST_ERROR = GET_ERROR_LABEL.concat("clients by list");
+
 }

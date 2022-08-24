@@ -8,6 +8,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @FeignClient(name = "${feign.prizes-ms.name}", url = "${feign.prizes-ms.url}")
@@ -43,4 +44,7 @@ public interface PrizeFeign {
 
     @GetMapping("/parties/{id}")
     Optional<PartyDTO> findById(@PathVariable("id")Long id);
+
+    @GetMapping("/parties/{id}/clients")
+    List<Long> findClientsByPartyId(@PathVariable("id") Long id);
 }

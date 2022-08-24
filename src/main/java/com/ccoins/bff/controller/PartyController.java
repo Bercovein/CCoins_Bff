@@ -1,10 +1,12 @@
 package com.ccoins.bff.controller;
 
 import com.ccoins.bff.controller.swagger.IPartyController;
+import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.LongDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.service.IPartiesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +28,6 @@ public class PartyController implements IPartyController {
         return ResponseEntity.ok(this.service.countCoinsByParty(id));
     }
 
-    //info de la mesa (nombre de la party, nro de mesa..)
     @GetMapping("/{id}")
     @Override
     public ResponseEntity<PartyDTO> getPartyInfo(@PathVariable("id") Long id){
@@ -34,6 +35,9 @@ public class PartyController implements IPartyController {
     }
 
     //integrantes de la mesa
-
-
+    @GetMapping("/{id}/clients")
+    @Override
+    public ResponseEntity<ListDTO> getClientsFromParty(@PathVariable("id") Long id, @RequestHeader HttpHeaders headers){
+        return ResponseEntity.ok(this.service.findClientsFromParty(id, headers));
+    }
 }
