@@ -148,4 +148,7 @@ public class ExceptionConstant {
     public static final String CLIENTS_LIST_ERROR_CODE = "0042";
     public static final String CLIENTS_LIST_ERROR = GET_ERROR_LABEL.concat("clients by list");
 
+    public static final String UNACTIVE_BAR_ERROR_CODE = "0043";
+    public static final String UNACTIVE_BAR_ERROR = UNAUTHORIZED_LABEL.concat("use this feature");
+
 }
