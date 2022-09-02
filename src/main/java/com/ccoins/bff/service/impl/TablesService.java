@@ -122,6 +122,16 @@ public class TablesService extends ContextService implements ITablesService {
 
     @Override
     public boolean isTableActiveByCode(String code){
-        return Boolean.TRUE.equals(this.barsFeign.isActiveByQrCode(code).getBody());
+
+        boolean response;
+
+        try{
+            response = this.barsFeign.isActiveByQrCode(code).getBody();
+        }catch (Exception e){
+            throw new BadRequestException(ExceptionConstant.TABLES_ACTIVE_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.TABLES_ACTIVE_ERROR);
+        }
+
+        return response;
     }
 }

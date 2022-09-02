@@ -38,12 +38,8 @@ public class AnnotationAspect {
 
         String code = HeaderUtils.getCode(headers);
 
-        Class<?> clazz = joinPoint.getTarget().getClass();
-
-
-        if(this.tablesService.isTableActiveByCode(code)){
+        if(!this.tablesService.isTableActiveByCode(code)){
             throw new UnauthorizedException(ExceptionConstant.UNACTIVE_BAR_ERROR_CODE,
-                    clazz,
                     ExceptionConstant.UNACTIVE_BAR_ERROR);
         }
 
