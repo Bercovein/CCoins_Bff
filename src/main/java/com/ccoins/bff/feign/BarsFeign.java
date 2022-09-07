@@ -67,7 +67,7 @@ public interface BarsFeign {
     BarTableDTO findByCode(@PathVariable("code")String code);
 
     @GetMapping("/tables/code/{code}/active")
-    ResponseEntity<Boolean> isActiveByQrCode(@PathVariable("code")String qrCode);
+    ResponseEntity<GenericRsDTO<Boolean>> isActiveByQrCode(@PathVariable("code")String qrCode);
 
     //GAMES
     @PostMapping("/games")

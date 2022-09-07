@@ -34,5 +34,5 @@ public interface ITablesService {
 
     BarTableDTO findByCode(String code);
 
-    boolean isTableActiveByCode(String code);
+    GenericRsDTO<Boolean> isTableActiveByCode(String code);
 }

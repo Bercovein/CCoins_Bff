@@ -1,5 +1,6 @@
 package com.ccoins.bff.annotation;
 
+import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.exceptions.UnauthorizedException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.service.ITablesService;
@@ -38,9 +39,11 @@ public class AnnotationAspect {
 
         String code = HeaderUtils.getCode(headers);
 
-        if(!this.tablesService.isTableActiveByCode(code)){
+        GenericRsDTO<Boolean> response = this.tablesService.isTableActiveByCode(code);
+
+        if(Boolean.FALSE.equals(response.getData())){
             throw new UnauthorizedException(ExceptionConstant.UNACTIVE_BAR_ERROR_CODE,
-                    ExceptionConstant.UNACTIVE_BAR_ERROR);
+                    response.getMessage().toString());
         }
 
         return joinPoint.proceed();

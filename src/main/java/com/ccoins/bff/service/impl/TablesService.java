@@ -121,9 +121,9 @@ public class TablesService extends ContextService implements ITablesService {
     }
 
     @Override
-    public boolean isTableActiveByCode(String code){
+    public GenericRsDTO<Boolean> isTableActiveByCode(String code){
 
-        boolean response;
+        GenericRsDTO<Boolean> response;
 
         try{
             response = this.barsFeign.isActiveByQrCode(code).getBody();
