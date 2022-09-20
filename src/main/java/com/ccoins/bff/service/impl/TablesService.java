@@ -123,15 +123,11 @@ public class TablesService extends ContextService implements ITablesService {
     @Override
     public GenericRsDTO<Boolean> isTableActiveByCode(String code){
 
-        GenericRsDTO<Boolean> response;
-
         try{
-            response = this.barsFeign.isActiveByQrCode(code).getBody();
+            return this.barsFeign.isActiveByQrCode(code).getBody();
         }catch (Exception e){
             throw new BadRequestException(ExceptionConstant.TABLES_ACTIVE_ERROR_CODE,
                     this.getClass(), ExceptionConstant.TABLES_ACTIVE_ERROR);
         }
-
-        return response;
     }
 }
