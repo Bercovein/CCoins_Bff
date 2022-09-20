@@ -12,7 +12,7 @@
 	<artifactId>${app.name}</artifactId>
 	<version>1.0.0</version>
 	<name>Bff</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Tesis</description>
 <!--	<packaging>war</packaging>-->
 	<properties>
 		<app.name>bff-app</app.name>
