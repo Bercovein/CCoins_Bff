@@ -33,7 +33,11 @@ public class AnnotationAspect {
     @Around(value = "@annotation(com.ccoins.bff.annotation.LimitedTime)")
     public Object checkBarLimitedTime(ProceedingJoinPoint joinPoint) throws Throwable {
 
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        ServletRequestAttributes attributes = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes());
+
+        assert attributes != null;
+
+        HttpServletRequest request = attributes.getRequest();
 
         HttpHeaders headers = this.getHttpHeaders(request);
 
