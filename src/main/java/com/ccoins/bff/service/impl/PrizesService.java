@@ -3,6 +3,7 @@ package com.ccoins.bff.service.impl;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.prizes.PrizeDTO;
+import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.PrizeFeign;
@@ -20,9 +21,15 @@ public class PrizesService extends ContextService implements IPrizesService {
 
     private final PrizeFeign prizeFeign;
 
+    private final ClientService clientService;
+
+    private final PartiesService partiesService;
+
     @Autowired
-    public PrizesService(PrizeFeign prizeFeign) {
+    public PrizesService(PrizeFeign prizeFeign, ClientService clientService, PartiesService partiesService) {
         this.prizeFeign = prizeFeign;
+        this.clientService = clientService;
+        this.partiesService = partiesService;
     }
 
     @Override
@@ -75,4 +82,22 @@ public class PrizesService extends ContextService implements IPrizesService {
                     this.getClass(), ExceptionConstant.PRIZE_UPDATE_ACTIVE_ERROR);
         }
     }
+
+    @Override
+    public void buyPrizeByTableAndUser(IdDTO idDTO, String client, String code) {
+
+        PrizeDTO prize = this.findById(idDTO).getBody();
+
+        if(prize == null){
+            throw new RuntimeException();
+        }
+
+        ClientDTO clientDTO = this.clientService.findActiveByIp(client);
+
+        this.partiesService.findActivePartyByTableCode(code);
+
+        //si la party no tiene puntos, error
+
+    }
+
 }

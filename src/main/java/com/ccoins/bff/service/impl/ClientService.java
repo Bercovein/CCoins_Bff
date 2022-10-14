@@ -100,4 +100,10 @@ public class ClientService implements IClientService {
                     this.getClass(), ExceptionConstant.UPDATE_CLIENT_NAME_ERROR);
         }
     }
+
+    @Override
+    public void logout(String client) {
+
+        this.partyService.logout(client);
+    }
 }

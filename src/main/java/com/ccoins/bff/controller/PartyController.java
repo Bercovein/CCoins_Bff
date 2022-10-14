@@ -1,5 +1,6 @@
 package com.ccoins.bff.controller;
 
+import com.ccoins.bff.annotation.LimitedTime;
 import com.ccoins.bff.controller.swagger.IPartyController;
 import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.LongDTO;
@@ -23,12 +24,14 @@ public class PartyController implements IPartyController {
     }
 
     @GetMapping("/{id}/coins/quantity")
+    @LimitedTime
     @Override
     public ResponseEntity<LongDTO> getTotalCoinsByParty(@PathVariable("id") Long id){
         return ResponseEntity.ok(this.service.countCoinsByParty(id));
     }
 
     @GetMapping("/{id}")
+    @LimitedTime
     @Override
     public ResponseEntity<PartyDTO> getPartyInfo(@PathVariable("id") Long id){
         return ResponseEntity.ok(this.service.findById(id));
@@ -36,6 +39,7 @@ public class PartyController implements IPartyController {
 
     //integrantes de la mesa
     @GetMapping("/{id}/clients")
+    @LimitedTime
     @Override
     public ResponseEntity<ListDTO> getClientsFromParty(@PathVariable("id") Long id, @RequestHeader HttpHeaders headers){
         return ResponseEntity.ok(this.service.findClientsFromParty(id, headers));

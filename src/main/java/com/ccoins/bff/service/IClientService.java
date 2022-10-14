@@ -14,4 +14,6 @@ public interface IClientService {
     ClientDTO newClient(ClientDTO request);
 
     void changeName(ClientDTO request);
+
+    void logout(String client);
 }

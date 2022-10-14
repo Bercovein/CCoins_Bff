@@ -106,6 +106,17 @@ public class PartiesService extends ContextService implements IPartiesService {
     }
 
     @Override
+    public Optional<PartyDTO> findActivePartyByTableCode(String code){
+
+        try {
+            return this.prizeFeign.findActivePartyByTableCode(code);
+        }catch (Exception e){
+            throw new BadRequestException(ExceptionConstant.PARTY_BY_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.PARTY_BY_ERROR);
+        }
+    }
+
+    @Override
     public LongDTO countCoinsByParty(Long id){
         Long quantity = this.coinsService.countCoinsByParty(id);
         return LongDTO.builder().value(quantity).build();
@@ -144,6 +155,16 @@ public class PartiesService extends ContextService implements IPartiesService {
         clients = clients.stream().sorted(Comparator.comparing(ClientDTO::getNickName)).collect(Collectors.toList());
 
         return ListDTO.builder().list(clients).build();
+    }
+
+    @Override
+    public void logout(String client) {
+        try {
+            this.prizeFeign.logoutClientFromTables(client);
+        } catch (Exception e) {
+            throw new BadRequestException(ExceptionConstant.LOGOUT_CLIENT_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.LOGOUT_CLIENT_ERROR);
+        }
     }
 
     private List<ClientDTO> findByIdIn(List<Long> list) {

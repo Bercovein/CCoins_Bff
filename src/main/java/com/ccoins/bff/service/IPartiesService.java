@@ -18,9 +18,13 @@ public interface IPartiesService {
 
     Optional<PartyDTO> findActivePartyByTable(Long id);
 
+    Optional<PartyDTO> findActivePartyByTableCode(String code);
+
     LongDTO countCoinsByParty(Long id);
 
     PartyDTO findById(Long id);
 
     ListDTO findClientsFromParty(Long id, HttpHeaders headers);
+
+    void logout(String client);
 }

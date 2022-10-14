@@ -16,4 +16,6 @@ public interface IPrizesService {
     ResponseEntity<ListDTO> findAllByBar(IdDTO request, Optional<String> status);
 
     ResponseEntity<PrizeDTO> active(IdDTO id);
+
+    void buyPrizeByTableAndUser(IdDTO idDTO, String client, String code);
 }

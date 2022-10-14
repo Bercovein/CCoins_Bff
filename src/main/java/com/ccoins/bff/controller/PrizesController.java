@@ -1,11 +1,14 @@
 package com.ccoins.bff.controller;
 
+import com.ccoins.bff.annotation.LimitedTime;
 import com.ccoins.bff.controller.swagger.IPrizesController;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.prizes.PrizeDTO;
 import com.ccoins.bff.service.IPrizesService;
+import com.ccoins.bff.utils.HeaderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,5 +51,12 @@ public class PrizesController implements IPrizesController {
     @PatchMapping("/active")
     public ResponseEntity<PrizeDTO> active(@RequestBody IdDTO request){
         return this.service.active(request);
+    }
+
+    @Override
+    @PostMapping("/buy")
+    @LimitedTime
+    public void buyPrize(@RequestBody IdDTO idDTO, @RequestHeader HttpHeaders headers){
+        this.service.buyPrizeByTableAndUser(idDTO,HeaderUtils.getClient(headers), HeaderUtils.getCode(headers));
     }
 }

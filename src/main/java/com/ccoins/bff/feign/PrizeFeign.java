@@ -47,4 +47,10 @@ public interface PrizeFeign {
 
     @GetMapping("/parties/{id}/clients")
     List<Long> findClientsByPartyId(@PathVariable("id") Long id);
+
+    @DeleteMapping("/parties/client/{client}")
+    void logoutClientFromTables(@PathVariable ("client") String client);
+
+    @GetMapping("/parties/table/code/{code}")
+    Optional<PartyDTO> findActivePartyByTableCode(@PathVariable ("code")String code);
 }

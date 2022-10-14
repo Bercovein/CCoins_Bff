@@ -25,4 +25,5 @@ public interface IBarsController {
 
     @ApiOperation(value = ACTIVATE_DEACTIVATE)
     ResponseEntity<BarDTO> active(@RequestBody IdDTO id);
+
 }

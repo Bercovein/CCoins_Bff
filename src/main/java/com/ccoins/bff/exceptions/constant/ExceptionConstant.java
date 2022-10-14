@@ -6,6 +6,7 @@ public class ExceptionConstant {
     public static final String ERROR_LABEL = "Error when trying to ";
     public static final String UNAUTHORIZED_LABEL = "User not authorized to ";
     public static final String LOGIN_WITH_ERROR_LABEL = ERROR_LABEL.concat("login with ");
+    public static final String LOGOUT_WITH_ERROR_LABEL = ERROR_LABEL.concat("logout ");
     public static final String GET_ERROR_LABEL = ERROR_LABEL.concat("get ");
     public static final String GET_UNAUTHORIZED_LABEL = UNAUTHORIZED_LABEL.concat("get ");
     public static final String CREATE_NEW_ERROR_LABEL = ERROR_LABEL.concat("create new ");
@@ -150,5 +151,11 @@ public class ExceptionConstant {
 
     public static final String UNACTIVE_BAR_ERROR_CODE = "0043";
     public static final String UNACTIVE_BAR_ERROR = UNAUTHORIZED_LABEL.concat("use this feature");
+
+    public static final String LOGOUT_CLIENT_ERROR_CODE = "0044";
+    public static final String LOGOUT_CLIENT_ERROR = LOGOUT_WITH_ERROR_LABEL.concat("client");
+
+    public static final String PARTY_BY_ERROR_CODE = "0045";
+    public static final String PARTY_BY_ERROR = GET_ERROR_LABEL.concat("party by table code");
 
 }

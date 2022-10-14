@@ -1,10 +1,7 @@
 package com.ccoins.bff.feign;
 
-import com.ccoins.bff.dto.GenericRsDTO;
-import com.ccoins.bff.dto.ListDTO;
-import com.ccoins.bff.dto.LongListDTO;
+import com.ccoins.bff.dto.*;
 import com.ccoins.bff.dto.bars.*;
-import com.ccoins.bff.dto.ResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +26,8 @@ public interface BarsFeign {
     @PutMapping("/bars/{id}/active")
     ResponseEntity<BarDTO> activeBar(@PathVariable("id") Long id);
 
+    @GetMapping("/bars/menu/table/{code}")
+    ResponseEntity<StringDTO> findUrlByTableCode(@PathVariable("code") String code);
 
     //TABLES
     @PostMapping("/tables")
