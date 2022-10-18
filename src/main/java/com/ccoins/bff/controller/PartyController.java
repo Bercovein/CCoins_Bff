@@ -51,11 +51,17 @@ public class PartyController implements IPartyController {
     }
 
     @Override
-    @PostMapping("/prize/buy")
+    @PostMapping("/prizes/buy")
     @LimitedTime
     public void buyPrize(@RequestBody IdDTO idDTO, @RequestHeader HttpHeaders headers){
         this.prizeService.buyPrizeByTableAndUser(idDTO, HeaderUtils.getClient(headers), HeaderUtils.getCode(headers));
     }
 
+    @Override
+    @GetMapping({"/bar-prizes"})
+    public ResponseEntity<ListDTO> findAllByBar(@RequestHeader HttpHeaders headers){
+
+        return this.prizeService.findAllByHeader(headers);
+    }
 
 }

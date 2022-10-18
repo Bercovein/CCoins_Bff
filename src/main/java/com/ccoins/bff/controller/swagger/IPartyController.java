@@ -30,4 +30,7 @@ public interface IPartyController {
     @PostMapping("/buy")
     @LimitedTime
     void buyPrize(@RequestBody IdDTO idDTO, @RequestHeader HttpHeaders headers);
+
+    @PostMapping({"/prizes"})
+    ResponseEntity<ListDTO> findAllByBar(@RequestHeader HttpHeaders headers);
 }
