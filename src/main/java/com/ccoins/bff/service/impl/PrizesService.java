@@ -3,6 +3,7 @@ package com.ccoins.bff.service.impl;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.bars.BarTableDTO;
+import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.dto.prizes.PrizeDTO;
 import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
@@ -100,7 +101,13 @@ public class PrizesService extends ContextService implements IPrizesService {
 
         ClientDTO clientDTO = this.clientService.findActiveByIp(client);
 
-        this.partiesService.findActivePartyByTableCode(code);
+        Optional<PartyDTO> partyOpt = this.partiesService.findActivePartyByTableCode(code);
+
+        if(partyOpt.isEmpty()){
+            throw new RuntimeException();
+        }
+
+        PartyDTO party = partyOpt.get();
 
         //si la party no tiene puntos, error
 

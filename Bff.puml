@@ -1,0 +1,123 @@
+@startuml
+class CoinsController {
+}
+class ImageController {
+}
+class OauthController {
+}
+class ClientsController {
+}
+class BarsService {
+}
+interface IImageController {
+}
+interface IOauthController {
+}
+interface IRandomNameService {
+}
+interface IClientsController {
+}
+interface IPrizesController {
+}
+class CoinsService {
+}
+class PartiesService {
+}
+class ClientService {
+}
+interface UsersFeign {
+}
+interface BarsFeign {
+}
+class PartyController {
+}
+interface ITablesController {
+}
+class ContextService {
+}
+class BarsController {
+}
+class PrizesService {
+}
+interface ICoinsService {
+}
+class OwnerService {
+}
+class TablesService {
+}
+class OAuthService {
+}
+interface IContextService {
+}
+interface IBarsController {
+}
+interface IGamesController {
+}
+interface IBarsService {
+}
+class RandomNameService {
+}
+interface ITablesService {
+}
+class SwaggerConstants {
+}
+interface IOwnerService {
+}
+interface IClientService {
+}
+interface IGamesService {
+}
+interface CoinsFeign {
+}
+interface PrizeFeign {
+}
+interface IOauthService {
+}
+class GamesController {
+}
+class ImageService {
+}
+class TablesController {
+}
+interface IPartyController {
+}
+interface IPartiesService {
+}
+class PrizesController {
+}
+interface IImageService {
+}
+interface IPrizesService {
+}
+class GamesService {
+}
+
+
+IImageController <|.. ImageController
+IOauthController <|.. OauthController
+IClientsController <|.. ClientsController
+IBarsService <|.. BarsService
+ContextService <|-- BarsService
+ICoinsService <|.. CoinsService
+IPartiesService <|.. PartiesService
+ContextService <|-- PartiesService
+IClientService <|.. ClientService
+IPartyController <|.. PartyController
+IContextService <|.. ContextService
+IBarsController <|.. BarsController
+IPrizesService <|.. PrizesService
+ContextService <|-- PrizesService
+IOwnerService <|.. OwnerService
+ITablesService <|.. TablesService
+ContextService <|-- TablesService
+IOauthService <|.. OAuthService
+UserDetailsService <|.. OAuthService
+IRandomNameService <|.. RandomNameService
+IGamesController <|.. GamesController
+IImageService <|.. ImageService
+ContextService <|-- ImageService
+ITablesController <|.. TablesController
+IPrizesController <|.. PrizesController
+IGamesService <|.. GamesService
+ContextService <|-- GamesService
+@enduml

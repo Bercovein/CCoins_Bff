@@ -19,7 +19,6 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/clients")
 @CrossOrigin
-
 public class ClientsController implements IClientsController {
 
     @Autowired
