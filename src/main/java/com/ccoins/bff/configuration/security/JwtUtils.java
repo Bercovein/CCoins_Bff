@@ -29,6 +29,7 @@ public class JwtUtils {
     public static final String ACCESS_CONTROL_EXPOSE_HEADERS = "Access-Control-Expose-Headers";
     public static final String LOCATION = "Location";
     public static final String CLIENT = "client";
+    public static final String CODE = "code";
     public static final String AUTHORITIES = "authorities";
     public static final String BEARER_SPACE = "Bearer ";
     public static final String HEADER = "header";
