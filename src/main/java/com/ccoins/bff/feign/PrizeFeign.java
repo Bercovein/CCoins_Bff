@@ -8,13 +8,14 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @FeignClient(name = "${feign.prizes-ms.name}", url = "${feign.prizes-ms.url}")
 @RequestMapping("${feign.prizes-ms.req-map}")
 public interface PrizeFeign {
 
-    @PostMapping
+    @PostMapping("/prizes")
     ResponseEntity<PrizeDTO> saveOrUpdatePrize(@RequestBody PrizeDTO request);
 
     @GetMapping("/prizes/owner/{barId}")
@@ -40,4 +41,16 @@ public interface PrizeFeign {
 
     @PostMapping({"/parties/{partyId}/client/{clientId}"})
     void asignClientToParty(@PathVariable("partyId") Long partyId, @PathVariable("clientId") Long clientId);
+
+    @GetMapping("/parties/{id}")
+    Optional<PartyDTO> findById(@PathVariable("id")Long id);
+
+    @GetMapping("/parties/{id}/clients")
+    List<Long> findClientsByPartyId(@PathVariable("id") Long id);
+
+    @DeleteMapping("/parties/client/{client}")
+    void logoutClientFromTables(@PathVariable ("client") String client);
+
+    @GetMapping("/parties/table/code/{code}")
+    Optional<PartyDTO> findActivePartyByTableCode(@PathVariable ("code")String code);
 }

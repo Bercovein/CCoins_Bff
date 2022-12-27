@@ -12,7 +12,7 @@
 	<artifactId>${app.name}</artifactId>
 	<version>1.0.0</version>
 	<name>Bff</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Tesis</description>
 <!--	<packaging>war</packaging>-->
 	<properties>
 		<app.name>bff-app</app.name>
@@ -26,6 +26,12 @@
 	</properties>
 
 	<dependencies>
+<!--		&lt;!&ndash; TOMCAT &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-tomcat</artifactId>-->
+<!--			<scope>provided</scope>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -250,15 +256,6 @@
 			<artifactId>jasperreports</artifactId>
 			<version>6.19.1</version>
 		</dependency>
-
-
-<!--		&lt;!&ndash; TOMCAT &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.boot</groupId>-->
-<!--			<artifactId>spring-boot-starter-tomcat</artifactId>-->
-<!--			<scope>provided</scope>-->
-<!--		</dependency>-->
-
 		<!-- Model Mapper -->
 		<dependency>
 			<groupId>org.modelmapper</groupId>

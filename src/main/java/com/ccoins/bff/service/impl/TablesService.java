@@ -26,7 +26,6 @@ public class TablesService extends ContextService implements ITablesService {
 
     private final BarsFeign barsFeign;
 
-
     @Autowired
     public TablesService(BarsFeign barsFeign) {
         this.barsFeign = barsFeign;
@@ -119,5 +118,16 @@ public class TablesService extends ContextService implements ITablesService {
     @Override
     public BarTableDTO findByCode(String code) {
         return this.barsFeign.findByCode(code);
+    }
+
+    @Override
+    public GenericRsDTO<Boolean> isTableActiveByCode(String code){
+
+        try{
+            return this.barsFeign.isActiveByQrCode(code).getBody();
+        }catch (Exception e){
+            throw new BadRequestException(ExceptionConstant.TABLES_ACTIVE_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.TABLES_ACTIVE_ERROR);
+        }
     }
 }

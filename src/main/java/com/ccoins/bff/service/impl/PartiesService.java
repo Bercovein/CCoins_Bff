@@ -1,19 +1,26 @@
 package com.ccoins.bff.service.impl;
 
+import com.ccoins.bff.dto.ListDTO;
+import com.ccoins.bff.dto.LongDTO;
 import com.ccoins.bff.dto.bars.BarTableDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.PrizeFeign;
-import com.ccoins.bff.service.IPartiesService;
-import com.ccoins.bff.service.IRandomNameService;
-import com.ccoins.bff.service.ITablesService;
+import com.ccoins.bff.feign.UsersFeign;
+import com.ccoins.bff.service.*;
+import com.ccoins.bff.utils.HeaderUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -23,12 +30,18 @@ public class PartiesService extends ContextService implements IPartiesService {
 
     private final ITablesService tablesService;
 
+    private final UsersFeign usersFeign;
+
+    private final ICoinsService coinsService;
+
     private final IRandomNameService randomizer;
 
     @Autowired
-    public PartiesService(PrizeFeign prizeFeign, ITablesService tablesService, IRandomNameService randomizer) {
+    public PartiesService(PrizeFeign prizeFeign, ITablesService tablesService, UsersFeign usersFeign, ICoinsService coinsService, IRandomNameService randomizer) {
         this.prizeFeign = prizeFeign;
         this.tablesService = tablesService;
+        this.usersFeign = usersFeign;
+        this.coinsService = coinsService;
         this.randomizer = randomizer;
     }
 
@@ -74,7 +87,6 @@ public class PartiesService extends ContextService implements IPartiesService {
                     .table(tableId)
                     .name(this.randomizer.randomGroupName())
                     .build());
-
         }catch (Exception e){
             throw new BadRequestException(ExceptionConstant.CREATE_PARTY_ERROR_CODE,
                     this.getClass(), ExceptionConstant.CREATE_PARTY_ERROR);
@@ -90,6 +102,77 @@ public class PartiesService extends ContextService implements IPartiesService {
         }catch (Exception e){
             throw new BadRequestException(ExceptionConstant.PARTY_BY_BAR_ERROR_CODE,
                     this.getClass(), ExceptionConstant.PARTY_BY_BAR_ERROR);
+        }
+    }
+
+    @Override
+    public Optional<PartyDTO> findActivePartyByTableCode(String code){
+
+        try {
+            return this.prizeFeign.findActivePartyByTableCode(code);
+        }catch (Exception e){
+            throw new BadRequestException(ExceptionConstant.PARTY_BY_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.PARTY_BY_ERROR);
+        }
+    }
+
+    @Override
+    public LongDTO countCoinsByParty(Long id){
+        Long quantity = this.coinsService.countCoinsByParty(id);
+        return LongDTO.builder().value(quantity).build();
+    }
+
+    @Override
+    public PartyDTO findById(Long id) {
+        try {
+            return this.prizeFeign.findById(id).get();
+        }catch(Exception e){
+            throw new BadRequestException(ExceptionConstant.PARTY_ID_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.PARTY_ID_ERROR);
+        }
+    }
+
+    @Override
+    public ListDTO findClientsFromParty(Long id, HttpHeaders headers) {
+
+        String clientIp = HeaderUtils.getClient(headers);
+        List<Long> longList;
+        List<ClientDTO> clients = new ArrayList<>();
+
+        try {
+            longList = this.prizeFeign.findClientsByPartyId(id);
+        }catch(Exception e){
+            throw new BadRequestException(ExceptionConstant.PARTY_CLIENTS_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.PARTY_CLIENTS_ERROR);
+        }
+
+        if(!longList.isEmpty()){
+            clients = this.findByIdIn(longList);
+        }
+
+        clients.removeIf(clientDTO -> clientDTO.getIp().equals(clientIp));
+
+        clients = clients.stream().sorted(Comparator.comparing(ClientDTO::getNickName)).collect(Collectors.toList());
+
+        return ListDTO.builder().list(clients).build();
+    }
+
+    @Override
+    public void logout(String client) {
+        try {
+            this.prizeFeign.logoutClientFromTables(client);
+        } catch (Exception e) {
+            throw new BadRequestException(ExceptionConstant.LOGOUT_CLIENT_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.LOGOUT_CLIENT_ERROR);
+        }
+    }
+
+    private List<ClientDTO> findByIdIn(List<Long> list) {
+        try {
+            return this.usersFeign.findByIdIn(list);
+        } catch (Exception e) {
+            throw new BadRequestException(ExceptionConstant.CLIENTS_LIST_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.CLIENTS_LIST_ERROR);
         }
     }
 }

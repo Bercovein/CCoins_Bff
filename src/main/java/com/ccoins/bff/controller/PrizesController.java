@@ -39,7 +39,7 @@ public class PrizesController implements IPrizesController {
     }
 
     @Override
-    @GetMapping({"/bar", "/bar/{status}"})
+    @PostMapping({"/bar", "/bar/{status}"})
     public ResponseEntity<ListDTO> findAllByBar(@RequestBody IdDTO request, @PathVariable("status") Optional<String> status){
         return this.service.findAllByBar(request,status);
     }
@@ -49,4 +49,6 @@ public class PrizesController implements IPrizesController {
     public ResponseEntity<PrizeDTO> active(@RequestBody IdDTO request){
         return this.service.active(request);
     }
+
+
 }

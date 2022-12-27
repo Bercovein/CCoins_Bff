@@ -6,12 +6,14 @@ public class ExceptionConstant {
     public static final String ERROR_LABEL = "Error when trying to ";
     public static final String UNAUTHORIZED_LABEL = "User not authorized to ";
     public static final String LOGIN_WITH_ERROR_LABEL = ERROR_LABEL.concat("login with ");
+    public static final String LOGOUT_WITH_ERROR_LABEL = ERROR_LABEL.concat("logout ");
     public static final String GET_ERROR_LABEL = ERROR_LABEL.concat("get ");
     public static final String GET_UNAUTHORIZED_LABEL = UNAUTHORIZED_LABEL.concat("get ");
     public static final String CREATE_NEW_ERROR_LABEL = ERROR_LABEL.concat("create new ");
     public static final String ACTIVE_UNACTIVE_ERROR_LABEL = ERROR_LABEL.concat("change state of ");
     public static final String GENERATE_ERROR_LABEL = ERROR_LABEL.concat("generate new ");
     public static final String ADD_ERROR_LABEL = ERROR_LABEL.concat("add ");
+    public static final String COUNT_ERROR_LABEL = ERROR_LABEL.concat("count ");
 
     public static final String READ_ERROR_LABEL = ERROR_LABEL.concat("read ");
 
@@ -134,5 +136,26 @@ public class ExceptionConstant {
 
     public static final String UPDATE_CLIENT_NAME_ERROR_CODE = "0038";
     public static final String UPDATE_CLIENT_NAME_ERROR = UPDATE_ERROR_LABEL.concat("client nickname");
+
+    public static final String COUNT_COINS_BY_PARTY_ERROR_CODE = "0039";
+    public static final String COUNT_COINS_BY_PARTY_ERROR = COUNT_ERROR_LABEL.concat("coins by party");
+
+    public static final String PARTY_ID_ERROR_CODE = "0040";
+    public static final String PARTY_ID_ERROR = GET_ERROR_LABEL.concat("party by id");
+
+    public static final String PARTY_CLIENTS_ERROR_CODE = "0041";
+    public static final String PARTY_CLIENTS_ERROR = GET_ERROR_LABEL.concat("party clients");
+
+    public static final String CLIENTS_LIST_ERROR_CODE = "0042";
+    public static final String CLIENTS_LIST_ERROR = GET_ERROR_LABEL.concat("clients by list");
+
+    public static final String UNACTIVE_BAR_ERROR_CODE = "0043";
+    public static final String UNACTIVE_BAR_ERROR = UNAUTHORIZED_LABEL.concat("use this feature");
+
+    public static final String LOGOUT_CLIENT_ERROR_CODE = "0044";
+    public static final String LOGOUT_CLIENT_ERROR = LOGOUT_WITH_ERROR_LABEL.concat("client");
+
+    public static final String PARTY_BY_ERROR_CODE = "0045";
+    public static final String PARTY_BY_ERROR = GET_ERROR_LABEL.concat("party by table code");
 
 }

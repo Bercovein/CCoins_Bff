@@ -1,7 +1,10 @@
 package com.ccoins.bff.service;
 
+import com.ccoins.bff.dto.ListDTO;
+import com.ccoins.bff.dto.LongDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.dto.users.ClientDTO;
+import org.springframework.http.HttpHeaders;
 
 import java.util.Optional;
 
@@ -14,4 +17,14 @@ public interface IPartiesService {
     PartyDTO createParty(Long tableId);
 
     Optional<PartyDTO> findActivePartyByTable(Long id);
+
+    Optional<PartyDTO> findActivePartyByTableCode(String code);
+
+    LongDTO countCoinsByParty(Long id);
+
+    PartyDTO findById(Long id);
+
+    ListDTO findClientsFromParty(Long id, HttpHeaders headers);
+
+    void logout(String client);
 }

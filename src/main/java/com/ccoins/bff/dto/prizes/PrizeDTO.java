@@ -21,5 +21,5 @@ public class PrizeDTO {
 
     private LocalDateTime endDate;
     private boolean active;
-
+    private Long bar;
 }

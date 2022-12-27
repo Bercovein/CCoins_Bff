@@ -2,7 +2,9 @@ package com.ccoins.bff.service;
 
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ListDTO;
+import com.ccoins.bff.dto.StringDTO;
 import com.ccoins.bff.dto.bars.BarDTO;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
 public interface IBarsService {
@@ -14,4 +16,6 @@ public interface IBarsService {
     ResponseEntity<ListDTO> findAllByOwner();
 
     ResponseEntity<BarDTO> active(IdDTO id);
+
+    ResponseEntity<StringDTO> findUrlMenu(HttpHeaders headers);
 }

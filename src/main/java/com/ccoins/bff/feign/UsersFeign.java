@@ -5,6 +5,7 @@ import com.ccoins.bff.dto.users.OwnerDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @FeignClient(name = "${feign.users-ms.name}", url = "${feign.users-ms.url}")
@@ -26,4 +27,6 @@ public interface UsersFeign {
     @PutMapping("/client/name")
     void updateName(ClientDTO request);
 
+    @PostMapping("/client/list")
+    List<ClientDTO> findByIdIn(@RequestBody List<Long> list);
 }

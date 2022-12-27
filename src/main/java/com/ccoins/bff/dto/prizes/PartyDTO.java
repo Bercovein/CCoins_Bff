@@ -22,4 +22,5 @@ public class PartyDTO {
     private boolean active;
 
     private Long table;
+
 }

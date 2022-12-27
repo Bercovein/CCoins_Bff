@@ -33,4 +33,6 @@ public interface ITablesService {
     List<BarTableDTO> findByIdIn(LongListDTO list);
 
     BarTableDTO findByCode(String code);
+
+    GenericRsDTO<Boolean> isTableActiveByCode(String code);
 }

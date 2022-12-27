@@ -2,13 +2,18 @@ package com.ccoins.bff.service.impl;
 
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ListDTO;
+import com.ccoins.bff.dto.bars.BarTableDTO;
+import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.dto.prizes.PrizeDTO;
+import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.PrizeFeign;
 import com.ccoins.bff.service.IPrizesService;
+import com.ccoins.bff.utils.HeaderUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +25,18 @@ public class PrizesService extends ContextService implements IPrizesService {
 
     private final PrizeFeign prizeFeign;
 
+    private final ClientService clientService;
+
+    private final PartiesService partiesService;
+
+    private final TablesService tablesService;
+
     @Autowired
-    public PrizesService(PrizeFeign prizeFeign) {
+    public PrizesService(PrizeFeign prizeFeign, ClientService clientService, PartiesService partiesService, TablesService tablesService) {
         this.prizeFeign = prizeFeign;
+        this.clientService = clientService;
+        this.partiesService = partiesService;
+        this.tablesService = tablesService;
     }
 
     @Override
@@ -75,4 +89,35 @@ public class PrizesService extends ContextService implements IPrizesService {
                     this.getClass(), ExceptionConstant.PRIZE_UPDATE_ACTIVE_ERROR);
         }
     }
+
+    @Override
+    public void buyPrizeByTableAndUser(IdDTO idDTO, String client, String code) {
+
+        PrizeDTO prize = this.findById(idDTO).getBody();
+
+        if(prize == null){
+            throw new RuntimeException();
+        }
+
+        ClientDTO clientDTO = this.clientService.findActiveByIp(client);
+
+        Optional<PartyDTO> partyOpt = this.partiesService.findActivePartyByTableCode(code);
+
+        if(partyOpt.isEmpty()){
+            throw new RuntimeException();
+        }
+
+        PartyDTO party = partyOpt.get();
+
+        //si la party no tiene puntos, error
+
+    }
+
+    @Override
+    public ResponseEntity<ListDTO> findAllByHeader(HttpHeaders headers) {
+
+        BarTableDTO barTableDTO = this.tablesService.findByCode(HeaderUtils.getCode(headers));
+        return this.findAllByBar(IdDTO.builder().id(barTableDTO.getBar()).build(), Optional.of("active"));
+    }
+
 }

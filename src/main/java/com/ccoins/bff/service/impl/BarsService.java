@@ -2,14 +2,17 @@ package com.ccoins.bff.service.impl;
 
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ListDTO;
+import com.ccoins.bff.dto.StringDTO;
 import com.ccoins.bff.dto.bars.BarDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.UnauthorizedException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.service.IBarsService;
+import com.ccoins.bff.utils.HeaderUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +21,6 @@ import org.springframework.stereotype.Service;
 public class BarsService extends ContextService implements IBarsService {
 
     private final BarsFeign barsFeign;
-
 
     @Autowired
     public BarsService(BarsFeign barsFeign) {
@@ -77,5 +79,13 @@ public class BarsService extends ContextService implements IBarsService {
             throw new BadRequestException(ExceptionConstant.BARS_ACTIVE_ERROR_CODE,
                     this.getClass(), ExceptionConstant.BARS_ACTIVE_ERROR);
         }
+    }
+
+    @Override
+    public ResponseEntity<StringDTO> findUrlMenu(HttpHeaders headers) {
+
+        String code = HeaderUtils.getCode(headers);
+
+        return this.barsFeign.findUrlByTableCode(code);
     }
 }

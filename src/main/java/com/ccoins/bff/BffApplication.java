@@ -2,13 +2,14 @@ package com.ccoins.bff;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 @EnableFeignClients
 public class BffApplication
-//		extends SpringBootServletInitializer
+		extends SpringBootServletInitializer
 {
 
 	public static void main(String[] args) {
@@ -18,9 +19,9 @@ public class BffApplication
 		ConfigurableApplicationContext context = builder.run(args);
 	}
 
-//	@Override
-//	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-//		return application.sources(BffApplication.class);
-//	}
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		return application.sources(BffApplication.class);
+	}
 
 }
