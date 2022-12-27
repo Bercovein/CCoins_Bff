@@ -88,7 +88,7 @@ public class ImageService extends ContextService implements IImageService {
 
         //generar QRs
         for (BarTableDTO table : listed) {
-            InputStream inputStream = this.createQRImage(this.URL.concat("/").concat(table.getCode()), table.getCode());
+            InputStream inputStream = this.createQRImage(this.URL.concat("/login").concat(table.getCode()), table.getCode());
             imageList.add(ImageToPdfDTO.builder().number(table.getNumber()).image(inputStream).build());
         }
 

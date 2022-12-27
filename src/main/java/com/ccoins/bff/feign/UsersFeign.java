@@ -20,8 +20,8 @@ public interface UsersFeign {
     @PostMapping("/client")
     ClientDTO saveClient(ClientDTO request);
 
-    @GetMapping("/client/ip/{id}")
-    Optional<ClientDTO> findActiveByIp(@PathVariable("id")String id);
+    @GetMapping("/client/ip/{ip}")
+    Optional<ClientDTO> findActiveByIp(@PathVariable("ip") String ip);
 
     @PutMapping("/client/name")
     void updateName(ClientDTO request);

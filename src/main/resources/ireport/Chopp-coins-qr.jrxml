@@ -49,7 +49,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Magneto" size="26" isBold="true"/>
+					<font size="26" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{numberLeft}]]></textFieldExpression>
 			</textField>
@@ -76,7 +76,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Magneto" size="26" isBold="true"/>
+					<font size="26" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{numberMedium}]]></textFieldExpression>
 			</textField>
@@ -103,7 +103,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Magneto" size="26" isBold="true"/>
+					<font size="26" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{numberRight}]]></textFieldExpression>
 			</textField>
