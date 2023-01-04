@@ -8,6 +8,7 @@ public class SwaggerConstants {
     public static final String CLIENT = "Client";
     public static final String PRIZE = "Prize";
     public static final String BAR = "Bar";
+    public static final String SPOTIFY = "Spotify";
     public static final String OWNER = "Owner";
     public static final String PARTY = "Party";
     public static final String GAME = "Game";

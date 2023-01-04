@@ -28,26 +28,26 @@ public class PartyController implements IPartyController {
         this.prizeService = prizeService;
     }
 
-    @GetMapping("/{id}/coins/quantity")
+    @PostMapping("/coins/quantity")
     @LimitedTime
     @Override
-    public ResponseEntity<LongDTO> getTotalCoinsByParty(@PathVariable("id") Long id){
-        return ResponseEntity.ok(this.service.countCoinsByParty(id));
+    public ResponseEntity<LongDTO> getTotalCoinsByParty(@RequestBody IdDTO id){
+        return ResponseEntity.ok(this.service.countCoinsByParty(id.getId()));
     }
 
-    @GetMapping("/{id}")
+    @PostMapping("")
     @LimitedTime
     @Override
-    public ResponseEntity<PartyDTO> getPartyInfo(@PathVariable("id") Long id){
-        return ResponseEntity.ok(this.service.findById(id));
+    public ResponseEntity<PartyDTO> getPartyInfo(@RequestBody IdDTO id){
+        return ResponseEntity.ok(this.service.findById(id.getId()));
     }
 
     //integrantes de la mesa
-    @GetMapping("/{id}/clients")
+    @PostMapping("/clients")
     @LimitedTime
     @Override
-    public ResponseEntity<ListDTO> getClientsFromParty(@PathVariable("id") Long id, @RequestHeader HttpHeaders headers){
-        return ResponseEntity.ok(this.service.findClientsFromParty(id, headers));
+    public ResponseEntity<ListDTO> getClientsFromParty(@RequestBody IdDTO id, @RequestHeader HttpHeaders headers){
+        return ResponseEntity.ok(this.service.findClientsFromParty(id.getId(), headers));
     }
 
     @Override

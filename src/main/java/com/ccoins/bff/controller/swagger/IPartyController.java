@@ -6,26 +6,28 @@ import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.LongDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
-import static com.ccoins.bff.controller.swagger.SwaggerConstants.*;
+import static com.ccoins.bff.controller.swagger.SwaggerConstants.PARTY;
 
 @Api(tags = PARTY)
 public interface IPartyController {
 
-    @ApiOperation(value = COUNT + "coins by party")
-    ResponseEntity<LongDTO> getTotalCoinsByParty(Long id);
+    @PostMapping("/coins/quantity")
+    @LimitedTime
+    ResponseEntity<LongDTO> getTotalCoinsByParty(@RequestBody IdDTO id);
 
     //info de la mesa (nombre de la party, nro de mesa..)
-    @GetMapping("/{id}")
-    ResponseEntity<PartyDTO> getPartyInfo(@PathVariable("id") Long id);
+    @PostMapping
+    ResponseEntity<PartyDTO> getPartyInfo(@RequestBody IdDTO id);
 
     //integrantes de la mesa
-    @GetMapping("/{id}/clients")
-    ResponseEntity<ListDTO> getClientsFromParty(@PathVariable("id") Long id, @RequestHeader HttpHeaders headers);
+    @PostMapping("/clients")
+    ResponseEntity<ListDTO> getClientsFromParty(@RequestBody IdDTO id, @RequestHeader HttpHeaders headers);
 
     @PostMapping("/buy")
     @LimitedTime
