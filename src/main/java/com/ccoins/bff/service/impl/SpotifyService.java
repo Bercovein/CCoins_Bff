@@ -4,9 +4,11 @@ import com.ccoins.bff.configuration.CredentialsSPTFConfig;
 import com.ccoins.bff.exceptions.UnauthorizedException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.SpotifyFeign;
+import com.ccoins.bff.service.IServerSentEventService;
 import com.ccoins.bff.service.ISpotifyService;
 import com.ccoins.bff.spotify.sto.*;
 import com.ccoins.bff.utils.MapperUtils;
+import com.ccoins.bff.utils.enums.EventNamesEnum;
 import feign.FeignException;
 import org.modelmapper.internal.util.CopyOnWriteLinkedHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +24,16 @@ public class SpotifyService implements ISpotifyService {
     private final SpotifyFeign feign;
     private final CredentialsSPTFConfig credentials;
 
+    private final IServerSentEventService sseService;
+
     protected CopyOnWriteLinkedHashMap<Long, TokenPlaybackSPTF> actualSongs = new CopyOnWriteLinkedHashMap<>();
 
 
     @Autowired
-    public SpotifyService(SpotifyFeign feign, CredentialsSPTFConfig credentials) {
+    public SpotifyService(SpotifyFeign feign, CredentialsSPTFConfig credentials, IServerSentEventService sseService) {
         this.feign = feign;
         this.credentials = credentials;
+        this.sseService = sseService;
     }
 
     @Override
@@ -65,17 +70,20 @@ public class SpotifyService implements ISpotifyService {
         headers.remove("content-length");
     }
 
-    public void addActualSongToList(Long id, String token, PlaybackSPTF playback){
+    @Override
+    public void addActualSongToList(Long barId, String token, PlaybackSPTF playback){
 
         Optional<PlaybackSPTF> optional = Optional.ofNullable(playback);
         TokenPlaybackSPTF tokenPlayback = TokenPlaybackSPTF.builder().token(token).build();
 
         if(optional.isPresent()) {
             tokenPlayback.setPlayback(optional.get());
-            this.actualSongs.put(id, tokenPlayback);
+            this.actualSongs.put(barId, tokenPlayback);
         }else{
-            this.actualSongs.replace(id, tokenPlayback);
+            this.actualSongs.replace(barId, tokenPlayback);
         }
+
+        this.sseService.dispatchEventToClients(EventNamesEnum.ACTUAL_SONG_SPTF.name(),playback, barId);
     }
 
     @Override

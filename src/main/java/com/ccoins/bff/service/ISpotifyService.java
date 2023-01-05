@@ -14,6 +14,8 @@ public interface ISpotifyService {
 
     CredentialsSPTFDTO getCredentials();
 
+    void addActualSongToList(Long barId, String token, PlaybackSPTF playback);
+
     void addTokenPlaybackInMemory(BarTokenDTO request);
 
     PlaybackSPTF getPlaybackByBarId(Long id);

@@ -1,18 +1,13 @@
-package com.ccoins.bff.controller;
+package com.ccoins.bff.service.impl;
 
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.feign.BarsFeign;
+import com.ccoins.bff.service.IServerSentEventService;
 import com.ccoins.bff.service.ISpotifyService;
-import com.ccoins.bff.spotify.sto.PlaybackSPTF;
-import com.ccoins.bff.utils.enums.EventNamesEnum;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -22,20 +17,17 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-@RestController
-@RequestMapping("/sse")
-public class SSEController {
+@Service
+public class ServerSentEventService implements IServerSentEventService {
 
     @Autowired
     private BarsFeign barsFeign;
 
     private ISpotifyService spotifyService;
 
-    public Map<Long, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
+    protected static final Map<Long, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
-    // method for client subscription
-    @CrossOrigin(origins = "${sse.cross-origins}")
-    @RequestMapping(value="/subscribe",consumes=MediaType.ALL_VALUE)
+    @Override
     public SseEmitter subscribe(@RequestParam Long partyId){
 
         ResponseEntity<IdDTO> responseEntity = this.barsFeign.getBarIdByParty(partyId);
@@ -64,9 +56,10 @@ public class SSEController {
         return sseEmitter;
     }
 
+    @Override
     public void dispatchEventToClients(String eventName, Object data, Long barId){
 
-        List<SseEmitter> sseEmitterList = this.emitters.get(barId);
+        List<SseEmitter> sseEmitterList = emitters.get(barId);
 
         if(sseEmitterList != null && !sseEmitterList.isEmpty()){
 
@@ -82,20 +75,6 @@ public class SSEController {
         }
     }
 
-    @Scheduled(fixedDelayString = "${sse.cron}")
-    public void sendProgramedMessages(){
-
-        this.emitters.forEach((barId,emitterList) -> {
-            this.dispatchSpotifyEvents(barId);
-        });
-    }
-
-    private void dispatchSpotifyEvents(Long barId){
-        PlaybackSPTF playback = this.spotifyService.getPlaybackByBarId(barId);
-        this.dispatchEventToClients(EventNamesEnum.ACTUAL_SONG_SPTF.name(),playback, barId);
-    }
-
-
     private void sendInitEvent(SseEmitter sseEmitter){
         try{
             sseEmitter.send(SseEmitter.event().name("INIT"));
@@ -103,5 +82,4 @@ public class SSEController {
             e.printStackTrace();
         }
     }
-
 }
