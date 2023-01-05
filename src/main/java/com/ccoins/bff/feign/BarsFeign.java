@@ -84,4 +84,7 @@ public interface BarsFeign {
     @GetMapping("/games/types")
     ResponseEntity<ListDTO> findAllGamesTypes();
 
+    @GetMapping("/bars/id/party/{id}")
+    ResponseEntity<IdDTO> getBarIdByParty(@RequestParam("id") Long id);
+
 }

@@ -1,4 +1,4 @@
-package com.ccoins.bff.modal;
+package com.ccoins.bff.spotify.sto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

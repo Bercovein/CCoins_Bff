@@ -158,4 +158,7 @@ public class ExceptionConstant {
     public static final String PARTY_BY_ERROR_CODE = "0045";
     public static final String PARTY_BY_ERROR = GET_ERROR_LABEL.concat("party by table code");
 
+    public static final String SPOTIFY_PLAYBACK_ERROR_CODE = "0046";
+
+
 }

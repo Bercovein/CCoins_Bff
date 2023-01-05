@@ -75,7 +75,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
-                .authorizeRequests().antMatchers("/oauth/**", "/actuator/**","/clients/**", "/parties/**","/coins/**").permitAll()
+                .authorizeRequests().antMatchers("/oauth/**", "/actuator/**","/clients/**","/sse/**" , "/parties/**","/coins/**").permitAll()
                 .antMatchers("/","/my/docs", "/v2/swagger", "/swagger-ui/**", "/swagger-ui.html", "/v2/api-docs", "/swagger-resources/**", "/webjars/**", "/swagger.json").permitAll()      // rutas publicas, no requieren autenticación
                 .anyRequest().authenticated()
                 .and()
