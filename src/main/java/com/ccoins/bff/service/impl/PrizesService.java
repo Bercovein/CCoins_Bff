@@ -11,7 +11,6 @@ import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.PrizeFeign;
 import com.ccoins.bff.service.IPrizesService;
 import com.ccoins.bff.utils.HeaderUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-@Slf4j
 public class PrizesService extends ContextService implements IPrizesService {
 
     private final PrizeFeign prizeFeign;

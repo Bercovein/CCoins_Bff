@@ -5,10 +5,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import javax.validation.Valid;
-import java.util.Optional;
 
 @Api(tags = "SPOTIFY")
 public interface ISpotifyController {
@@ -25,9 +27,7 @@ public interface ISpotifyController {
     @ApiOperation(value = "Return config to authorize Spotify")
     ResponseEntity<CredentialsSPTFDTO> getCredentials();
 
-    @GetMapping("/playback")
-    ResponseEntity<Optional<PlaybackSPTF>> getPlaybackState(@RequestHeader HttpHeaders headers);
-
     @PostMapping("/actualSongs")
     void addBarTokenToActualSongs(@RequestBody @Valid BarTokenDTO request);
+
 }

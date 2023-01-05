@@ -9,14 +9,12 @@ import com.ccoins.bff.feign.UsersFeign;
 import com.ccoins.bff.service.IClientService;
 import com.ccoins.bff.service.IPartiesService;
 import com.ccoins.bff.service.IRandomNameService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-@Slf4j
 public class ClientService implements IClientService {
 
     private final IPartiesService partyService;
@@ -53,7 +51,6 @@ public class ClientService implements IClientService {
         try {
             response = this.findActiveByIp(request.getIp());
         }catch(ObjectNotFoundException e) {
-            log.error("Nuevo cliente");
             request.setNickName(this.randomize.randomDefaultName());
             response = this.newClient(request);
         }

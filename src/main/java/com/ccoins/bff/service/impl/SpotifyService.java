@@ -6,21 +6,17 @@ import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.SpotifyFeign;
 import com.ccoins.bff.service.ISpotifyService;
 import com.ccoins.bff.spotify.sto.*;
-import com.ccoins.bff.utils.HttpHeadersUtils;
 import com.ccoins.bff.utils.MapperUtils;
 import feign.FeignException;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.internal.util.CopyOnWriteLinkedHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-@Slf4j
 public class SpotifyService implements ISpotifyService {
 
     private final SpotifyFeign feign;
@@ -64,35 +60,14 @@ public class SpotifyService implements ISpotifyService {
         return (CredentialsSPTFDTO) MapperUtils.map(this.credentials, CredentialsSPTFDTO.class);
     }
 
-    @Override
-    public Optional<PlaybackSPTF> getPlaybackState(HttpHeaders headers){
-        this.setParameters(headers);
-        return this.feign.getPlayState(headers);
-    }
-
     private void setParameters(HttpHeaders headers){
         headers.set("Accept-Encoding", "identity");
         headers.remove("content-length");
     }
 
-    @Scheduled(fixedDelayString = "${spotify.playback.cron}")
-    public void loadActualSongs(){ //actualiza el estado de las canciones de los bares cada X tiempo
-        actualSongs.forEach((key,value) -> {
-            try {
-                this.addActualSongToList(key, value.getToken());
-            }catch(Exception ignored){
+    public void addActualSongToList(Long id, String token, PlaybackSPTF playback){
 
-            }
-        });
-    }
-
-    public void addActualSongToList(Long id, String token){
-        HttpHeaders headers = HttpHeadersUtils.getHeaderFromToken(token);
-        this.setParameters(headers);
-        Optional<PlaybackSPTF> optional;
-
-        optional = this.feign.getPlayState(headers);
-
+        Optional<PlaybackSPTF> optional = Optional.ofNullable(playback);
         TokenPlaybackSPTF tokenPlayback = TokenPlaybackSPTF.builder().token(token).build();
 
         if(optional.isPresent()) {
@@ -104,11 +79,16 @@ public class SpotifyService implements ISpotifyService {
     }
 
     @Override
-    public void addTokenPlaybackInMemory(Long barId, String token){
+    public void addTokenPlaybackInMemory(BarTokenDTO request){
 
+        Long id = request.getId();
         try {
-            if (!this.actualSongs.containsKey(barId))
-                this.addActualSongToList(barId,token);
+            if (!this.actualSongs.containsKey(id)) {
+                this.addActualSongToList(id,
+                        request.getToken(),
+                        request.getPlayback()
+                );
+            }
         }catch(FeignException e){
             throw new UnauthorizedException(ExceptionConstant.SPOTIFY_PLAYBACK_ERROR_CODE,
                     this.getClass(),

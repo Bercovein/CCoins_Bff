@@ -9,9 +9,11 @@ import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.PrizeFeign;
 import com.ccoins.bff.feign.UsersFeign;
-import com.ccoins.bff.service.*;
+import com.ccoins.bff.service.ICoinsService;
+import com.ccoins.bff.service.IPartiesService;
+import com.ccoins.bff.service.IRandomNameService;
+import com.ccoins.bff.service.ITablesService;
 import com.ccoins.bff.utils.HeaderUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -23,7 +25,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 public class PartiesService extends ContextService implements IPartiesService {
 
     private final PrizeFeign prizeFeign;

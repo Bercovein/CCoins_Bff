@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/spotify")
@@ -46,15 +45,11 @@ public class SpotifyController implements ISpotifyController {
         return ResponseEntity.ok(this.service.getCredentials());
     }
 
-    @GetMapping("/playback")
-    @Override
-    public ResponseEntity<Optional<PlaybackSPTF>> getPlaybackState(@RequestHeader HttpHeaders headers){
-        return ResponseEntity.ok(this.service.getPlaybackState(headers));
-    }
 
-    @PostMapping("/actualSongs")
+    @PostMapping("/actualSongs/bar")
     @Override
     public void addBarTokenToActualSongs(@RequestBody @Valid BarTokenDTO request){
-        this.service.addTokenPlaybackInMemory(request.getId(), request.getToken());
+        this.service.addTokenPlaybackInMemory(request);
     }
+
 }

@@ -4,8 +4,6 @@ import com.ccoins.bff.spotify.sto.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Optional;
-
 public interface ISpotifyService {
 
     ResponseEntity<PlaylistSPTF> getPlaylist(HttpHeaders headers);
@@ -16,9 +14,7 @@ public interface ISpotifyService {
 
     CredentialsSPTFDTO getCredentials();
 
-    Optional<PlaybackSPTF> getPlaybackState(HttpHeaders headers);
-
-    void addTokenPlaybackInMemory(Long barId, String token);
+    void addTokenPlaybackInMemory(BarTokenDTO request);
 
     PlaybackSPTF getPlaybackByBarId(Long id);
 

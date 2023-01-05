@@ -3,7 +3,6 @@ package com.ccoins.bff.service.impl;
 import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.service.IRandomNameService;
-import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.io.FileReader;
 
 @Service
-@Slf4j
 public class RandomNameService implements IRandomNameService {
 
     @Value("${folder.files.animals.path}")

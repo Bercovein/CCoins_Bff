@@ -7,13 +7,11 @@ import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.service.IGamesService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
-@Slf4j
 public class GamesService extends ContextService implements IGamesService {
 
     private final BarsFeign barsFeign;

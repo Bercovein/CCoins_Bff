@@ -4,12 +4,10 @@ import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.CoinsFeign;
 import com.ccoins.bff.service.ICoinsService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@Slf4j
 public class CoinsService implements ICoinsService {
 
     private final CoinsFeign feign;

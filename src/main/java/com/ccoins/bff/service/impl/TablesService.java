@@ -1,18 +1,13 @@
 package com.ccoins.bff.service.impl;
 
-import com.ccoins.bff.dto.GenericRsDTO;
-import com.ccoins.bff.dto.IdDTO;
-import com.ccoins.bff.dto.ListDTO;
-import com.ccoins.bff.dto.LongListDTO;
+import com.ccoins.bff.dto.*;
 import com.ccoins.bff.dto.bars.BarTableDTO;
 import com.ccoins.bff.dto.bars.TableDTO;
 import com.ccoins.bff.dto.bars.TableQuantityDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
-import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.service.ITablesService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,7 +16,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Slf4j
 public class TablesService extends ContextService implements ITablesService {
 
     private final BarsFeign barsFeign;

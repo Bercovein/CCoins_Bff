@@ -2,13 +2,12 @@ package com.ccoins.bff.configuration.security.filter;
 
 import com.ccoins.bff.configuration.security.JwtUtils;
 import com.ccoins.bff.configuration.security.authentication.JwtProvider;
-import com.ccoins.bff.service.impl.ClientService;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.exceptions.utils.ErrorUtils;
+import com.ccoins.bff.service.impl.ClientService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -26,7 +25,6 @@ import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.util.Optional.ofNullable;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
-@Slf4j
 public class JwtRefreshFilter extends OncePerRequestFilter {
 
     @Autowired

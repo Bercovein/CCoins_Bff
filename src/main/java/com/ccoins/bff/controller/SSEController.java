@@ -5,7 +5,6 @@ import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.service.ISpotifyService;
 import com.ccoins.bff.spotify.sto.PlaybackSPTF;
 import com.ccoins.bff.utils.enums.EventNamesEnum;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +24,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @RestController
 @RequestMapping("/sse")
-@Slf4j
 public class SSEController {
 
     @Autowired

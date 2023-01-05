@@ -10,14 +10,12 @@ import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.service.IBarsService;
 import com.ccoins.bff.utils.HeaderUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
-@Slf4j
 public class BarsService extends ContextService implements IBarsService {
 
     private final BarsFeign barsFeign;

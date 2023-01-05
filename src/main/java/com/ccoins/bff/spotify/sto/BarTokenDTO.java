@@ -17,4 +17,6 @@ public class BarTokenDTO {
     private Long id;
     @NotNull
     private String token;
+
+    private PlaybackSPTF playback;
 }
