@@ -160,5 +160,8 @@ public class ExceptionConstant {
 
     public static final String SPOTIFY_PLAYBACK_ERROR_CODE = "0046";
 
+    public static final String WRONG_DEVICE_ERROR_CODE = "0047";
+    public static final String WRONG_DEVICE_ERROR = "Device not permitted";
+
 
 }

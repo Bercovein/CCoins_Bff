@@ -3,7 +3,6 @@ package com.ccoins.bff.service.impl;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.service.IServerSentEventService;
-import com.ccoins.bff.service.ISpotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,7 @@ public class ServerSentEventService implements IServerSentEventService {
     @Autowired
     private BarsFeign barsFeign;
 
-    private ISpotifyService spotifyService;
+
 
     protected static final Map<Long, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 

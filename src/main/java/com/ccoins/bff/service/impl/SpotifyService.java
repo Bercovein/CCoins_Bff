@@ -7,15 +7,20 @@ import com.ccoins.bff.feign.SpotifyFeign;
 import com.ccoins.bff.service.IServerSentEventService;
 import com.ccoins.bff.service.ISpotifyService;
 import com.ccoins.bff.spotify.sto.*;
+import com.ccoins.bff.utils.HeaderUtils;
 import com.ccoins.bff.utils.MapperUtils;
 import com.ccoins.bff.utils.enums.EventNamesEnum;
 import feign.FeignException;
 import org.modelmapper.internal.util.CopyOnWriteLinkedHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,6 +30,9 @@ public class SpotifyService implements ISpotifyService {
     private final CredentialsSPTFConfig credentials;
 
     private final IServerSentEventService sseService;
+
+    @Value("${spotify.max-to-vote}")
+    private int maxToVote;
 
     protected CopyOnWriteLinkedHashMap<Long, TokenPlaybackSPTF> actualSongs = new CopyOnWriteLinkedHashMap<>();
 
@@ -39,7 +47,7 @@ public class SpotifyService implements ISpotifyService {
     @Override
     public ResponseEntity<PlaylistSPTF> getPlaylist(HttpHeaders headers) {
 
-        this.setParameters(headers);
+        HeaderUtils.setParameters(headers);
         PlaylistSPTF response =  this.feign.getQueue(headers);
         return ResponseEntity.ok(response);
     }
@@ -47,7 +55,7 @@ public class SpotifyService implements ISpotifyService {
     @Override
     public ResponseEntity<RecentlyPlayedSPTF> getRecentlyPlayed(HttpHeaders headers, Integer limit) {
 
-        this.setParameters(headers);
+        HeaderUtils.setParameters(headers);
         RecentlyPlayedSPTF response =  this.feign.getRecentlyPlayed(headers,limit);
         return ResponseEntity.ok(response);
     }
@@ -55,7 +63,7 @@ public class SpotifyService implements ISpotifyService {
     @Override
     public void addTrackToQueue(HttpHeaders headers, UriSPTF trackUri) {
 
-        this.setParameters(headers);
+        HeaderUtils.setParameters(headers);
         this.feign.addTrackToQueue(headers,trackUri);
     }
 
@@ -65,12 +73,10 @@ public class SpotifyService implements ISpotifyService {
         return (CredentialsSPTFDTO) MapperUtils.map(this.credentials, CredentialsSPTFDTO.class);
     }
 
-    private void setParameters(HttpHeaders headers){
-        headers.set("Accept-Encoding", "identity");
-        headers.remove("content-length");
-    }
+
 
     @Override
+    @Async
     public void addActualSongToList(Long barId, String token, PlaybackSPTF playback){
 
         Optional<PlaybackSPTF> optional = Optional.ofNullable(playback);
@@ -82,8 +88,6 @@ public class SpotifyService implements ISpotifyService {
         }else{
             this.actualSongs.replace(barId, tokenPlayback);
         }
-
-        this.sseService.dispatchEventToClients(EventNamesEnum.ACTUAL_SONG_SPTF.name(),playback, barId);
     }
 
     @Override
@@ -96,6 +100,8 @@ public class SpotifyService implements ISpotifyService {
                         request.getToken(),
                         request.getPlayback()
                 );
+
+                this.sseService.dispatchEventToClients(EventNamesEnum.ACTUAL_SONG_SPTF.name(), request.getPlayback(), id);
             }
         }catch(FeignException e){
             throw new UnauthorizedException(ExceptionConstant.SPOTIFY_PLAYBACK_ERROR_CODE,
@@ -115,4 +121,30 @@ public class SpotifyService implements ISpotifyService {
         }
         return playback;
     }
+
+    //TRAE LOS PROXIMOS TEMAS A VOTAR. DEBERIA DEVOLVERSE A MEDIDA QUE VIAJA LA CANCIÓN Y DEBE TENER TAMBIEN LA VOTACIÓN ACTUAL.
+    public List<SongSPTF> getNextVotes(Long barId){
+
+        TokenPlaybackSPTF tokenPlaybackSPTF = this.actualSongs.get(barId); // trae canción actual
+        HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(tokenPlaybackSPTF.getToken());
+        PlaylistSPTF playlistSPTF = this.feign.getQueue(headers); //trae la playlist actual
+        List<SongSPTF> songs = playlistSPTF.getQueue();
+
+        //toma los 3 temas siguientes
+        if(songs.isEmpty() || songs.size() == 1)
+            return new ArrayList<>();
+
+        return songs.subList(0, Math.min(songs.size(), maxToVote));
+    }
+
+//    public void addVotedSongToNextPlayback(Long barId, String uri){
+//
+//        TokenPlaybackSPTF tokenPlaybackSPTF = this.actualSongs.get(barId); // trae el token
+//        HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(tokenPlaybackSPTF.getToken());
+//        UriSPTF trackUri = UriSPTF.builder().uri(uri).build();
+//        //quitar la canción de la lista
+//        this.feign.removeSongFromPlaylist(headers, ,trackUri);
+//        //agregarla a continuación
+////        this.feign.addTrackToQueue(headers,List.of());
+//    }
 }

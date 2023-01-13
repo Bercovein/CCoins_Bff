@@ -1,9 +1,6 @@
 package com.ccoins.bff.feign;
 
-import com.ccoins.bff.spotify.sto.PlaybackSPTF;
-import com.ccoins.bff.spotify.sto.PlaylistSPTF;
-import com.ccoins.bff.spotify.sto.RecentlyPlayedSPTF;
-import com.ccoins.bff.spotify.sto.UriSPTF;
+import com.ccoins.bff.spotify.sto.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
@@ -26,4 +23,6 @@ public interface SpotifyFeign {
     @GetMapping(produces = "application/json", consumes = "application/json")
     Optional<PlaybackSPTF> getPlayState(@RequestHeader HttpHeaders headers);
 
+    @PostMapping(value = "/playlists/{playlistId}/tracks", produces = "application/json", consumes = "application/json")
+    void removeSongFromPlaylist(@RequestHeader HttpHeaders headers, @RequestParam("playlistId") Long playlistId, @RequestBody TrackUriListSPTF request);
 }

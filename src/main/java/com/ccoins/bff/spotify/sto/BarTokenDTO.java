@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -20,4 +21,6 @@ public class BarTokenDTO {
     private String token;
 
     private PlaybackSPTF playback;
+
+    private List<SongSPTF> toVote;
 }
