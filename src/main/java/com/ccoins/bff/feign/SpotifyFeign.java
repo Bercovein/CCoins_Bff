@@ -23,6 +23,6 @@ public interface SpotifyFeign {
     @GetMapping(produces = "application/json", consumes = "application/json")
     Optional<PlaybackSPTF> getPlayState(@RequestHeader HttpHeaders headers);
 
-    @PostMapping(value = "/playlists/{playlistId}/tracks", produces = "application/json", consumes = "application/json")
-    void removeSongFromPlaylist(@RequestHeader HttpHeaders headers, @RequestParam("playlistId") Long playlistId, @RequestBody TrackUriListSPTF request);
+    @DeleteMapping(value = "/playlists/{playlistId}/tracks", produces = "application/json", consumes = "application/json")
+    void removeSongFromPlaylist(@RequestHeader HttpHeaders headers, @RequestParam("playlistId") String playlistId, @RequestBody TrackUriListSPTF request);
 }

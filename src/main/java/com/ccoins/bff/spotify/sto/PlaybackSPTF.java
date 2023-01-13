@@ -17,4 +17,6 @@ public class PlaybackSPTF {
     private boolean playing;
 
     private PlaybackItemSPTF item;
+
+    private UriSPTF context;
 }

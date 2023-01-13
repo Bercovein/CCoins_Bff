@@ -18,6 +18,7 @@ public class SwaggerConstants {
 
     //
     public static final String SAVE_OR_UPDATE = "Save / Update";
+    public static final String SUBSCRIBE = "Subscribe";
     public static final String SAVE_BY_QUANTITY = "Save by quantity";
     public static final String DELETE_BY_QUANTITY = "Delete by quantity";
     public static final String GENERATE_QR_PDF = "Generate PDF from codes";

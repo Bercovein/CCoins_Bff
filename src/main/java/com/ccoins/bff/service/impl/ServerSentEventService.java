@@ -5,6 +5,7 @@ import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.service.IServerSentEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -56,6 +57,7 @@ public class ServerSentEventService implements IServerSentEventService {
     }
 
     @Override
+    @Async
     public void dispatchEventToClients(String eventName, Object data, Long barId){
 
         List<SseEmitter> sseEmitterList = emitters.get(barId);

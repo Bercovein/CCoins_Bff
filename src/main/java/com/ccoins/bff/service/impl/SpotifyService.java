@@ -34,6 +34,9 @@ public class SpotifyService implements ISpotifyService {
     @Value("${spotify.max-to-vote}")
     private int maxToVote;
 
+    @Value("${spotify.vote-before-ms}")
+    private int votesBeforeEndSongMs;
+
     protected CopyOnWriteLinkedHashMap<Long, TokenPlaybackSPTF> actualSongs = new CopyOnWriteLinkedHashMap<>();
 
 
@@ -74,7 +77,6 @@ public class SpotifyService implements ISpotifyService {
     }
 
 
-
     @Override
     @Async
     public void addActualSongToList(Long barId, String token, PlaybackSPTF playback){
@@ -95,11 +97,22 @@ public class SpotifyService implements ISpotifyService {
 
         Long id = request.getId();
         try {
+            PlaybackSPTF playbackSPTF = request.getPlayback();
+            String token = request.getToken();
             if (!this.actualSongs.containsKey(id)) {
                 this.addActualSongToList(id,
-                        request.getToken(),
-                        request.getPlayback()
+                        token,
+                        playbackSPTF
                 );
+
+                if(playbackSPTF != null
+                        && playbackSPTF.getItem() != null
+                        && (playbackSPTF.getItem().getDurationMs() - playbackSPTF.getProgressMs() <= this.votesBeforeEndSongMs)){
+
+                    //resolver resultado de la votación
+                    this.addVotedSongToNextPlayback(token, playbackSPTF);
+                    List<SongSPTF> list = this.getNextVotes(token); //ESTAS CANCIONES DEBERIAN VIAJAR A LA NUEVA VOTACIÓN
+                }
 
                 this.sseService.dispatchEventToClients(EventNamesEnum.ACTUAL_SONG_SPTF.name(), request.getPlayback(), id);
             }
@@ -122,11 +135,9 @@ public class SpotifyService implements ISpotifyService {
         return playback;
     }
 
-    //TRAE LOS PROXIMOS TEMAS A VOTAR. DEBERIA DEVOLVERSE A MEDIDA QUE VIAJA LA CANCIÓN Y DEBE TENER TAMBIEN LA VOTACIÓN ACTUAL.
-    public List<SongSPTF> getNextVotes(Long barId){
+    public List<SongSPTF> getNextVotes(String token){
 
-        TokenPlaybackSPTF tokenPlaybackSPTF = this.actualSongs.get(barId); // trae canción actual
-        HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(tokenPlaybackSPTF.getToken());
+        HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(token);
         PlaylistSPTF playlistSPTF = this.feign.getQueue(headers); //trae la playlist actual
         List<SongSPTF> songs = playlistSPTF.getQueue();
 
@@ -137,14 +148,25 @@ public class SpotifyService implements ISpotifyService {
         return songs.subList(0, Math.min(songs.size(), maxToVote));
     }
 
-//    public void addVotedSongToNextPlayback(Long barId, String uri){
-//
-//        TokenPlaybackSPTF tokenPlaybackSPTF = this.actualSongs.get(barId); // trae el token
-//        HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(tokenPlaybackSPTF.getToken());
-//        UriSPTF trackUri = UriSPTF.builder().uri(uri).build();
-//        //quitar la canción de la lista
-//        this.feign.removeSongFromPlaylist(headers, ,trackUri);
-//        //agregarla a continuación
-////        this.feign.addTrackToQueue(headers,List.of());
-//    }
+    public void addVotedSongToNextPlayback(String token, PlaybackSPTF playbackSPTF){
+
+        String songUri = null; // BUSCAR LA CANCIÓN GANADORA DE LA VOTACIÓN
+
+        HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(token);
+
+        UriSPTF playlistUri = playbackSPTF.getContext();
+        String[] list = playlistUri.getUri().split(":");
+        String playlistId = list[list.length-1]; //toma el id del uri de la playlist
+
+        UriSPTF trackUri = UriSPTF.builder().uri(songUri).build();
+
+        //quitar la canción de la lista
+        this.feign.removeSongFromPlaylist(headers,
+                playlistId,
+                TrackUriListSPTF.builder().tracks(List.of(trackUri)).build()
+        );
+
+        //agregarla a continuación
+        this.feign.addTrackToQueue(headers,trackUri);
+    }
 }
