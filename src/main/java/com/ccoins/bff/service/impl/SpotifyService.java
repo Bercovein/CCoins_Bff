@@ -1,14 +1,18 @@
 package com.ccoins.bff.service.impl;
 
 import com.ccoins.bff.configuration.CredentialsSPTFConfig;
+import com.ccoins.bff.dto.coins.SongDTO;
+import com.ccoins.bff.dto.coins.VotingDTO;
 import com.ccoins.bff.exceptions.UnauthorizedException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.SpotifyFeign;
 import com.ccoins.bff.service.IServerSentEventService;
 import com.ccoins.bff.service.ISpotifyService;
+import com.ccoins.bff.service.IVoteService;
 import com.ccoins.bff.spotify.sto.*;
 import com.ccoins.bff.utils.HeaderUtils;
 import com.ccoins.bff.utils.MapperUtils;
+import com.ccoins.bff.utils.StringsUtils;
 import com.ccoins.bff.utils.enums.EventNamesEnum;
 import feign.FeignException;
 import org.modelmapper.internal.util.CopyOnWriteLinkedHashMap;
@@ -28,8 +32,8 @@ public class SpotifyService implements ISpotifyService {
 
     private final SpotifyFeign feign;
     private final CredentialsSPTFConfig credentials;
-
     private final IServerSentEventService sseService;
+    private final IVoteService voteService;
 
     @Value("${spotify.max-to-vote}")
     private int maxToVote;
@@ -41,10 +45,11 @@ public class SpotifyService implements ISpotifyService {
 
 
     @Autowired
-    public SpotifyService(SpotifyFeign feign, CredentialsSPTFConfig credentials, IServerSentEventService sseService) {
+    public SpotifyService(SpotifyFeign feign, CredentialsSPTFConfig credentials, IServerSentEventService sseService, IVoteService voteService) {
         this.feign = feign;
         this.credentials = credentials;
         this.sseService = sseService;
+        this.voteService = voteService;
     }
 
     @Override
@@ -76,6 +81,63 @@ public class SpotifyService implements ISpotifyService {
         return (CredentialsSPTFDTO) MapperUtils.map(this.credentials, CredentialsSPTFDTO.class);
     }
 
+    @Override
+    public void addTokenPlaybackInMemory(BarTokenDTO request){
+
+        Long barId = request.getId();
+        try {
+            PlaybackSPTF playbackSPTF = request.getPlayback();
+            String token = request.getToken();
+            this.addActualSongToList(barId,
+                    token,
+                    playbackSPTF
+            );
+
+            this.sseService.dispatchEventToClients(EventNamesEnum.ACTUAL_SONG_SPTF.name(), request.getPlayback(), barId);
+
+            if(playbackSPTF != null && playbackSPTF.getItem() != null){
+                if(playbackSPTF.getItem().getDurationMs() - playbackSPTF.getProgressMs() <= this.votesBeforeEndSongMs){
+                    this.newWinner(barId);
+                    this.newVoting(token, playbackSPTF, barId);
+                }else{
+                    this.getActualVotes(barId);
+                }
+            }
+
+        }catch(FeignException e){
+            throw new UnauthorizedException(ExceptionConstant.SPOTIFY_PLAYBACK_ERROR_CODE,
+                    this.getClass(),
+                    e.getLocalizedMessage());
+        }
+    }
+
+    @Override
+    @Async
+    public void newWinner(Long barId){
+        SongDTO winner = this.voteService.resolveVoting(barId);
+        this.sseService.dispatchEventToClients(EventNamesEnum.NEW_WINNER_SPTF.name(), winner, barId);
+    }
+
+    @Override
+    @Async
+    public void newVoting(String token, PlaybackSPTF playbackSPTF, Long barId){
+
+        //si no hay playlist uri entonces no se crea una nueva votación
+        if(playbackSPTF.getContext() != null && !StringsUtils.isNullOrEmpty(playbackSPTF.getContext().getUri())){
+
+            this.addVotedSongToNextPlayback(token, playbackSPTF);
+            List<SongSPTF> list = this.getNextVotes(token); //ESTAS CANCIONES DEBERIAN VIAJAR A LA NUEVA VOTACIÓN
+            VotingDTO voting = this.voteService.createNewVoting(barId, list);
+            this.sseService.dispatchEventToClients(EventNamesEnum.NEW_VOTING_SPTF.name(), voting, barId);
+        }
+    }
+
+    @Override
+    @Async
+    public void getActualVotes(Long barId){
+        VotingDTO actualVoting = this.voteService.getActualVotingByBar(barId);
+        this.sseService.dispatchEventToClients(EventNamesEnum.ACTUAL_VOTES_SPTF.name(), actualVoting, barId);
+    }
 
     @Override
     @Async
@@ -89,37 +151,6 @@ public class SpotifyService implements ISpotifyService {
             this.actualSongs.put(barId, tokenPlayback);
         }else{
             this.actualSongs.replace(barId, tokenPlayback);
-        }
-    }
-
-    @Override
-    public void addTokenPlaybackInMemory(BarTokenDTO request){
-
-        Long id = request.getId();
-        try {
-            PlaybackSPTF playbackSPTF = request.getPlayback();
-            String token = request.getToken();
-            if (!this.actualSongs.containsKey(id)) {
-                this.addActualSongToList(id,
-                        token,
-                        playbackSPTF
-                );
-
-                if(playbackSPTF != null
-                        && playbackSPTF.getItem() != null
-                        && (playbackSPTF.getItem().getDurationMs() - playbackSPTF.getProgressMs() <= this.votesBeforeEndSongMs)){
-
-                    //resolver resultado de la votación
-                    this.addVotedSongToNextPlayback(token, playbackSPTF);
-                    List<SongSPTF> list = this.getNextVotes(token); //ESTAS CANCIONES DEBERIAN VIAJAR A LA NUEVA VOTACIÓN
-                }
-
-                this.sseService.dispatchEventToClients(EventNamesEnum.ACTUAL_SONG_SPTF.name(), request.getPlayback(), id);
-            }
-        }catch(FeignException e){
-            throw new UnauthorizedException(ExceptionConstant.SPOTIFY_PLAYBACK_ERROR_CODE,
-                    this.getClass(),
-                    e.getLocalizedMessage());
         }
     }
 
@@ -150,7 +181,7 @@ public class SpotifyService implements ISpotifyService {
 
     public void addVotedSongToNextPlayback(String token, PlaybackSPTF playbackSPTF){
 
-        String songUri = null; // BUSCAR LA CANCIÓN GANADORA DE LA VOTACIÓN
+        String songUri = null; // BUSCAR LA CANCIÓN GANADORA DE LA VOTACIÓN Y CERRARLA
 
         HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(token);
 
