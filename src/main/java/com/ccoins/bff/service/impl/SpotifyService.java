@@ -95,11 +95,19 @@ public class SpotifyService implements ISpotifyService {
 
             this.sseService.dispatchEventToClients(EventNamesEnum.ACTUAL_SONG_SPTF.name(), request.getPlayback(), barId);
 
+
             if(playbackSPTF != null && playbackSPTF.getItem() != null){
+
+                if(!playbackSPTF.isShuffleState()){ //quita el aleatorio de la lista
+                    this.changeShuffleState(token, false);
+                }
+
+                //valida si faltan 5 seg para que termine la canción y resuelve la votación
                 if(playbackSPTF.getItem().getDurationMs() - playbackSPTF.getProgressMs() <= this.votesBeforeEndSongMs){
                     this.newWinner(barId);
                     this.newVoting(token, playbackSPTF, barId);
                 }
+                //devuelve la votación actual
                 this.getActualVotes(barId);
             }
 
@@ -108,6 +116,12 @@ public class SpotifyService implements ISpotifyService {
                     this.getClass(),
                     e.getLocalizedMessage());
         }
+    }
+
+    @Override
+    public void changeShuffleState(String token, boolean bool){
+        HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(token);
+        this.feign.changeShuffleState(headers, bool);
     }
 
     @Override

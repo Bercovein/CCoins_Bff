@@ -19,4 +19,7 @@ public class PlaybackSPTF {
     private PlaybackItemSPTF item;
 
     private UriSPTF context;
+
+    @JsonProperty("shuffle_state")
+    private boolean shuffleState;
 }

@@ -15,6 +15,8 @@ public interface ISpotifyService {
 
     CredentialsSPTFDTO getCredentials();
 
+    void changeShuffleState(String token, boolean bool);
+
     @Async
     void newWinner(Long barId);
 
