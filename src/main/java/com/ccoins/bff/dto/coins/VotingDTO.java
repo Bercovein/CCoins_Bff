@@ -16,5 +16,4 @@ public class VotingDTO {
     private SongDTO winnerSong;
     private List<SongDTO> songs;
     private MatchDTO match;
-
 }

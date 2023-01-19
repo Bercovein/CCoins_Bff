@@ -99,9 +99,8 @@ public class SpotifyService implements ISpotifyService {
                 if(playbackSPTF.getItem().getDurationMs() - playbackSPTF.getProgressMs() <= this.votesBeforeEndSongMs){
                     this.newWinner(barId);
                     this.newVoting(token, playbackSPTF, barId);
-                }else{
-                    this.getActualVotes(barId);
                 }
+                this.getActualVotes(barId);
             }
 
         }catch(FeignException e){
@@ -119,7 +118,6 @@ public class SpotifyService implements ISpotifyService {
     }
 
     @Override
-    @Async
     public void newVoting(String token, PlaybackSPTF playbackSPTF, Long barId){
 
         //si no hay playlist uri entonces no se crea una nueva votación
@@ -127,8 +125,7 @@ public class SpotifyService implements ISpotifyService {
 
             this.addVotedSongToNextPlayback(token, playbackSPTF);
             List<SongSPTF> list = this.getNextVotes(token); //ESTAS CANCIONES DEBERIAN VIAJAR A LA NUEVA VOTACIÓN
-            VotingDTO voting = this.voteService.createNewVoting(barId, list);
-            this.sseService.dispatchEventToClients(EventNamesEnum.NEW_VOTING_SPTF.name(), voting, barId);
+            this.voteService.createNewVoting(barId, list);
         }
     }
 
@@ -136,7 +133,7 @@ public class SpotifyService implements ISpotifyService {
     @Async
     public void getActualVotes(Long barId){
         VotingDTO actualVoting = this.voteService.getActualVotingByBar(barId);
-        this.sseService.dispatchEventToClients(EventNamesEnum.ACTUAL_VOTES_SPTF.name(), actualVoting, barId);
+        this.sseService.dispatchEventToClients(EventNamesEnum.ACTUAL_VOTES_SPTF.name(), actualVoting.getSongs(), barId);
     }
 
     @Override
