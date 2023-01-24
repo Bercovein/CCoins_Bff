@@ -86,23 +86,23 @@ public class SpotifyService implements ISpotifyService {
     public void addTokenPlaybackInMemory(BarTokenDTO request){
 
         Long barId = request.getId();
-        try {
-            PlaybackSPTF playbackSPTF = request.getPlayback();
-            String token = request.getToken();
-            this.addActualSongToList(barId,
-                    token,
-                    playbackSPTF
-            );
 
-            this.sseService.dispatchEventToClients(EventNamesEnum.ACTUAL_SONG_SPTF.name(), request.getPlayback(), barId);
+        PlaybackSPTF playbackSPTF = request.getPlayback();
+        String token = request.getToken();
+        this.addActualSongToList(barId,
+                token,
+                playbackSPTF
+        );
 
+        this.sseService.dispatchEventToClients(EventNamesEnum.ACTUAL_SONG_SPTF.name(), request.getPlayback(), barId);
 
-            if(playbackSPTF != null && playbackSPTF.getItem() != null){
+        if(playbackSPTF != null && playbackSPTF.getItem() != null){
 
-                if(playbackSPTF.isShuffleState()){ //quita el aleatorio de la lista
-                    this.changeShuffleState(token, false);
-                }
+            if(playbackSPTF.isShuffleState()){ //quita el aleatorio de la lista
+                this.changeShuffleState(token, false);
+            }
 
+            try {
                 //valida si faltan 5 seg para que termine la canción y resuelve la votación
                 if(playbackSPTF.getItem().getDurationMs() - playbackSPTF.getProgressMs() <= this.votesBeforeEndSongMs){
                     this.newWinner(barId);
@@ -110,20 +110,23 @@ public class SpotifyService implements ISpotifyService {
                 }
                 //devuelve la votación actual
                 this.getActualVotes(barId);
-            }
 
-        }catch(FeignException e){
-            throw new UnauthorizedException(ExceptionConstant.SPOTIFY_PLAYBACK_ERROR_CODE,
-                    this.getClass(),
-                    e.getLocalizedMessage());
+            }catch(FeignException e){
+                throw new UnauthorizedException(ExceptionConstant.SPOTIFY_PLAYBACK_ERROR_CODE,
+                        this.getClass(),
+                        e.getLocalizedMessage());
+            }
         }
     }
 
     @Override
     public void changeShuffleState(String token, boolean bool){
-        HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(token);
-        EmptyDTO request =  EmptyDTO.builder().build();
-        this.feign.changeShuffleState(headers, bool, request);
+
+        try {
+            HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(token);
+            EmptyDTO request = EmptyDTO.builder().build();
+            this.feign.changeShuffleState(headers, bool, request);
+        }catch (Exception ignored){}
     }
 
     @Override
