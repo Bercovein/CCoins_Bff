@@ -16,7 +16,6 @@ import com.ccoins.bff.utils.MapperUtils;
 import com.ccoins.bff.utils.StringsUtils;
 import com.ccoins.bff.utils.enums.EventNamesEnum;
 import feign.FeignException;
-import org.apache.logging.log4j.util.Strings;
 import org.modelmapper.internal.util.CopyOnWriteLinkedHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -123,7 +122,7 @@ public class SpotifyService implements ISpotifyService {
     @Override
     public void changeShuffleState(String token, boolean bool){
         HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(token);
-        EmptyDTO request =  EmptyDTO.builder().nothing(Strings.EMPTY).build();
+        EmptyDTO request =  EmptyDTO.builder().build();
         this.feign.changeShuffleState(headers, bool, request);
     }
 
