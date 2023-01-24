@@ -1,5 +1,6 @@
 package com.ccoins.bff.feign;
 
+import com.ccoins.bff.dto.EmptyDTO;
 import com.ccoins.bff.spotify.sto.PlaylistSPTF;
 import com.ccoins.bff.spotify.sto.RecentlyPlayedSPTF;
 import com.ccoins.bff.spotify.sto.TrackUriListSPTF;
@@ -25,5 +26,5 @@ public interface SpotifyFeign {
     void removeSongFromPlaylist(@RequestHeader HttpHeaders headers, @RequestParam("playlistId") String playlistId, @RequestBody TrackUriListSPTF request);
 
     @PutMapping(value = "${spotify.path.change-shuffle-state}", produces = "application/json", consumes = "application/json")
-    void changeShuffleState(@RequestHeader HttpHeaders headers, @RequestParam("shuffle") boolean bool);
+    void changeShuffleState(@RequestHeader HttpHeaders headers, @PathVariable("state") boolean bool, @RequestBody EmptyDTO request);
 }

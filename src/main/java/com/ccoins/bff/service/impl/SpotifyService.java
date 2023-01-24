@@ -1,6 +1,7 @@
 package com.ccoins.bff.service.impl;
 
 import com.ccoins.bff.configuration.CredentialsSPTFConfig;
+import com.ccoins.bff.dto.EmptyDTO;
 import com.ccoins.bff.dto.coins.SongDTO;
 import com.ccoins.bff.dto.coins.VotingDTO;
 import com.ccoins.bff.exceptions.UnauthorizedException;
@@ -15,6 +16,7 @@ import com.ccoins.bff.utils.MapperUtils;
 import com.ccoins.bff.utils.StringsUtils;
 import com.ccoins.bff.utils.enums.EventNamesEnum;
 import feign.FeignException;
+import org.apache.logging.log4j.util.Strings;
 import org.modelmapper.internal.util.CopyOnWriteLinkedHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -98,7 +100,7 @@ public class SpotifyService implements ISpotifyService {
 
             if(playbackSPTF != null && playbackSPTF.getItem() != null){
 
-                if(!playbackSPTF.isShuffleState()){ //quita el aleatorio de la lista
+                if(playbackSPTF.isShuffleState()){ //quita el aleatorio de la lista
                     this.changeShuffleState(token, false);
                 }
 
@@ -121,7 +123,8 @@ public class SpotifyService implements ISpotifyService {
     @Override
     public void changeShuffleState(String token, boolean bool){
         HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(token);
-        this.feign.changeShuffleState(headers, bool);
+        EmptyDTO request =  EmptyDTO.builder().nothing(Strings.EMPTY).build();
+        this.feign.changeShuffleState(headers, bool, request);
     }
 
     @Override

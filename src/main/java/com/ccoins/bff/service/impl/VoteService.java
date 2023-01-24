@@ -1,5 +1,6 @@
 package com.ccoins.bff.service.impl;
 
+import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.bars.GameDTO;
 import com.ccoins.bff.dto.coins.MatchDTO;
 import com.ccoins.bff.dto.coins.SongDTO;
@@ -10,6 +11,7 @@ import com.ccoins.bff.service.IVoteService;
 import com.ccoins.bff.spotify.sto.SongSPTF;
 import com.ccoins.bff.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -72,6 +74,17 @@ public class VoteService implements IVoteService {
                 .songs(songDTOList).match(matchDTO).build();
 
         return this.coinsFeign.saveOrUpdateVoting(votingDTO);
+    }
+
+    @Override
+    public void voteSong(HttpHeaders headers, IdDTO request) {
+
+        //buscar si el cliente pertenece a ese bar (cliente vs bar asociado a la canción)
+        //buscar si la votación está activa
+        //aumentar en 1 el voto de forma transaccional
+        //devolver OK si se hizo correctamente
+
+        //en caso de fallo, devolver por qué
     }
 
 }

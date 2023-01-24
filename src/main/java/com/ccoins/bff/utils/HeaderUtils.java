@@ -40,6 +40,6 @@ public class HeaderUtils {
 
     public static void setParameters(HttpHeaders headers){
         headers.set("Accept-Encoding", "identity");
-        headers.remove("content-length");
+        headers.remove("Content-Length");
     }
 }
