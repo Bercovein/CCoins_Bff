@@ -26,10 +26,6 @@ public interface ISpotifyService {
     @Async
     void getActualVotes(Long barId);
 
-    void addActualSongToList(Long barId, String token, PlaybackSPTF playback);
-
-    void addTokenPlaybackInMemory(BarTokenDTO request);
-
-    PlaybackSPTF getPlaybackByBarId(Long id);
+    void sendPlaybackToClients(BarTokenDTO request);
 
 }

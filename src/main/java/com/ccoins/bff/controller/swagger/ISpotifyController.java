@@ -17,6 +17,6 @@ public interface ISpotifyController {
     ResponseEntity<CredentialsSPTFDTO> getCredentials();
 
     @PostMapping("/actualSongs")
-    void addBarTokenToActualSongs(@RequestBody @Valid BarTokenDTO request);
+    void sendPlaybackToClients(@RequestBody @Valid BarTokenDTO request);
 
 }

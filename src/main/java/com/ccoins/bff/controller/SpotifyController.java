@@ -25,8 +25,8 @@ public class SpotifyController implements ISpotifyController {
 
     @PostMapping("/actualSongs/bar")
     @Override
-    public void addBarTokenToActualSongs(@RequestBody @Valid BarTokenDTO request){
-        this.service.addTokenPlaybackInMemory(request);
+    public void sendPlaybackToClients(@RequestBody @Valid BarTokenDTO request){
+        this.service.sendPlaybackToClients(request);
     }
 
 }

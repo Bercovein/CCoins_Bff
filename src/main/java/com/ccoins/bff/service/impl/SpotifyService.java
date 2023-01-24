@@ -4,8 +4,6 @@ import com.ccoins.bff.configuration.CredentialsSPTFConfig;
 import com.ccoins.bff.dto.EmptyDTO;
 import com.ccoins.bff.dto.coins.SongDTO;
 import com.ccoins.bff.dto.coins.VotingDTO;
-import com.ccoins.bff.exceptions.UnauthorizedException;
-import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.SpotifyFeign;
 import com.ccoins.bff.service.IServerSentEventService;
 import com.ccoins.bff.service.ISpotifyService;
@@ -15,8 +13,6 @@ import com.ccoins.bff.utils.HeaderUtils;
 import com.ccoins.bff.utils.MapperUtils;
 import com.ccoins.bff.utils.StringsUtils;
 import com.ccoins.bff.utils.enums.EventNamesEnum;
-import feign.FeignException;
-import org.modelmapper.internal.util.CopyOnWriteLinkedHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -26,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SpotifyService implements ISpotifyService {
@@ -41,9 +36,6 @@ public class SpotifyService implements ISpotifyService {
 
     @Value("${spotify.vote-before-ms}")
     private int votesBeforeEndSongMs;
-
-    protected CopyOnWriteLinkedHashMap<Long, TokenPlaybackSPTF> actualSongs = new CopyOnWriteLinkedHashMap<>();
-
 
     @Autowired
     public SpotifyService(SpotifyFeign feign, CredentialsSPTFConfig credentials, IServerSentEventService sseService, IVoteService voteService) {
@@ -83,16 +75,12 @@ public class SpotifyService implements ISpotifyService {
     }
 
     @Override
-    public void addTokenPlaybackInMemory(BarTokenDTO request){
+    public void sendPlaybackToClients(BarTokenDTO request){
 
         Long barId = request.getId();
 
         PlaybackSPTF playbackSPTF = request.getPlayback();
         String token = request.getToken();
-        this.addActualSongToList(barId,
-                token,
-                playbackSPTF
-        );
 
         this.sseService.dispatchEventToClients(EventNamesEnum.ACTUAL_SONG_SPTF.name(), request.getPlayback(), barId);
 
@@ -111,11 +99,7 @@ public class SpotifyService implements ISpotifyService {
                 //devuelve la votación actual
                 this.getActualVotes(barId);
 
-            }catch(FeignException e){
-                throw new UnauthorizedException(ExceptionConstant.SPOTIFY_PLAYBACK_ERROR_CODE,
-                        this.getClass(),
-                        e.getLocalizedMessage());
-            }
+            }catch(Exception ignored){}
         }
     }
 
@@ -153,33 +137,6 @@ public class SpotifyService implements ISpotifyService {
     public void getActualVotes(Long barId){
         VotingDTO actualVoting = this.voteService.getActualVotingByBar(barId);
         this.sseService.dispatchEventToClients(EventNamesEnum.ACTUAL_VOTES_SPTF.name(), actualVoting.getSongs(), barId);
-    }
-
-    @Override
-    @Async
-    public void addActualSongToList(Long barId, String token, PlaybackSPTF playback){
-
-        Optional<PlaybackSPTF> optional = Optional.ofNullable(playback);
-        TokenPlaybackSPTF tokenPlayback = TokenPlaybackSPTF.builder().token(token).build();
-
-        if(optional.isPresent()) {
-            tokenPlayback.setPlayback(optional.get());
-            this.actualSongs.put(barId, tokenPlayback);
-        }else{
-            this.actualSongs.replace(barId, tokenPlayback);
-        }
-    }
-
-    @Override
-    public PlaybackSPTF getPlaybackByBarId(Long id){
-
-        TokenPlaybackSPTF tokenPlayback = this.actualSongs.get(id);
-        PlaybackSPTF playback = null;
-
-        if(tokenPlayback != null){
-            playback = tokenPlayback.getPlayback();
-        }
-        return playback;
     }
 
     public List<SongSPTF> getNextVotes(String token){
