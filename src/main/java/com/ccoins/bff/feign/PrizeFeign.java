@@ -22,7 +22,7 @@ public interface PrizeFeign {
     ResponseEntity<ListDTO> findAllPrizesByBar(@PathVariable("barId") Long id);
 
     @GetMapping("/prizes/owner/{barId}/{status}")
-    ResponseEntity<ListDTO> findAllPrizesByBarAndStatus(@PathVariable("barId") Long id, @PathVariable("status") Optional<String> status);
+    ResponseEntity<ListDTO> findAllPrizesByBarAndStatus(@PathVariable("barId") Long id, @PathVariable("status") String status);
 
     @GetMapping("/prizes/{id}")
     ResponseEntity<PrizeDTO> findPrizeById(@PathVariable("id") Long id);

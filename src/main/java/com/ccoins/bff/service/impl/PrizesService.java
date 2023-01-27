@@ -68,7 +68,7 @@ public class PrizesService extends ContextService implements IPrizesService {
 
         try{
             if(status.isPresent()) {
-                return this.prizeFeign.findAllPrizesByBarAndStatus(request.getId(),status);
+                return this.prizeFeign.findAllPrizesByBarAndStatus(request.getId(),status.get());
             } else {
                 return this.prizeFeign.findAllPrizesByBar(request.getId());
             }
