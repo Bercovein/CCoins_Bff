@@ -40,7 +40,7 @@ public class ClientService implements IClientService {
 
         Long partyId = this.partyService.asignOrCreatePartyByCode(request.getTableCode(), clientDTO);
 
-        return ClientTableDTO.builder().partyId(partyId).clientIp(clientDTO.getIp()).tableCode(request.getTableCode()).nickName(clientDTO.getNickName()).build();
+        return ClientTableDTO.builder().partyId(partyId).clientIp(clientDTO.getIp()).clientId(clientDTO.getId()).tableCode(request.getTableCode()).nickName(clientDTO.getNickName()).build();
     }
 
     @Override

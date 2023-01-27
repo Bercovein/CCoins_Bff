@@ -67,7 +67,7 @@ public class ServerSentEventService implements IServerSentEventService {
 
             for (SseEmitter emitter: sseEmitterList) {
                 try{
-                    emitter.send(SseEmitter.event().name(eventName).data(data), MediaType.APPLICATION_JSON);
+                    emitter.send(SseEmitter.event().name(eventName).data(data, MediaType.APPLICATION_JSON));
                 }catch(IOException e){
                     sseEmitterList.remove(emitter);
                     e.printStackTrace();
