@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders;
 public class HeaderUtils {
 
     public static final String CLIENT = "client";
+    public static final String PARTY_ID = "partyId";
     public static final String CODE = "code";
 
     public static final String AUTHORIZATION = "Authorization";
@@ -32,6 +33,10 @@ public class HeaderUtils {
 
     public static String getClient(HttpHeaders headers){
         return HeaderUtils.get(headers, CLIENT);
+    }
+
+    public static Long getPartyId(HttpHeaders headers){
+        return Long.getLong(HeaderUtils.get(headers, PARTY_ID));
     }
 
     public static String getCode(HttpHeaders headers){

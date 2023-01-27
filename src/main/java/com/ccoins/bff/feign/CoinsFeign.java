@@ -1,5 +1,6 @@
 package com.ccoins.bff.feign;
 
+import com.ccoins.bff.dto.coins.VoteDTO;
 import com.ccoins.bff.dto.coins.VotingDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -17,4 +18,10 @@ public interface CoinsFeign {
 
     @PostMapping("/match/voting")
     VotingDTO saveOrUpdateVoting(@RequestBody VotingDTO request);
+
+    @GetMapping("/match/voting/song/{songId}")
+    VotingDTO getVotingBySong(@PathVariable("songId") Long songId);
+
+    @PostMapping("/vote")
+    void voteSong(@RequestBody VoteDTO request);
 }

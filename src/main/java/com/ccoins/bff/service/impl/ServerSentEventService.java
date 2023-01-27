@@ -4,6 +4,7 @@ import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.service.IServerSentEventService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -66,7 +67,7 @@ public class ServerSentEventService implements IServerSentEventService {
 
             for (SseEmitter emitter: sseEmitterList) {
                 try{
-                    emitter.send(SseEmitter.event().name(eventName).data(data));
+                    emitter.send(SseEmitter.event().name(eventName).data(data), MediaType.APPLICATION_JSON);
                 }catch(IOException e){
                     sseEmitterList.remove(emitter);
                     e.printStackTrace();

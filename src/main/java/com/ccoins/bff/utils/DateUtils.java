@@ -1,6 +1,7 @@
 package com.ccoins.bff.utils;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 
 public class DateUtils {
@@ -20,5 +21,13 @@ public class DateUtils {
 
     public static Date nowPlusDate(long time){
         return new Date(System.currentTimeMillis() + time);
+    }
+
+    public static boolean isBetweenLocalTimes(LocalTime time, LocalTime start, LocalTime end){
+        return time.isAfter(start) && time.isBefore(end);
+    }
+
+    public static boolean isNowBetweenLocalTimes(LocalTime start, LocalTime end){
+        return DateUtils.isBetweenLocalTimes(LocalTime.now(), start, end);
     }
 }
