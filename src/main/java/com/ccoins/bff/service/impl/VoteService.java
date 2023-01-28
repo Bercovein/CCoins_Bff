@@ -98,7 +98,8 @@ public class VoteService implements IVoteService {
         BarDTO barBySong;
 
         //buscar si el cliente pertenece a ese bar (cliente vs bar asociado a la canción)
-        ResponseEntity<IdDTO> barResponseEntity = barsFeign.getBarIdByParty(HeaderUtils.getPartyId(headers));
+        Long partyId = HeaderUtils.getPartyId(headers);
+        ResponseEntity<IdDTO> barResponseEntity = this.barsFeign.getBarIdByParty(partyId);
 
         if (barResponseEntity.hasBody()){
             barIdByParty = barResponseEntity.getBody();
@@ -125,7 +126,7 @@ public class VoteService implements IVoteService {
     }
 
     public void voteSong(Long songId, String clientIp){
-        ClientDTO clientDTO = clientService.findActiveByIp(clientIp);
+        ClientDTO clientDTO = this.clientService.findActiveByIp(clientIp);
         this.coinsFeign.voteSong(VoteDTO.builder().song(songId).client(clientDTO.getId()).build());
     }
 }

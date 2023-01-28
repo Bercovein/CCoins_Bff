@@ -28,6 +28,9 @@ public class DateUtils {
     }
 
     public static boolean isNowBetweenLocalTimes(LocalTime start, LocalTime end){
-        return DateUtils.isBetweenLocalTimes(LocalTime.now(), start, end);
+        boolean response = true;
+        if(start != null && end != null)
+            response = DateUtils.isBetweenLocalTimes(LocalTime.now(), start, end);
+        return response;
     }
 }
