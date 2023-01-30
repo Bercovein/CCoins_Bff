@@ -8,6 +8,7 @@ import com.ccoins.bff.dto.coins.SongDTO;
 import com.ccoins.bff.dto.coins.VoteDTO;
 import com.ccoins.bff.dto.coins.VotingDTO;
 import com.ccoins.bff.dto.users.ClientDTO;
+import com.ccoins.bff.exceptions.UnauthorizedException;
 import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.feign.CoinsFeign;
 import com.ccoins.bff.service.IVoteService;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.ccoins.bff.exceptions.constant.ExceptionConstant.*;
 
 @Service
 public class VoteService implements IVoteService {
@@ -91,7 +94,7 @@ public class VoteService implements IVoteService {
         VotingDTO voting = this.coinsFeign.getVotingBySong(request.getId());
 
         if(voting.getWinnerSong() != null){
-            System.out.println("LA VOTACIÓN YA TERMINÓ");
+            throw new UnauthorizedException(VOTES_IS_OVER_ERROR_CODE, VOTES_IS_OVER_ERROR);
         }
 
         IdDTO barIdByParty;
@@ -110,18 +113,17 @@ public class VoteService implements IVoteService {
             if(barRs.hasBody()){
                 barBySong = barRs.getBody();
 
-                if(barBySong.getId() != barIdByParty.getId()){
-                    System.out.println("EL USUARIO NO ESTÁ EN EL BAR CORRECTO");
+                if(!Objects.equals(barBySong.getId(), barIdByParty.getId())){
+                    throw new UnauthorizedException(WRONG_BAR_ERROR_CODE, WRONG_BAR_ERROR);
                 }
 
                 if(!DateUtils.isNowBetweenLocalTimes(barBySong.getOpenTime(),barBySong.getCloseTime())){
-                    System.out.println("EL USUARIO VOTÓ FUERA DEL HORARIO DEL BAR");
+                    throw new UnauthorizedException(WRONG_BAR_TIME_ERROR_CODE, WRONG_BAR_TIME_ERROR);
                 }
 
                 //aumentar en 1 el voto de forma transaccional
                 this.voteSong(request.getId(), HeaderUtils.getClient(headers));
             }
-
         }
     }
 

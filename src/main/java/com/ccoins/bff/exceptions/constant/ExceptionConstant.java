@@ -163,5 +163,14 @@ public class ExceptionConstant {
     public static final String WRONG_DEVICE_ERROR_CODE = "0047";
     public static final String WRONG_DEVICE_ERROR = "Device not permitted";
 
+    public static final String WRONG_BAR_ERROR_CODE = "0048";
+    public static final String WRONG_BAR_ERROR = "Client is in wrong bar";
+
+    public static final String WRONG_BAR_TIME_ERROR_CODE = "0049";
+    public static final String WRONG_BAR_TIME_ERROR = "Bar is not open yet! Come back later.";
+
+    public static final String VOTES_IS_OVER_ERROR_CODE = "0050";
+    public static final String VOTES_IS_OVER_ERROR = "Votation is over.";
+
 
 }
