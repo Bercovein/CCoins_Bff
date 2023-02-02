@@ -15,12 +15,14 @@ public class SongDTO {
     private Long id;
     private String name;
     private Long votes;
+    private String uri;
 
     public static SongDTO convert(SongSPTF song){
 
         return SongDTO.builder()
                 .votes(0L)
                 .name(song.getName() + ", " + song.getArtists().get(0).getName())
+                .uri(song.getUri())
                 .build();
     }
 }

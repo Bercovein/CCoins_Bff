@@ -3,10 +3,7 @@ package com.ccoins.bff.service.impl;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.bars.BarDTO;
 import com.ccoins.bff.dto.bars.GameDTO;
-import com.ccoins.bff.dto.coins.MatchDTO;
-import com.ccoins.bff.dto.coins.SongDTO;
-import com.ccoins.bff.dto.coins.VoteDTO;
-import com.ccoins.bff.dto.coins.VotingDTO;
+import com.ccoins.bff.dto.coins.*;
 import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.exceptions.UnauthorizedException;
 import com.ccoins.bff.feign.BarsFeign;
@@ -47,7 +44,7 @@ public class VoteService implements IVoteService {
     }
 
     @Override
-    public SongDTO resolveVoting(Long barId){
+    public VotingDTO resolveVoting(Long barId){
         //resolver resultado de la votación, si ninguno fue votado, tomar cualquiera y cerrar la votación
         VotingDTO voting = this.getActualVotingByBar(barId);
         List<SongDTO> voteList = voting.getSongs();
@@ -66,7 +63,27 @@ public class VoteService implements IVoteService {
 
         this.coinsFeign.saveOrUpdateVoting(voting); //actualiza el match y la votación
 
-        return winner;
+        return voting;
+    }
+
+    @Override
+    public void giveSongCoinsByGame(Long barId, VotingDTO voting){
+
+        //buscar el game
+        GameDTO game = this.barsFeign.findVotingGameByBarId(barId).getBody();
+
+        //buscar a los clientes que votaron la canción
+        List<Long> clientsIdList = this.coinsFeign.getClientsIdWhoVotedSong(voting.getWinnerSong().getId()).getBody();
+
+        //crear coins en base al match para cada cliente
+        assert game != null;
+        CoinsToWinnersDTO request = CoinsToWinnersDTO.builder()
+                .quantity(game.getPoints())
+                .matchId(voting.getMatch().getId())
+                .clients(clientsIdList)
+                .build();
+
+        this.coinsFeign.giveCoinsToClients(request);
     }
 
     @Override
@@ -75,6 +92,7 @@ public class VoteService implements IVoteService {
 
         GameDTO game = this.barsFeign.findVotingGameByBarId(barId).getBody();
 
+        assert game != null;
         MatchDTO matchDTO = MatchDTO.builder()
                 .startDate(DateUtils.nowLocalDateTime())
                 .active(true)

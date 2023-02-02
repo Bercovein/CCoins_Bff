@@ -93,8 +93,8 @@ public class SpotifyService implements ISpotifyService {
             try {
                 //valida si faltan 5 seg para que termine la canción y resuelve la votación
                 if(playbackSPTF.getItem().getDurationMs() - playbackSPTF.getProgressMs() <= this.votesBeforeEndSongMs){
-                    this.newWinner(barId);
-                    this.newVoting(token, playbackSPTF, barId);
+                    SongDTO song = this.newWinner(barId);
+                    this.newVoting(token, playbackSPTF, barId, song);
                 }
                 //devuelve la votación actual
                 this.getActualVotes(barId);
@@ -114,19 +114,22 @@ public class SpotifyService implements ISpotifyService {
     }
 
     @Override
-    @Async
-    public void newWinner(Long barId){
-        SongDTO winner = this.voteService.resolveVoting(barId);
-        this.sseService.dispatchEventToClients(EventNamesEnum.NEW_WINNER_SPTF.name(), winner, barId);
+    public SongDTO newWinner(Long barId){
+        //resolver la votación
+        VotingDTO voting = this.voteService.resolveVoting(barId);
+        this.sseService.dispatchEventToClients(EventNamesEnum.NEW_WINNER_SPTF.name(), voting.getWinnerSong(), barId);
+        this.voteService.giveSongCoinsByGame(barId, voting);
+        //se debe enviar la notificación solo a los ganadores
+        return voting.getWinnerSong();
     }
 
     @Override
-    public void newVoting(String token, PlaybackSPTF playbackSPTF, Long barId){
+    @Async
+    public void newVoting(String token, PlaybackSPTF playbackSPTF, Long barId, SongDTO song){
 
         //si no hay playlist uri entonces no se crea una nueva votación
         if(playbackSPTF.getContext() != null && !StringsUtils.isNullOrEmpty(playbackSPTF.getContext().getUri())){
-
-            this.addVotedSongToNextPlayback(token, playbackSPTF);
+            this.addVotedSongToNextPlayback(token, playbackSPTF, song.getUri());
             List<SongSPTF> list = this.getNextVotes(token); //ESTAS CANCIONES DEBERIAN VIAJAR A LA NUEVA VOTACIÓN
             this.voteService.createNewVoting(barId, list);
         }
@@ -152,9 +155,7 @@ public class SpotifyService implements ISpotifyService {
         return songs.subList(0, Math.min(songs.size(), maxToVote));
     }
 
-    public void addVotedSongToNextPlayback(String token, PlaybackSPTF playbackSPTF){
-
-        String songUri = null; // BUSCAR LA CANCIÓN GANADORA DE LA VOTACIÓN Y CERRARLA
+    public void addVotedSongToNextPlayback(String token, PlaybackSPTF playbackSPTF, String songUri){
 
         HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(token);
 

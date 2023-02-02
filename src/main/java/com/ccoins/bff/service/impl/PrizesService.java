@@ -91,14 +91,17 @@ public class PrizesService extends ContextService implements IPrizesService {
     @Override
     public void buyPrizeByTableAndUser(IdDTO idDTO, String client, String code) {
 
+        //busca el premio
         PrizeDTO prize = this.findById(idDTO).getBody();
 
         if(prize == null){
             throw new RuntimeException();
         }
 
+        //busca al cliente por IP
         ClientDTO clientDTO = this.clientService.findActiveByIp(client);
 
+        //busca la party activa por codigo
         Optional<PartyDTO> partyOpt = this.partiesService.findActivePartyByTableCode(code);
 
         if(partyOpt.isEmpty()){
@@ -108,6 +111,7 @@ public class PrizesService extends ContextService implements IPrizesService {
         PartyDTO party = partyOpt.get();
 
         //si la party no tiene puntos, error
+
 
     }
 

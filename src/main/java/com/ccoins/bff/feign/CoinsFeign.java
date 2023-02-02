@@ -1,10 +1,13 @@
 package com.ccoins.bff.feign;
 
+import com.ccoins.bff.dto.coins.CoinsToWinnersDTO;
 import com.ccoins.bff.dto.coins.VoteDTO;
 import com.ccoins.bff.dto.coins.VotingDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @FeignClient(name = "${feign.coins-ms.name}", url = "${feign.coins-ms.url}")
 @RequestMapping("${feign.coins-ms.req-map}")
@@ -24,4 +27,10 @@ public interface CoinsFeign {
 
     @PostMapping("/vote")
     void voteSong(@RequestBody VoteDTO request);
+
+    @GetMapping("/vote/clients/song/{songId}")
+    ResponseEntity<List<Long>> getClientsIdWhoVotedSong(@PathVariable("songId") Long songId);
+
+    @PostMapping("/coins/clients/match")
+    public void giveCoinsToClients(@RequestBody CoinsToWinnersDTO request);
 }
