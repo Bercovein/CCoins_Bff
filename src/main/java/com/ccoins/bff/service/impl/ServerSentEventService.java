@@ -31,10 +31,7 @@ public class ServerSentEventService implements IServerSentEventService {
     }
 
     @Override
-    public SseEmitter subscribe(@RequestParam HttpHeaders headers){
-
-        Long partyId = HeaderUtils.getPartyId(headers);
-        String client = HeaderUtils.getClient(headers);
+    public SseEmitter subscribe(Long partyId, String client){
 
         ResponseEntity<IdDTO> responseEntity = this.barsFeign.getBarIdByParty(partyId);
         Long barId;

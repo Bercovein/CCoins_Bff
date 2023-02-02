@@ -1,8 +1,6 @@
 package com.ccoins.bff.service;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
@@ -10,7 +8,7 @@ import java.util.List;
 public interface IServerSentEventService {
 
 
-    SseEmitter subscribe(@RequestParam HttpHeaders partyId);
+    SseEmitter subscribe(Long partyId, String client);
 
     @Async
     void dispatchEventToAllClientsFromBar(String eventName, Object data, Long barId);
