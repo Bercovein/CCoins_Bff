@@ -82,7 +82,7 @@ public class SpotifyService implements ISpotifyService {
         PlaybackSPTF playbackSPTF = request.getPlayback();
         String token = request.getToken();
 
-        this.sseService.dispatchEventToClients(EventNamesEnum.ACTUAL_SONG_SPTF.name(), request.getPlayback(), barId);
+        this.sseService.dispatchEventToAllClientsFromBar(EventNamesEnum.ACTUAL_SONG_SPTF.name(), request.getPlayback(), barId);
 
         if(playbackSPTF != null && playbackSPTF.getItem() != null){
 
@@ -117,9 +117,10 @@ public class SpotifyService implements ISpotifyService {
     public SongDTO newWinner(Long barId){
         //resolver la votación
         VotingDTO voting = this.voteService.resolveVoting(barId);
-        this.sseService.dispatchEventToClients(EventNamesEnum.NEW_WINNER_SPTF.name(), voting.getWinnerSong(), barId);
-        this.voteService.giveSongCoinsByGame(barId, voting);
-        //se debe enviar la notificación solo a los ganadores
+        this.sseService.dispatchEventToAllClientsFromBar(EventNamesEnum.NEW_WINNER_SPTF.name(), voting.getWinnerSong(), barId);
+
+        List<String> clientIpList = this.voteService.giveSongCoinsByGame(barId, voting);
+        this.sseService.dispatchEventToSomeClientsFromBar(EventNamesEnum.YOU_WIN_SONG_VOTE_SPTF.name(), null,barId, clientIpList);
         return voting.getWinnerSong();
     }
 
@@ -139,7 +140,7 @@ public class SpotifyService implements ISpotifyService {
     @Async
     public void getActualVotes(Long barId){
         VotingDTO actualVoting = this.voteService.getActualVotingByBar(barId);
-        this.sseService.dispatchEventToClients(EventNamesEnum.ACTUAL_VOTES_SPTF.name(), actualVoting.getSongs(), barId);
+        this.sseService.dispatchEventToAllClientsFromBar(EventNamesEnum.ACTUAL_VOTES_SPTF.name(), actualVoting.getSongs(), barId);
     }
 
     public List<SongSPTF> getNextVotes(String token){

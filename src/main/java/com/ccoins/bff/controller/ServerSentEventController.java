@@ -3,11 +3,9 @@ package com.ccoins.bff.controller;
 import com.ccoins.bff.controller.swagger.IServerSentEventController;
 import com.ccoins.bff.service.IServerSentEventService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
@@ -21,8 +19,8 @@ public class ServerSentEventController implements IServerSentEventController {
     @CrossOrigin(origins = "${sse.cross-origins}")
     @RequestMapping(value="/subscribe",consumes=MediaType.ALL_VALUE)
     @Override
-    public SseEmitter subscribe(@RequestParam Long partyId){
-        return this.service.subscribe(partyId);
+    public SseEmitter subscribe(@RequestHeader HttpHeaders headers){
+        return this.service.subscribe(headers);
     }
 
 }

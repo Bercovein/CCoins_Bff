@@ -32,5 +32,5 @@ public interface CoinsFeign {
     ResponseEntity<List<Long>> getClientsIdWhoVotedSong(@PathVariable("songId") Long songId);
 
     @PostMapping("/coins/clients/match")
-    public void giveCoinsToClients(@RequestBody CoinsToWinnersDTO request);
+    ResponseEntity<List<Long>> giveCoinsToClients(@RequestBody CoinsToWinnersDTO request);
 }

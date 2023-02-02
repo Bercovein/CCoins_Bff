@@ -6,6 +6,7 @@ import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.dto.users.ClientDTO;
 import org.springframework.http.HttpHeaders;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface IPartiesService {
@@ -27,4 +28,6 @@ public interface IPartiesService {
     ListDTO findClientsFromParty(Long id, HttpHeaders headers);
 
     void logout(String client);
+
+    List<ClientDTO> findByIdIn(List<Long> list);
 }

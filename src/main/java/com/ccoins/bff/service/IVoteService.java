@@ -13,7 +13,7 @@ public interface IVoteService {
 
     VotingDTO resolveVoting(Long barId);
 
-    void giveSongCoinsByGame(Long barId, VotingDTO voting);
+    List<String> giveSongCoinsByGame(Long barId, VotingDTO voting);
 
     VotingDTO createNewVoting(Long barId, List<SongSPTF> list);
 

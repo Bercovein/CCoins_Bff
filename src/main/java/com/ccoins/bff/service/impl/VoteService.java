@@ -31,11 +31,14 @@ public class VoteService implements IVoteService {
 
     private final ClientService clientService;
 
+    private final PartiesService partiesService;
+
     @Autowired
-    public VoteService(CoinsFeign coinsFeign, BarsFeign barsFeign, ClientService clientService) {
+    public VoteService(CoinsFeign coinsFeign, BarsFeign barsFeign, ClientService clientService, PartiesService partiesService) {
         this.coinsFeign = coinsFeign;
         this.barsFeign = barsFeign;
         this.clientService = clientService;
+        this.partiesService = partiesService;
     }
 
     @Override
@@ -67,7 +70,9 @@ public class VoteService implements IVoteService {
     }
 
     @Override
-    public void giveSongCoinsByGame(Long barId, VotingDTO voting){
+    public List<String> giveSongCoinsByGame(Long barId, VotingDTO voting){
+
+        List<String> ipClients = new ArrayList<>();
 
         //buscar el game
         GameDTO game = this.barsFeign.findVotingGameByBarId(barId).getBody();
@@ -83,7 +88,13 @@ public class VoteService implements IVoteService {
                 .clients(clientsIdList)
                 .build();
 
-        this.coinsFeign.giveCoinsToClients(request);
+        ResponseEntity<List<Long>> clientsResponse = this.coinsFeign.giveCoinsToClients(request);
+
+        if(clientsResponse.hasBody()){
+            this.partiesService.findByIdIn(clientsResponse.getBody()).forEach(clientDTO -> ipClients.add(clientDTO.getIp()));
+        }
+
+        return ipClients;
     }
 
     @Override

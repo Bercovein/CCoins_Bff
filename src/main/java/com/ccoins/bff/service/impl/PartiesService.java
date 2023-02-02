@@ -168,7 +168,8 @@ public class PartiesService extends ContextService implements IPartiesService {
         }
     }
 
-    private List<ClientDTO> findByIdIn(List<Long> list) {
+    @Override
+    public List<ClientDTO> findByIdIn(List<Long> list) {
         try {
             return this.usersFeign.findByIdIn(list);
         } catch (Exception e) {

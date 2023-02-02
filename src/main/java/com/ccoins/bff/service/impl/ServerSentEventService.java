@@ -3,7 +3,9 @@ package com.ccoins.bff.service.impl;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.service.IServerSentEventService;
+import com.ccoins.bff.utils.HeaderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -16,20 +18,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class ServerSentEventService implements IServerSentEventService {
 
-    @Autowired
     private BarsFeign barsFeign;
+    protected static final Map<Long, Map<String,SseEmitter>> emitters = new ConcurrentHashMap<>();
 
-
-
-    protected static final Map<Long, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
+    @Autowired
+    public ServerSentEventService(BarsFeign barsFeign) {
+        this.barsFeign = barsFeign;
+    }
 
     @Override
-    public SseEmitter subscribe(@RequestParam Long partyId){
+    public SseEmitter subscribe(@RequestParam HttpHeaders headers){
+
+        Long partyId = HeaderUtils.getPartyId(headers);
+        String client = HeaderUtils.getClient(headers);
 
         ResponseEntity<IdDTO> responseEntity = this.barsFeign.getBarIdByParty(partyId);
         Long barId;
@@ -40,40 +45,60 @@ public class ServerSentEventService implements IServerSentEventService {
 
             this.sendInitEvent(sseEmitter);
 
-            List<SseEmitter> sseEmitterList = emitters.get(barId);
+            Map<String,SseEmitter> sseEmitterMap = emitters.get(barId);
 
-            if(sseEmitterList == null || sseEmitterList.isEmpty()){
-                sseEmitterList = new CopyOnWriteArrayList<>();
+            if(sseEmitterMap == null || sseEmitterMap.isEmpty()){
+                sseEmitterMap = new ConcurrentHashMap<>();
             }
 
-            sseEmitterList.add(sseEmitter);
+            sseEmitterMap.put(client,sseEmitter);
 
-            emitters.put(barId,sseEmitterList);
+            emitters.put(barId,sseEmitterMap);
 
-            sseEmitter.onCompletion(()->emitters.get(barId).remove(sseEmitter));
-            sseEmitter.onTimeout(()->emitters.get(barId).remove(sseEmitter));
-            sseEmitter.onError(e->emitters.get(barId).remove(sseEmitter));
+            sseEmitter.onCompletion(()->emitters.get(barId).remove(client));
+            sseEmitter.onTimeout(()->emitters.get(barId).remove(client));
+            sseEmitter.onError(e->emitters.get(barId).remove(client));
         }
         return sseEmitter;
     }
 
     @Override
     @Async
-    public void dispatchEventToClients(String eventName, Object data, Long barId){
+    public void dispatchEventToAllClientsFromBar(String eventName, Object data, Long barId){
 
-        List<SseEmitter> sseEmitterList = emitters.get(barId);
+        Map<String,SseEmitter> sseEmitterMap = emitters.get(barId);
 
-        if(sseEmitterList != null && !sseEmitterList.isEmpty()){
+        if(sseEmitterMap != null && !sseEmitterMap.isEmpty()){
 
-            for (SseEmitter emitter: sseEmitterList) {
+            sseEmitterMap.forEach((client,emitter) -> {
                 try{
                     emitter.send(SseEmitter.event().name(eventName).data(data, MediaType.APPLICATION_JSON));
                 }catch(IOException e){
-                    sseEmitterList.remove(emitter);
+                    sseEmitterMap.remove(client);
                     e.printStackTrace();
                 }
-            }
-            emitters.put(barId, sseEmitterList);
+            });
+            emitters.put(barId, sseEmitterMap);
+        }
+    }
+
+    @Override
+    @Async
+    public void dispatchEventToSomeClientsFromBar(String eventName, Object data, Long barId, List<String> clients){
+
+        Map<String,SseEmitter> sseEmitterMap = emitters.get(barId);
+
+        if(sseEmitterMap != null && !sseEmitterMap.isEmpty()){
+
+            clients.forEach(client -> {
+                try{
+                    sseEmitterMap.get(client).send(SseEmitter.event().name(eventName).data(data, MediaType.APPLICATION_JSON));
+                }catch(IOException e){
+                    sseEmitterMap.remove(client);
+                    e.printStackTrace();
+                }
+            });
+            emitters.put(barId, sseEmitterMap);
         }
     }
 

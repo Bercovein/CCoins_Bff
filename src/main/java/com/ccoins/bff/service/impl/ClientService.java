@@ -100,7 +100,6 @@ public class ClientService implements IClientService {
 
     @Override
     public void logout(String client) {
-
         this.partyService.logout(client);
     }
 }
