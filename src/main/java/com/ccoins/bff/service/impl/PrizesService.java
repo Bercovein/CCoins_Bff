@@ -2,13 +2,16 @@ package com.ccoins.bff.service.impl;
 
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ListDTO;
+import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.dto.bars.BarTableDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.dto.prizes.PrizeDTO;
 import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
+import com.ccoins.bff.exceptions.ObjectNotFoundException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.PrizeFeign;
+import com.ccoins.bff.service.ICoinsService;
 import com.ccoins.bff.service.IPrizesService;
 import com.ccoins.bff.utils.HeaderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +32,15 @@ public class PrizesService extends ContextService implements IPrizesService {
 
     private final TablesService tablesService;
 
+    private final ICoinsService coinsService;
+
     @Autowired
-    public PrizesService(PrizeFeign prizeFeign, ClientService clientService, PartiesService partiesService, TablesService tablesService) {
+    public PrizesService(PrizeFeign prizeFeign, ClientService clientService, PartiesService partiesService, TablesService tablesService, ICoinsService coinsService) {
         this.prizeFeign = prizeFeign;
         this.clientService = clientService;
         this.partiesService = partiesService;
         this.tablesService = tablesService;
+        this.coinsService = coinsService;
     }
 
     @Override
@@ -58,6 +64,11 @@ public class PrizesService extends ContextService implements IPrizesService {
         }catch(Exception e){
             throw new BadRequestException(ExceptionConstant.PRIZE_FIND_BY_ID_ERROR_CODE,
                     this.getClass(), ExceptionConstant.PRIZE_FIND_BY_ID_ERROR);
+        }
+
+        if(prize == null){
+            throw new ObjectNotFoundException(ExceptionConstant.PRIZE_NOT_FOUND_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.PRIZE_NOT_FOUND_ERROR);
         }
 
         return ResponseEntity.ok(prize);
@@ -89,30 +100,24 @@ public class PrizesService extends ContextService implements IPrizesService {
     }
 
     @Override
-    public void buyPrizeByTableAndUser(IdDTO idDTO, String client, String code) {
+    public ResponseEntity<ResponseDTO> buyPrizeByTableAndUser(IdDTO idDTO, String client, String code) {
 
         //busca el premio
         PrizeDTO prize = this.findById(idDTO).getBody();
 
-        if(prize == null){
-            throw new RuntimeException();
+        assert prize != null;
+        if(prize.getEndDate() != null){
+            throw new BadRequestException(ExceptionConstant.PRIZE_UNAVAILABLE_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.PRIZE_UNAVAILABLE_ERROR);
         }
 
         //busca al cliente por IP
         ClientDTO clientDTO = this.clientService.findActiveByIp(client);
 
         //busca la party activa por codigo
-        Optional<PartyDTO> partyOpt = this.partiesService.findActivePartyByTableCode(code);
+        PartyDTO partyOpt = this.partiesService.findActivePartyByTableCode(code);
 
-        if(partyOpt.isEmpty()){
-            throw new RuntimeException();
-        }
-
-        PartyDTO party = partyOpt.get();
-
-        //si la party no tiene puntos, error
-
-
+        return this.coinsService.spendCoinsInPrizeByParty(partyOpt.getId(),clientDTO.getId(), prize.getId(), prize.getPoints());
     }
 
     @Override

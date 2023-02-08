@@ -107,14 +107,15 @@ public class PartiesService extends ContextService implements IPartiesService {
     }
 
     @Override
-    public Optional<PartyDTO> findActivePartyByTableCode(String code){
+    public PartyDTO findActivePartyByTableCode(String code){
 
-        try {
-            return this.prizeFeign.findActivePartyByTableCode(code);
-        }catch (Exception e){
-            throw new BadRequestException(ExceptionConstant.PARTY_BY_ERROR_CODE,
-                    this.getClass(), ExceptionConstant.PARTY_BY_ERROR);
+        Optional<PartyDTO> partyOpt = this.prizeFeign.findActivePartyByTableCode(code);
+
+        if(partyOpt.isEmpty()){
+            throw new BadRequestException(ExceptionConstant.PARTY_BY_ERROR_CODE,this.getClass(),ExceptionConstant.PARTY_BY_ERROR);
         }
+
+        return partyOpt.get();
     }
 
     @Override

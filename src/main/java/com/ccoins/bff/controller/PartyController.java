@@ -5,6 +5,7 @@ import com.ccoins.bff.controller.swagger.IPartyController;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.LongDTO;
+import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.service.IPartiesService;
 import com.ccoins.bff.service.IPrizesService;
@@ -53,8 +54,8 @@ public class PartyController implements IPartyController {
     @Override
     @PostMapping("/prizes/buy")
     @LimitedTime
-    public void buyPrize(@RequestBody IdDTO idDTO, @RequestHeader HttpHeaders headers){
-        this.prizeService.buyPrizeByTableAndUser(idDTO, HeaderUtils.getClient(headers), HeaderUtils.getCode(headers));
+    public ResponseEntity<ResponseDTO> buyPrize(@RequestBody IdDTO idDTO, @RequestHeader HttpHeaders headers){
+        return this.prizeService.buyPrizeByTableAndUser(idDTO, HeaderUtils.getClient(headers), HeaderUtils.getCode(headers));
     }
 
     @Override

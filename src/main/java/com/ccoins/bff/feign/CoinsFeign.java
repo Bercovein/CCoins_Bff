@@ -1,6 +1,8 @@
 package com.ccoins.bff.feign;
 
+import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.dto.coins.CoinsToWinnersDTO;
+import com.ccoins.bff.dto.coins.SpendCoinsRqDTO;
 import com.ccoins.bff.dto.coins.VoteDTO;
 import com.ccoins.bff.dto.coins.VotingDTO;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -33,4 +35,7 @@ public interface CoinsFeign {
 
     @PostMapping("/coins/clients/match")
     ResponseEntity<List<Long>> giveCoinsToClients(@RequestBody CoinsToWinnersDTO request);
+
+    @PostMapping("/coins/party/prize/buy")
+    ResponseEntity<ResponseDTO> spendCoinsInPrizeByParty(@RequestBody SpendCoinsRqDTO request);
 }

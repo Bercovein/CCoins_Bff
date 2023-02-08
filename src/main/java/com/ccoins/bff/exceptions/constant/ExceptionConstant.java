@@ -172,5 +172,11 @@ public class ExceptionConstant {
     public static final String VOTES_IS_OVER_ERROR_CODE = "0050";
     public static final String VOTES_IS_OVER_ERROR = "Votation is over.";
 
+    public static final String PRIZE_NOT_FOUND_ERROR_CODE = "0051";
+    public static final String PRIZE_NOT_FOUND_ERROR = "Prize not found.";
+
+    public static final String PRIZE_UNAVAILABLE_ERROR_CODE = "0052";
+    public static final String PRIZE_UNAVAILABLE_ERROR = "Prize is not available to buy.";
+
 
 }

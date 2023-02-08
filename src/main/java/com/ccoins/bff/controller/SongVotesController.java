@@ -1,5 +1,6 @@
 package com.ccoins.bff.controller;
 
+import com.ccoins.bff.annotation.LimitedTime;
 import com.ccoins.bff.controller.swagger.ISongVotesController;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.service.IVoteService;
@@ -20,6 +21,7 @@ public class SongVotesController implements ISongVotesController {
 
     @Override
     @PostMapping
+    @LimitedTime
     public void voteSong(@RequestHeader HttpHeaders headers, @RequestBody IdDTO request){
         this.service.voteSong(headers, request);
     }

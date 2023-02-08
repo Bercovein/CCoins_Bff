@@ -4,6 +4,7 @@ import com.ccoins.bff.annotation.LimitedTime;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.LongDTO;
+import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import io.swagger.annotations.Api;
 import org.springframework.http.HttpHeaders;
@@ -31,7 +32,7 @@ public interface IPartyController {
 
     @PostMapping("/buy")
     @LimitedTime
-    void buyPrize(@RequestBody IdDTO idDTO, @RequestHeader HttpHeaders headers);
+    ResponseEntity<ResponseDTO> buyPrize(@RequestBody IdDTO idDTO, @RequestHeader HttpHeaders headers);
 
     @PostMapping({"/prizes"})
     ResponseEntity<ListDTO> findAllByBar(@RequestHeader HttpHeaders headers);
