@@ -162,7 +162,7 @@ public class SpotifyService implements ISpotifyService {
         if(songs.isEmpty() || songs.size() == 1)
             return new ArrayList<>();
 
-        return songs.subList(1, Math.min(songs.size(), maxToVote + 1));
+        return songs.subList(0, Math.min(songs.size(), maxToVote));
     }
 
     public void addVotedSongToNextPlayback(String token, PlaybackSPTF playbackSPTF, SongDTO winnerSong){
