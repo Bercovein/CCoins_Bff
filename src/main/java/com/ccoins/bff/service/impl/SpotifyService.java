@@ -151,6 +151,7 @@ public class SpotifyService implements ISpotifyService {
         }
     }
 
+    @Override
     public List<SongSPTF> getNextVotes(String token){
 
         HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(token);
@@ -161,7 +162,7 @@ public class SpotifyService implements ISpotifyService {
         if(songs.isEmpty() || songs.size() == 1)
             return new ArrayList<>();
 
-        return songs.subList(0, Math.min(songs.size(), maxToVote));
+        return songs.subList(1, Math.min(songs.size(), maxToVote + 1));
     }
 
     public void addVotedSongToNextPlayback(String token, PlaybackSPTF playbackSPTF, SongDTO winnerSong){

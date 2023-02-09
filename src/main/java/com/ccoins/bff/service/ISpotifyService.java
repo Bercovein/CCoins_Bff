@@ -6,6 +6,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 
+import java.util.List;
+
 public interface ISpotifyService {
 
     ResponseEntity<PlaylistSPTF> getPlaylist(HttpHeaders headers);
@@ -29,4 +31,5 @@ public interface ISpotifyService {
 
     void sendPlaybackToClients(BarTokenDTO request);
 
+    List<SongSPTF> getNextVotes(String token);
 }
