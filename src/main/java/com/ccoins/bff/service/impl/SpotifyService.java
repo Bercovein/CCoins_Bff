@@ -147,7 +147,9 @@ public class SpotifyService implements ISpotifyService {
     @Async
     public void getActualVotes(Long barId){
         VotingDTO actualVoting = this.voteService.getActualVotingByBar(barId);
-        this.sseService.dispatchEventToAllClientsFromBar(EventNamesEnum.ACTUAL_VOTES_SPTF.name(), actualVoting.getSongs(), barId);
+        if(actualVoting != null && !actualVoting.getSongs().isEmpty()) {
+            this.sseService.dispatchEventToAllClientsFromBar(EventNamesEnum.ACTUAL_VOTES_SPTF.name(), actualVoting.getSongs(), barId);
+        }
     }
 
     public List<SongSPTF> getNextVotes(String token){
