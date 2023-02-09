@@ -136,7 +136,6 @@ public class SpotifyService implements ISpotifyService {
     }
 
     @Override
-    @Async
     public void newVoting(String token, PlaybackSPTF playbackSPTF, Long barId) {
 
         List<SongSPTF> list = this.getNextVotes(token); //ESTAS CANCIONES DEBERIAN VIAJAR A LA NUEVA VOTACIÓN
