@@ -140,7 +140,7 @@ public class JwtUtils {
     }
 
     public static JwtUserDTO parse(OwnerDTO ownerDTO){
-        return (JwtUserDTO) MapperUtils.map(ownerDTO, JwtUserDTO.class);
+        return MapperUtils.map(ownerDTO, JwtUserDTO.class);
     }
 
 }

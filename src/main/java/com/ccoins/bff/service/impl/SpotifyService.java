@@ -70,8 +70,7 @@ public class SpotifyService implements ISpotifyService {
 
     @Override
     public CredentialsSPTFDTO getCredentials(){
-
-        return (CredentialsSPTFDTO) MapperUtils.map(this.credentials, CredentialsSPTFDTO.class);
+        return MapperUtils.map(this.credentials, CredentialsSPTFDTO.class);
     }
 
     @Override
