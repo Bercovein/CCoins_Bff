@@ -2,12 +2,14 @@ package com.ccoins.bff.spotify.sto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
 @AllArgsConstructor
+@Builder
 public class PlaybackSPTF {
 
     @JsonProperty("progress_ms")

@@ -4,7 +4,6 @@ import com.ccoins.bff.dto.EmptyDTO;
 import com.ccoins.bff.spotify.sto.PlaylistSPTF;
 import com.ccoins.bff.spotify.sto.RecentlyPlayedSPTF;
 import com.ccoins.bff.spotify.sto.TrackUriListSPTF;
-import com.ccoins.bff.spotify.sto.UriSPTF;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +19,7 @@ public interface SpotifyFeign {
     RecentlyPlayedSPTF getRecentlyPlayed(@RequestHeader HttpHeaders headers, @PathVariable Integer limit);
 
     @PostMapping(value = "${spotify.path.add-track-to-queue}", produces = "application/json", consumes = "application/json")
-    void addTrackToQueue(@RequestHeader HttpHeaders headers, @RequestBody UriSPTF trackUri);
+    void addTrackToQueue(@RequestHeader HttpHeaders headers, @RequestParam("uri") String uri, @RequestBody EmptyDTO empty);
 
     @DeleteMapping(value = "${spotify.path.remove-song-from-playlist}", produces = "application/json", consumes = "application/json")
     void removeSongFromPlaylist(@RequestHeader HttpHeaders headers, @RequestParam("playlistId") String playlistId, @RequestBody TrackUriListSPTF request);

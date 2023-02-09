@@ -2,11 +2,11 @@ package com.ccoins.bff.controller;
 
 import com.ccoins.bff.controller.swagger.ISpotifyController;
 import com.ccoins.bff.dto.StringDTO;
+import com.ccoins.bff.dto.coins.SongDTO;
 import com.ccoins.bff.service.ISpotifyService;
-import com.ccoins.bff.spotify.sto.BarTokenDTO;
-import com.ccoins.bff.spotify.sto.CredentialsSPTFDTO;
-import com.ccoins.bff.spotify.sto.SongSPTF;
+import com.ccoins.bff.spotify.sto.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,5 +38,12 @@ public class SpotifyController implements ISpotifyController {
 
         return this.service.getNextVotes(token.getText());
     }
+
+    @Override
+    @GetMapping("/add-voted-song-to-next-playback")
+    public void addVotedSongToNextPlayback(@Param("token") String token,@Param("context") String context,@Param("song")  String song){
+        this.service.addVotedSongToNextPlayback(token, PlaybackSPTF.builder().context(UriSPTF.builder().uri(context).build()).build(), SongDTO.builder().uri(song).build());
+    }
+
 
 }

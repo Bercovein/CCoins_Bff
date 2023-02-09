@@ -65,7 +65,7 @@ public class SpotifyService implements ISpotifyService {
     public void addTrackToQueue(HttpHeaders headers, UriSPTF trackUri) {
 
         HeaderUtils.setParameters(headers);
-        this.feign.addTrackToQueue(headers,trackUri);
+        this.feign.addTrackToQueue(headers,trackUri.getUri(), EmptyDTO.builder().build());
     }
 
     @Override
@@ -165,6 +165,7 @@ public class SpotifyService implements ISpotifyService {
         return songs.subList(0, Math.min(songs.size(), maxToVote));
     }
 
+    @Override
     public void addVotedSongToNextPlayback(String token, PlaybackSPTF playbackSPTF, SongDTO winnerSong){
 
         if(winnerSong == null || StringsUtils.isNullOrEmpty(winnerSong.getUri())){
@@ -186,6 +187,6 @@ public class SpotifyService implements ISpotifyService {
         );
 
         //agregarla a continuación
-        this.feign.addTrackToQueue(headers,trackUri);
+        this.addTrackToQueue(headers,trackUri);
     }
 }

@@ -32,4 +32,6 @@ public interface ISpotifyService {
     void sendPlaybackToClients(BarTokenDTO request);
 
     List<SongSPTF> getNextVotes(String token);
+
+    void addVotedSongToNextPlayback(String token, PlaybackSPTF playbackSPTF, SongDTO winnerSong);
 }
