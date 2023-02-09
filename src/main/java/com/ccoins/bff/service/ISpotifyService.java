@@ -21,7 +21,8 @@ public interface ISpotifyService {
     @Async
     SongDTO newWinner(Long barId);
 
-    void newVoting(String token, PlaybackSPTF playbackSPTF, Long barId, SongDTO song);
+    @Async
+    void newVoting(String token, PlaybackSPTF playbackSPTF, Long barId);
 
     @Async
     void getActualVotes(Long barId);

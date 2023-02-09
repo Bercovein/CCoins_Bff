@@ -50,6 +50,11 @@ public class VoteService implements IVoteService {
     public VotingDTO resolveVoting(Long barId){
         //resolver resultado de la votación, si ninguno fue votado, tomar cualquiera y cerrar la votación
         VotingDTO voting = this.getActualVotingByBar(barId);
+
+        if(voting == null){
+            return null;
+        }
+
         List<SongDTO> voteList = voting.getSongs();
         Optional<SongDTO> maxValueOpt = voteList.stream().max(Comparator.comparing(SongDTO::getVotes));
         List<SongDTO> winnerSongs;

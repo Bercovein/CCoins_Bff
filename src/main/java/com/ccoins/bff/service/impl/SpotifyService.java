@@ -93,8 +93,14 @@ public class SpotifyService implements ISpotifyService {
             try {
                 //valida si faltan 5 seg para que termine la canción y resuelve la votación
                 if(playbackSPTF.getItem().getDurationMs() - playbackSPTF.getProgressMs() <= this.votesBeforeEndSongMs){
-                    SongDTO song = this.newWinner(barId);
-                    this.newVoting(token, playbackSPTF, barId, song);
+
+                    SongDTO winnerSong = this.newWinner(barId);
+
+                    //si no hay playlist uri entonces no se crea una nueva votación
+                    if(playbackSPTF.getContext() != null && !StringsUtils.isNullOrEmpty(playbackSPTF.getContext().getUri())){
+                        this.addVotedSongToNextPlayback(token, playbackSPTF, winnerSong);
+                        this.newVoting(token, playbackSPTF, barId);
+                    }
                 }
                 //devuelve la votación actual
                 this.getActualVotes(barId);
@@ -114,26 +120,28 @@ public class SpotifyService implements ISpotifyService {
     }
 
     @Override
-    public SongDTO newWinner(Long barId){
+    public SongDTO newWinner(Long barId) {
         //resolver la votación
         VotingDTO voting = this.voteService.resolveVoting(barId);
-        this.sseService.dispatchEventToAllClientsFromBar(EventNamesEnum.NEW_WINNER_SPTF.name(), voting.getWinnerSong(), barId);
+        SongDTO winnerSong = null;
 
-        List<String> clientIpList = this.voteService.giveSongCoinsByGame(barId, voting);
-        this.sseService.dispatchEventToSomeClientsFromBar(EventNamesEnum.YOU_WIN_SONG_VOTE_SPTF.name(), null,barId, clientIpList);
-        return voting.getWinnerSong();
+        if (voting != null) {
+            winnerSong = voting.getWinnerSong();
+            this.sseService.dispatchEventToAllClientsFromBar(EventNamesEnum.NEW_WINNER_SPTF.name(), voting.getWinnerSong(), barId);
+
+            List<String> clientIpList = this.voteService.giveSongCoinsByGame(barId, voting);
+            this.sseService.dispatchEventToSomeClientsFromBar(EventNamesEnum.YOU_WIN_SONG_VOTE_SPTF.name(), null, barId, clientIpList);
+        }
+
+        return winnerSong;
     }
 
     @Override
     @Async
-    public void newVoting(String token, PlaybackSPTF playbackSPTF, Long barId, SongDTO song){
+    public void newVoting(String token, PlaybackSPTF playbackSPTF, Long barId) {
 
-        //si no hay playlist uri entonces no se crea una nueva votación
-        if(playbackSPTF.getContext() != null && !StringsUtils.isNullOrEmpty(playbackSPTF.getContext().getUri())){
-            this.addVotedSongToNextPlayback(token, playbackSPTF, song.getUri());
-            List<SongSPTF> list = this.getNextVotes(token); //ESTAS CANCIONES DEBERIAN VIAJAR A LA NUEVA VOTACIÓN
-            this.voteService.createNewVoting(barId, list);
-        }
+        List<SongSPTF> list = this.getNextVotes(token); //ESTAS CANCIONES DEBERIAN VIAJAR A LA NUEVA VOTACIÓN
+        this.voteService.createNewVoting(barId, list);
     }
 
     @Override
@@ -156,7 +164,11 @@ public class SpotifyService implements ISpotifyService {
         return songs.subList(0, Math.min(songs.size(), maxToVote));
     }
 
-    public void addVotedSongToNextPlayback(String token, PlaybackSPTF playbackSPTF, String songUri){
+    public void addVotedSongToNextPlayback(String token, PlaybackSPTF playbackSPTF, SongDTO winnerSong){
+
+        if(winnerSong == null || StringsUtils.isNullOrEmpty(winnerSong.getUri())){
+            return;
+        }
 
         HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(token);
 
@@ -164,7 +176,7 @@ public class SpotifyService implements ISpotifyService {
         String[] list = playlistUri.getUri().split(":");
         String playlistId = list[list.length-1]; //toma el id del uri de la playlist
 
-        UriSPTF trackUri = UriSPTF.builder().uri(songUri).build();
+        UriSPTF trackUri = UriSPTF.builder().uri(winnerSong.getUri()).build();
 
         //quitar la canción de la lista
         this.feign.removeSongFromPlaylist(headers,
