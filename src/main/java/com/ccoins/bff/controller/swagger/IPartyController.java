@@ -9,6 +9,7 @@ import com.ccoins.bff.dto.prizes.PartyDTO;
 import io.swagger.annotations.Api;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -36,4 +37,7 @@ public interface IPartyController {
 
     @PostMapping({"/prizes"})
     ResponseEntity<ListDTO> findAllByBar(@RequestHeader HttpHeaders headers);
+
+    @GetMapping("/bar/games")
+    ResponseEntity<ListDTO> findGamesByBar(@RequestHeader HttpHeaders headers);
 }

@@ -86,4 +86,11 @@ public class BarsService extends ContextService implements IBarsService {
 
         return this.barsFeign.findUrlByTableCode(code);
     }
+
+    @Override
+    public ResponseEntity<ListDTO> findGamesByBarToClients(HttpHeaders headers) {
+
+        
+        return null;
+    }
 }

@@ -7,6 +7,7 @@ import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.LongDTO;
 import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
+import com.ccoins.bff.service.IGamesService;
 import com.ccoins.bff.service.IPartiesService;
 import com.ccoins.bff.service.IPrizesService;
 import com.ccoins.bff.utils.HeaderUtils;
@@ -20,27 +21,29 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 public class PartyController implements IPartyController {
 
-    private final IPartiesService service;
+    private final IPartiesService partiesService;
     private final IPrizesService prizeService;
+    private final IGamesService gameService;
 
     @Autowired
-    public PartyController(IPartiesService service, IPrizesService prizeService) {
-        this.service = service;
+    public PartyController(IPartiesService partiesService, IPrizesService prizeService, IGamesService gameService) {
+        this.partiesService = partiesService;
         this.prizeService = prizeService;
+        this.gameService = gameService;
     }
 
     @PostMapping("/coins/quantity")
     @LimitedTime
     @Override
     public ResponseEntity<LongDTO> getTotalCoinsByParty(@RequestBody IdDTO id){
-        return ResponseEntity.ok(this.service.countCoinsByParty(id.getId()));
+        return ResponseEntity.ok(this.partiesService.countCoinsByParty(id.getId()));
     }
 
     @PostMapping("")
     @LimitedTime
     @Override
     public ResponseEntity<PartyDTO> getPartyInfo(@RequestBody IdDTO id){
-        return ResponseEntity.ok(this.service.findById(id.getId()));
+        return ResponseEntity.ok(this.partiesService.findById(id.getId()));
     }
 
     //integrantes de la mesa
@@ -48,7 +51,7 @@ public class PartyController implements IPartyController {
     @LimitedTime
     @Override
     public ResponseEntity<ListDTO> getClientsFromParty(@RequestBody IdDTO id, @RequestHeader HttpHeaders headers){
-        return ResponseEntity.ok(this.service.findClientsFromParty(id.getId(), headers));
+        return ResponseEntity.ok(this.partiesService.findClientsFromParty(id.getId(), headers));
     }
 
     @Override
@@ -65,4 +68,9 @@ public class PartyController implements IPartyController {
         return this.prizeService.findAllByHeader(headers);
     }
 
+    @Override
+    @GetMapping("/bar/games")
+    public ResponseEntity<ListDTO> findGamesByBar(@RequestHeader HttpHeaders headers){
+        return this.gameService.findGamesByBarToClients(headers);
+    }
 }

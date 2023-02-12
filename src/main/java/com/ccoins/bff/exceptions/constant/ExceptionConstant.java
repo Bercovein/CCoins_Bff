@@ -182,4 +182,8 @@ public class ExceptionConstant {
     public static final String COINS_BY_PARTY_ERROR = GET_ERROR_LABEL.concat("coins by party");
 
 
+    public static final String GAME_FIND_BY_CLIENT_ERROR_CODE = "0054";
+    public static final String GAME_FIND_BY_CLIENT_ERROR = GET_ERROR_LABEL.concat("games by party");
+
+
 }

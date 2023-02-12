@@ -93,4 +93,7 @@ public interface BarsFeign {
     @GetMapping("/bars/game/{id}")
     ResponseEntity<BarDTO> getBarByGame(@RequestParam("id") Long id);
 
+    @GetMapping("/games/bar/{id}/active")
+    ResponseEntity<ListDTO> findAllActiveByBar(@PathVariable("id") Long id);
+
 }

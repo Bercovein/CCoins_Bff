@@ -7,7 +7,9 @@ import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.service.IGamesService;
+import com.ccoins.bff.utils.HeaderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -78,5 +80,19 @@ public class GamesService extends ContextService implements IGamesService {
             throw new BadRequestException(ExceptionConstant.GAME_FIND_GAME_TYPES_ERROR_CODE,
                     this.getClass(), ExceptionConstant.GAME_FIND_GAME_TYPES_ERROR);
         }
+    }
+
+    @Override
+    public ResponseEntity<ListDTO> findGamesByBarToClients(HttpHeaders headers) {
+
+        try{
+            IdDTO barId = this.barsFeign.getBarIdByParty(HeaderUtils.getPartyId(headers)).getBody();
+
+            return this.barsFeign.findAllActiveByBar(barId.getId());
+        }catch(Exception e){
+            throw new BadRequestException(ExceptionConstant.GAME_FIND_BY_CLIENT_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.GAME_FIND_BY_CLIENT_ERROR);
+        }
+
     }
 }

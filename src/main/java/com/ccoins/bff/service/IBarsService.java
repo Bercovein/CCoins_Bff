@@ -18,4 +18,6 @@ public interface IBarsService {
     ResponseEntity<BarDTO> active(IdDTO id);
 
     ResponseEntity<StringDTO> findUrlMenu(HttpHeaders headers);
+
+    ResponseEntity<ListDTO> findGamesByBarToClients(HttpHeaders headers);
 }

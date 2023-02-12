@@ -30,4 +30,5 @@ public interface IPartiesService {
     void logout(String client);
 
     List<ClientDTO> findByIdIn(List<Long> list);
+
 }

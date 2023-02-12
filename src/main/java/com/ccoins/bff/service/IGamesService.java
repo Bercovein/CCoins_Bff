@@ -3,6 +3,7 @@ package com.ccoins.bff.service;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.bars.GameDTO;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
 public interface IGamesService {
@@ -16,4 +17,6 @@ public interface IGamesService {
     ResponseEntity<GameDTO> active(IdDTO id);
 
     ResponseEntity<ListDTO> findAllGamesTypes();
+
+    ResponseEntity<ListDTO> findGamesByBarToClients(HttpHeaders headers);
 }
