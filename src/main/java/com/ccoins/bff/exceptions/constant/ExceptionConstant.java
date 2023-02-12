@@ -178,5 +178,8 @@ public class ExceptionConstant {
     public static final String PRIZE_UNAVAILABLE_ERROR_CODE = "0052";
     public static final String PRIZE_UNAVAILABLE_ERROR = "Prize is not available to buy.";
 
+    public static final String COINS_BY_PARTY_ERROR_CODE = "0053";
+    public static final String COINS_BY_PARTY_ERROR = GET_ERROR_LABEL.concat("coins by party");
+
 
 }

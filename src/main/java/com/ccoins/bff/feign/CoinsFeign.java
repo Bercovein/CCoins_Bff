@@ -1,10 +1,7 @@
 package com.ccoins.bff.feign;
 
 import com.ccoins.bff.dto.ResponseDTO;
-import com.ccoins.bff.dto.coins.CoinsToWinnersDTO;
-import com.ccoins.bff.dto.coins.SpendCoinsRqDTO;
-import com.ccoins.bff.dto.coins.VoteDTO;
-import com.ccoins.bff.dto.coins.VotingDTO;
+import com.ccoins.bff.dto.coins.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,14 +12,17 @@ import java.util.List;
 @RequestMapping("${feign.coins-ms.req-map}")
 public interface CoinsFeign {
 
-    @GetMapping("/coins/party/{id}")
+    @GetMapping("/coins/party/{id}/count")
     ResponseEntity<Long> countCoinsByParty(@PathVariable("id") Long id);
 
     @GetMapping("/match/voting/bar/{id}")
     ResponseEntity<VotingDTO> getActualVotingByBar(@PathVariable("id") Long id);
 
     @PostMapping("/match/voting")
-    VotingDTO saveOrUpdateVoting(@RequestBody VotingDTO request);
+    VotingDTO saveVoting(@RequestBody VotingDTO request);
+
+    @PutMapping("/match/voting")
+    VotingDTO updateVoting(@RequestBody VotingDTO request);
 
     @GetMapping("/match/voting/song/{songId}")
     VotingDTO getVotingBySong(@PathVariable("songId") Long songId);
@@ -38,4 +38,7 @@ public interface CoinsFeign {
 
     @PostMapping("/coins/party/prize/buy")
     ResponseEntity<ResponseDTO> spendCoinsInPrizeByParty(@RequestBody SpendCoinsRqDTO request);
+
+    @GetMapping("/coins/party/{id}")
+    ResponseEntity<CoinsReportDTO> getAllCoinsFromParty(@PathVariable Long id);
 }

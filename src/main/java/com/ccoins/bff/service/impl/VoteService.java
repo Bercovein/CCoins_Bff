@@ -69,7 +69,7 @@ public class VoteService implements IVoteService {
         voting.setWinnerSong(winner);
         voting.getMatch().setEndDate(DateUtils.nowLocalDateTime());
 
-        this.coinsFeign.saveOrUpdateVoting(voting); //actualiza el match y la votación
+        this.coinsFeign.updateVoting(voting); //actualiza el match y la votación
 
         return voting;
     }
@@ -118,7 +118,7 @@ public class VoteService implements IVoteService {
         VotingDTO votingDTO = VotingDTO.builder()
                 .songs(songDTOList).match(matchDTO).build();
 
-        return this.coinsFeign.saveOrUpdateVoting(votingDTO);
+        return this.coinsFeign.saveVoting(votingDTO);
     }
 
     @Override
