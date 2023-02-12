@@ -14,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
 @RestController
 @RequestMapping("/clients")
 @CrossOrigin
@@ -29,9 +27,13 @@ public class ClientsController implements IClientsController {
 
     @PostMapping("/login")
     @LimitedTime
-    public ClientTableDTO login(@RequestBody @Valid ClientTableDTO request, @RequestHeader HttpHeaders headers){
-        request.setClientIp(HeaderUtils.getClient(headers));
-        request.setTableCode(HeaderUtils.getCode(headers));
+    public ClientTableDTO login(@RequestHeader HttpHeaders headers){
+
+        ClientTableDTO request = ClientTableDTO.builder()
+                .clientIp(HeaderUtils.getClient(headers))
+                .tableCode(HeaderUtils.getCode(headers))
+                .build();
+
         return this.service.loginClient(request);
     }
 
