@@ -5,7 +5,7 @@ import org.springframework.http.HttpHeaders;
 public class HeaderUtils {
 
     public static final String CLIENT = "client";
-    public static final String PARTY_ID = "partyid";
+    public static final String PARTY_ID = "partyId";
     public static final String CODE = "code";
     public static final String AUTHORIZATION = "Authorization";
     public static final String BEARER = "Bearer ";
