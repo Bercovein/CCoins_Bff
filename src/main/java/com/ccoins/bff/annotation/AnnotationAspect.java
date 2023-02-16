@@ -10,6 +10,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.mobile.device.Device;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -18,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static com.ccoins.bff.exceptions.constant.ExceptionConstant.NOT_MOBILE_ERROR;
 
 @Aspect
 @Component
@@ -48,6 +51,25 @@ public class AnnotationAspect {
         if(Boolean.FALSE.equals(response.getData())){
             throw new UnauthorizedException(ExceptionConstant.UNACTIVE_BAR_ERROR_CODE,
                     response.getMessage().toString());
+        }
+
+        return joinPoint.proceed();
+    }
+
+    @Around(value = "@annotation(com.ccoins.bff.annotation.MobileCheck)")
+    public Object checkDevice(ProceedingJoinPoint joinPoint) throws Throwable {
+
+        Object[] args = joinPoint.getArgs();
+
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] instanceof Device){
+                Device device = (Device) args[i];
+                if (!device.isMobile()) {
+                    System.out.println("NOT A MOBILE DEVICE");
+                    throw new UnauthorizedException(ExceptionConstant.NOT_MOBILE_ERROR_CODE,
+                            NOT_MOBILE_ERROR);
+                }
+            }
         }
 
         return joinPoint.proceed();

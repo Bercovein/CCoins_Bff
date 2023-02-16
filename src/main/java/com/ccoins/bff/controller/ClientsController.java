@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mobile.device.Device;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,8 +27,9 @@ public class ClientsController implements IClientsController {
     private IBarsService barsService;
 
     @PostMapping("/login")
+//    @MobileCheck
     @LimitedTime
-    public ClientTableDTO login(@RequestHeader HttpHeaders headers){
+    public ClientTableDTO login(@RequestHeader HttpHeaders headers, Device device){
 
         ClientTableDTO request = ClientTableDTO.builder()
                 .clientIp(HeaderUtils.getClient(headers))

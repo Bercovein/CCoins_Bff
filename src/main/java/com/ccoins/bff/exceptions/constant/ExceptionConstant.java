@@ -186,4 +186,8 @@ public class ExceptionConstant {
     public static final String GAME_FIND_BY_CLIENT_ERROR = GET_ERROR_LABEL.concat("games by party");
 
 
+    public static final String NOT_MOBILE_ERROR_CODE = "0055";
+    public static final String NOT_MOBILE_ERROR = "You can only login with your phone.";
+
+
 }

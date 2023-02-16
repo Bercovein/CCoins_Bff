@@ -10,7 +10,7 @@
               class="ch.qos.logback.core.ConsoleAppender">
         <withJansi>true</withJansi>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-4level) %t %cyan(%logger{20})-%line %blue([%X{transaction.id}]): %m%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-4level) %t %cyan(%logger{0})-%line %blue([%X{transaction.id}]): %m%n</pattern>
         </encoder>
     </appender>
 
