@@ -31,7 +31,7 @@ public class SongVotesController implements ISongVotesController {
 
     @Override
     @GetMapping("/check-vote")
-//    @LimitedTime
+    @LimitedTime
     public ResponseEntity<GenericRsDTO<ResponseDTO>> checkVote(@RequestHeader HttpHeaders headers){
         return this.service.checkVote(headers);
     }
