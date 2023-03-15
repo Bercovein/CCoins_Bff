@@ -1,6 +1,7 @@
 package com.ccoins.bff.service;
 
 import com.ccoins.bff.dto.coins.SongDTO;
+import com.ccoins.bff.dto.coins.VotingDTO;
 import com.ccoins.bff.spotify.sto.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +24,7 @@ public interface ISpotifyService {
     @Async
     SongDTO newWinner(Long barId);
 
-    @Async
-    void newVoting(String token, PlaybackSPTF playbackSPTF, Long barId);
-
-    @Async
-    void getActualVotes(Long barId);
+    VotingDTO newVoting(String token, PlaybackSPTF playbackSPTF, Long barId);
 
     void sendPlaybackToClients(BarTokenDTO request);
 

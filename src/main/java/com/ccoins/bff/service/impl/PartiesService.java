@@ -86,6 +86,7 @@ public class PartiesService extends ContextService implements IPartiesService {
         try {
             return this.prizeFeign.createParty(PartyDTO.builder()
                     .table(tableId)
+                    .active(true)
                     .name(this.randomizer.randomGroupName())
                     .build());
         }catch (Exception e){

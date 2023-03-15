@@ -41,4 +41,7 @@ public interface CoinsFeign {
 
     @GetMapping("/coins/party/{id}")
     ResponseEntity<CoinsReportDTO> getAllCoinsFromParty(@PathVariable Long id);
+
+    @GetMapping("/vote/client/{userIp}/bar/{barId}")
+    boolean hasVotedAlready(@PathVariable("userIp") String userIp, @PathVariable("barId")  Long barId);
 }

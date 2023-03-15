@@ -1,6 +1,8 @@
 package com.ccoins.bff.service.impl;
 
+import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.dto.IdDTO;
+import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.dto.bars.BarDTO;
 import com.ccoins.bff.dto.bars.GameDTO;
 import com.ccoins.bff.dto.coins.*;
@@ -14,6 +16,7 @@ import com.ccoins.bff.utils.DateUtils;
 import com.ccoins.bff.utils.HeaderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -48,6 +51,7 @@ public class VoteService implements IVoteService {
 
     @Override
     public VotingDTO resolveVoting(Long barId){
+
         //resolver resultado de la votación, si ninguno fue votado, tomar cualquiera y cerrar la votación
         VotingDTO voting = this.getActualVotingByBar(barId);
 
@@ -159,6 +163,30 @@ public class VoteService implements IVoteService {
                 this.voteSong(request.getId(), HeaderUtils.getClient(headers));
             }
         }
+    }
+
+    @Override
+    public ResponseEntity<GenericRsDTO<ResponseDTO>> checkVote(HttpHeaders headers) {
+
+        Long partyId = HeaderUtils.getPartyId(headers);
+        String userIp = HeaderUtils.getClient(headers);
+        boolean hasVoted = false;
+
+        //buscar bar al que pertenece
+        ResponseEntity<IdDTO> barResponseEntity = this.barsFeign.getBarIdByParty(partyId);
+
+        //buscar la votación actual por bar
+        if(barResponseEntity.hasBody()){
+            hasVoted = this.coinsFeign.hasVotedAlready(userIp, barResponseEntity.getBody().getId());
+        }
+
+        if(!hasVoted){
+            return  ResponseEntity.status(HttpStatus.FORBIDDEN).body(new GenericRsDTO<>(
+                    ALREADY_VOTE_ERROR_CODE, ALREADY_VOTE_ERROR, null
+            ));
+        }
+
+        return ResponseEntity.ok(null);
     }
 
     public void voteSong(Long songId, String clientIp){
