@@ -35,7 +35,6 @@ public class SpotifyController implements ISpotifyController {
     @Override
     @PostMapping("/get-next-votes")
     public List<SongSPTF> getNextVotes(@RequestBody StringDTO token){
-
         return this.service.getNextVotes(token.getText());
     }
 

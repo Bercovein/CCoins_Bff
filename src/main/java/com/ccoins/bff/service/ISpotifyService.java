@@ -19,6 +19,8 @@ public interface ISpotifyService {
 
     CredentialsSPTFDTO getCredentials();
 
+    void resolveAndGenerateVotation(BarTokenDTO request, VotingDTO actualVoting);
+
     void changeShuffleState(String token, boolean bool);
 
     @Async

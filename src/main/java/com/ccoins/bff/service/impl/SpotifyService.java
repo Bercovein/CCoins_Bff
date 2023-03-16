@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -76,6 +77,7 @@ public class SpotifyService implements ISpotifyService {
     }
 
     @Override
+    @Async
     public void sendPlaybackToClients(BarTokenDTO request){
 
         Long barId = request.getId();
@@ -87,50 +89,71 @@ public class SpotifyService implements ISpotifyService {
         this.sseService.dispatchEventToAllClientsFromBar(EventNamesEnum.ACTUAL_SONG_SPTF.name(), playbackSPTF, barId);
 
         //solo si la canción existe
-        if(playbackSPTF != null && playbackSPTF.getItem() != null){
-
-            //quita el modo aleatorio de la lista si es que lo tiene
-            if(playbackSPTF.isShuffleState()){
-                this.changeShuffleState(token, false);
-            }
-
-            try {
-                //toma la votación actual del bar
-                VotingDTO actualVoting = this.voteService.getActualVotingByBar(barId);
-
-                //si la votación no existe, crea una nueva
-                if(actualVoting == null){
-                    actualVoting = this.newVoting(token, playbackSPTF, barId);
-                }
-
-                if(playbackSPTF.getItem().getDurationMs() - playbackSPTF.getProgressMs() <= this.votesBeforeEndSongMs){
-
-                    SongDTO winnerSong = this.newWinner(barId);
-
-                    //si no hay playlist uri entonces no se crea una nueva votación
-                    if(playbackSPTF.getContext() != null && !StringsUtils.isNullOrEmpty(playbackSPTF.getContext().getUri())){
-                        this.addVotedSongToNextPlayback(token, playbackSPTF, winnerSong);
-                        this.newVoting(token, playbackSPTF, barId);
-                    }
-                }
-                //devuelve la votación actual
-                if(actualVoting != null && !actualVoting.getSongs().isEmpty()) {
-                    this.sseService.dispatchEventToAllClientsFromBar(EventNamesEnum.ACTUAL_VOTES_SPTF.name(), actualVoting.getSongs(), barId);
-                }
-
-            }catch(Exception e){
-                log.error(e.getMessage());
-            }
+        //si no hay playlist uri entonces no se genera nada
+        if(playbackSPTF == null
+            || playbackSPTF.getItem() == null
+            || playbackSPTF.getContext() == null
+            || StringsUtils.isNullOrEmpty(playbackSPTF.getContext().getUri())){
+            return;
         }
+
+        //quita el modo aleatorio de la lista si es que lo tiene
+        this.changeShuffleState(token, playbackSPTF.isShuffleState());
+
+        try {
+            //toma la votación actual del bar
+            VotingDTO actualVoting = this.voteService.getActualVotingByBar(barId);
+
+            //si la votación no existe, crea una nueva (caso de ser el primer tema en reproducción)
+            if(actualVoting == null){
+                actualVoting = this.newVoting(token, playbackSPTF, barId);
+            }
+
+            //si la votación tiene ganador y faltan mas segundos antes de que termine la canción, no se genera nueva votación
+            if(actualVoting == null
+                    || actualVoting.getSongs().isEmpty()
+                    || actualVoting.getWinnerSong() != null
+                    || playbackSPTF.getItem().getDurationMs() - playbackSPTF.getProgressMs() > this.votesBeforeEndSongMs){
+                return;
+            }
+
+            this.resolveAndGenerateVotation(request, actualVoting);
+
+        }catch(Exception e){
+            log.error(e.getMessage());
+        }
+
+    }
+
+    @Override
+    public void resolveAndGenerateVotation(BarTokenDTO request, VotingDTO actualVoting){
+
+        Long barId = request.getId();
+        PlaybackSPTF playbackSPTF = request.getPlayback();
+        String token = request.getToken();
+
+        //genera un nuevo ganador
+        SongDTO winnerSong = this.newWinner(barId);
+
+        //añade la canción ganadora en la posición siguiente a reproducir
+        this.addVotedSongToNextPlayback(token, playbackSPTF, winnerSong);
+
+        //se genera una votación nueva
+        this.newVoting(token, playbackSPTF, barId);
+
+        //devuelve la votación actual
+        this.sseService.dispatchEventToAllClientsFromBar(EventNamesEnum.ACTUAL_VOTES_SPTF.name(), actualVoting.getSongs(), barId);
+
     }
 
     @Override
     public void changeShuffleState(String token, boolean bool){
 
         try {
-            HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(token);
-            EmptyDTO request = EmptyDTO.builder().build();
-            this.feign.changeShuffleState(headers, bool, request);
+            if(bool){
+                HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(token);
+                this.feign.changeShuffleState(headers, false, EmptyDTO.builder().build());
+            }
         }catch (Exception ignored){}
     }
 
@@ -155,7 +178,12 @@ public class SpotifyService implements ISpotifyService {
     @Override
     public VotingDTO newVoting(String token, PlaybackSPTF playbackSPTF, Long barId) {
 
-        List<SongSPTF> list = this.getNextVotes(token); //ESTAS CANCIONES DEBERIAN VIAJAR A LA NUEVA VOTACIÓN
+        List<SongSPTF> list = this.getNextVotes(token); //ESTAS CANCIONES VIAJAN A LA NUEVA VOTACIÓN
+
+        if(list.isEmpty()){
+            return null;
+        }
+
         return this.voteService.createNewVoting(barId, list);
     }
 
@@ -170,9 +198,13 @@ public class SpotifyService implements ISpotifyService {
             return new ArrayList<>();
 
         Random rand = new Random();
-        songs.get(rand.nextInt(songs.size()));
+        List<SongSPTF> votingSongs = new ArrayList<>();
 
-        return songs.subList(0, Math.min(songs.size(), maxToVote));
+        for (int i=1; i <= Math.min(songs.size(), maxToVote); i++){
+            votingSongs.add(songs.remove(rand.nextInt(songs.size())));
+        }
+
+        return votingSongs;
     }
 
     @Override
