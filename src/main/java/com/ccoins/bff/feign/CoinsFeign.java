@@ -3,6 +3,8 @@ package com.ccoins.bff.feign;
 import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.dto.coins.*;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,7 +42,7 @@ public interface CoinsFeign {
     ResponseEntity<ResponseDTO> spendCoinsInPrizeByParty(@RequestBody SpendCoinsRqDTO request);
 
     @GetMapping("/coins/party/{id}")
-    ResponseEntity<CoinsReportDTO> getAllCoinsFromParty(@PathVariable Long id);
+    ResponseEntity<CoinsReportDTO> getAllCoinsFromParty(@PathVariable Long id, @PageableDefault Pageable pagination);
 
     @GetMapping("/vote/client/{userIp}/bar/{barId}")
     boolean hasVotedAlready(@PathVariable("userIp") String userIp, @PathVariable("barId")  Long barId);

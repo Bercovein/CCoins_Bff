@@ -13,6 +13,7 @@ import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.PrizeFeign;
 import com.ccoins.bff.service.ICoinsService;
 import com.ccoins.bff.service.IPrizesService;
+import com.ccoins.bff.utils.DateUtils;
 import com.ccoins.bff.utils.HeaderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -106,7 +107,7 @@ public class PrizesService extends ContextService implements IPrizesService {
         PrizeDTO prize = this.findById(idDTO).getBody();
 
         assert prize != null;
-        if(prize.getEndDate() != null){
+        if(prize.getEndDate() != null && DateUtils.isAfterLocalDateTime(DateUtils.nowLocalDateTime(),prize.getEndDate())){
             throw new BadRequestException(ExceptionConstant.PRIZE_UNAVAILABLE_ERROR_CODE,
                     this.getClass(), ExceptionConstant.PRIZE_UNAVAILABLE_ERROR);
         }

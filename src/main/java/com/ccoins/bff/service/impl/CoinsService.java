@@ -9,6 +9,7 @@ import com.ccoins.bff.feign.CoinsFeign;
 import com.ccoins.bff.service.ICoinsService;
 import com.ccoins.bff.utils.HeaderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -56,14 +57,14 @@ public class CoinsService implements ICoinsService {
     }
 
     @Override
-    public ResponseEntity<CoinsReportDTO> getCoinsReport(HttpHeaders headers) {
+    public ResponseEntity<CoinsReportDTO> getCoinsReport(HttpHeaders headers, Pageable pagination) {
 
-        try{
-            return this.feign.getAllCoinsFromParty(HeaderUtils.getPartyId(headers));
-        }catch (Exception e){
-            throw new BadRequestException(ExceptionConstant.COINS_BY_PARTY_ERROR_CODE,
-                    this.getClass(), ExceptionConstant.COINS_BY_PARTY_ERROR);
-        }
+//        try{
+            return this.feign.getAllCoinsFromParty(HeaderUtils.getPartyId(headers), pagination);
+//        }catch (Exception e){
+//            throw new BadRequestException(ExceptionConstant.COINS_BY_PARTY_ERROR_CODE,
+//                    this.getClass(), ExceptionConstant.COINS_BY_PARTY_ERROR);
+//        }
 
     }
 }

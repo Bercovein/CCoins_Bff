@@ -1,11 +1,10 @@
 package com.ccoins.bff.dto.coins;
 
+import com.ccoins.bff.decoder.RestPage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -14,5 +13,5 @@ import java.util.List;
 public class CoinsReportDTO {
 
     private Long totalCoins;
-    private List<CoinsReport> report;
+    private RestPage<CoinsReport> report;
 }

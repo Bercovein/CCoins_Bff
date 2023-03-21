@@ -24,7 +24,7 @@ public class DateUtils {
     }
 
     public static boolean isBetweenLocalTimes(LocalTime time, LocalTime start, LocalTime end){
-        return time.isAfter(start) && time.isBefore(end);
+        return isAfterLocalTimes(time, start) && isBeforeLocalTimes(time, end);
     }
 
     public static boolean isNowBetweenLocalTimes(LocalTime start, LocalTime end){
@@ -32,5 +32,17 @@ public class DateUtils {
         if(start != null && end != null)
             response = DateUtils.isBetweenLocalTimes(LocalTime.now(), start, end);
         return response;
+    }
+
+    public static boolean isAfterLocalTimes(LocalTime time, LocalTime start){
+        return time.isAfter(start);
+    }
+
+    public static boolean isBeforeLocalTimes(LocalTime time, LocalTime end){
+        return time.isBefore(end);
+    }
+
+    public static boolean isAfterLocalDateTime(LocalDateTime time, LocalDateTime start){
+        return time.isAfter(start);
     }
 }
