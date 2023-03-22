@@ -12,5 +12,5 @@ public interface ICoinsService {
 
     ResponseEntity<ResponseDTO> spendCoinsInPrizeByParty(Long partyId, Long clientParty, Long prizeId, Long prizePoints);
 
-    ResponseEntity<CoinsReportDTO> getCoinsReport(HttpHeaders headers, Pageable pagination);
+    ResponseEntity<CoinsReportDTO> getCoinsReport(HttpHeaders headers, Pageable pagination, String type);
 }

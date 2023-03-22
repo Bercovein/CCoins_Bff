@@ -57,14 +57,14 @@ public class CoinsService implements ICoinsService {
     }
 
     @Override
-    public ResponseEntity<CoinsReportDTO> getCoinsReport(HttpHeaders headers, Pageable pagination) {
+    public ResponseEntity<CoinsReportDTO> getCoinsReport(HttpHeaders headers, Pageable pagination, String type) {
 
-//        try{
-            return this.feign.getAllCoinsFromParty(HeaderUtils.getPartyId(headers), pagination);
-//        }catch (Exception e){
-//            throw new BadRequestException(ExceptionConstant.COINS_BY_PARTY_ERROR_CODE,
-//                    this.getClass(), ExceptionConstant.COINS_BY_PARTY_ERROR);
-//        }
+        try{
+            return this.feign.getAllCoinsFromParty(HeaderUtils.getPartyId(headers), pagination, type);
+        }catch (Exception e){
+            throw new BadRequestException(ExceptionConstant.COINS_BY_PARTY_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.COINS_BY_PARTY_ERROR);
+        }
 
     }
 }

@@ -42,7 +42,9 @@ public interface CoinsFeign {
     ResponseEntity<ResponseDTO> spendCoinsInPrizeByParty(@RequestBody SpendCoinsRqDTO request);
 
     @GetMapping("/coins/party/{id}")
-    ResponseEntity<CoinsReportDTO> getAllCoinsFromParty(@PathVariable Long id, @PageableDefault Pageable pagination);
+    ResponseEntity<CoinsReportDTO> getAllCoinsFromParty(@PathVariable("id") Long id,
+                                                        @PageableDefault Pageable pagination,
+                                                        @RequestParam(value = "type", required = false) String type);
 
     @GetMapping("/vote/client/{userIp}/bar/{barId}")
     boolean hasVotedAlready(@PathVariable("userIp") String userIp, @PathVariable("barId")  Long barId);
