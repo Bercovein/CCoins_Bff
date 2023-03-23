@@ -12,6 +12,11 @@ public class GenericRsDTO<T> extends ResponseDTO {
         this.data = data;
     }
 
+    public GenericRsDTO(String code, Object message) {
+        super(code, message);
+        this.data = null;
+    }
+
     public GenericRsDTO() {
         super();
     }

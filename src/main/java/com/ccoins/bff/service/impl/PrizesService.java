@@ -1,5 +1,6 @@
 package com.ccoins.bff.service.impl;
 
+import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.ResponseDTO;
@@ -21,6 +22,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+
+import static com.ccoins.bff.exceptions.constant.ExceptionConstant.PRIZE_UNAVAILABLE_ERROR;
+import static com.ccoins.bff.exceptions.constant.ExceptionConstant.PRIZE_UNAVAILABLE_ERROR_CODE;
 
 @Service
 public class PrizesService extends ContextService implements IPrizesService {
@@ -107,9 +111,8 @@ public class PrizesService extends ContextService implements IPrizesService {
         PrizeDTO prize = this.findById(idDTO).getBody();
 
         assert prize != null;
-        if(prize.getEndDate() != null && DateUtils.isAfterLocalDateTime(DateUtils.nowLocalDateTime(),prize.getEndDate())){
-            throw new BadRequestException(ExceptionConstant.PRIZE_UNAVAILABLE_ERROR_CODE,
-                    this.getClass(), ExceptionConstant.PRIZE_UNAVAILABLE_ERROR);
+        if(prize.getEndDate() != null && prize.getStartDate() != null && !DateUtils.isBetweenLocalDateTime(DateUtils.nowLocalDateTime(), prize.getStartDate(),prize.getEndDate())){
+            return ResponseEntity.badRequest().body(new GenericRsDTO(PRIZE_UNAVAILABLE_ERROR_CODE, PRIZE_UNAVAILABLE_ERROR));
         }
 
         //busca al cliente por IP

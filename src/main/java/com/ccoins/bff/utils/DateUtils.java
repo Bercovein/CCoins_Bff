@@ -45,4 +45,12 @@ public class DateUtils {
     public static boolean isAfterLocalDateTime(LocalDateTime time, LocalDateTime start){
         return time.isAfter(start);
     }
+
+    public static boolean isBeforeLocalDateTime(LocalDateTime time, LocalDateTime start){
+        return time.isBefore(start);
+    }
+
+    public static boolean isBetweenLocalDateTime(LocalDateTime time, LocalDateTime start, LocalDateTime end){
+        return DateUtils.isAfterLocalDateTime(time,start) && DateUtils.isBeforeLocalDateTime(time, end);
+    }
 }
