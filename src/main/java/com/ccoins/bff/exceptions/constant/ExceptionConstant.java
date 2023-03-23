@@ -191,5 +191,8 @@ public class ExceptionConstant {
     public static final String ALREADY_VOTE_ERROR_CODE = "0056";
     public static final String ALREADY_VOTE_ERROR = "Ya votaste en esta ronda, esperá a la siguiente canción.";
 
+    public static final String BAR_OR_PARTY_NO_EXIST_ERROR_CODE = "0057";
+    public static final String BAR_OR_PARTY_NO_EXIST_ERROR = "La party o el bar no existe.";
+
 
 }

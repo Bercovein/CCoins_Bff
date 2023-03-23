@@ -175,12 +175,20 @@ public class VoteService implements IVoteService {
         //buscar bar al que pertenece
         ResponseEntity<IdDTO> barResponseEntity = this.barsFeign.getBarIdByParty(partyId);
 
-        //buscar la votación actual por bar
-        if(barResponseEntity.hasBody()){
-            hasVoted = this.coinsFeign.hasVotedAlready(userIp, barResponseEntity.getBody().getId());
+        if(!barResponseEntity.hasBody() || barResponseEntity.getBody() == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new GenericRsDTO<>(
+                    BAR_OR_PARTY_NO_EXIST_ERROR_CODE, BAR_OR_PARTY_NO_EXIST_ERROR, null
+            ));
         }
 
-        if(!hasVoted){
+        IdDTO barId = barResponseEntity.getBody();
+
+        //buscar la votación actual por bar
+        if(barResponseEntity.hasBody()){
+            hasVoted = this.coinsFeign.hasVotedAlready(userIp, barId.getId());
+        }
+
+        if(hasVoted){
             return  ResponseEntity.status(HttpStatus.FORBIDDEN).body(new GenericRsDTO<>(
                     ALREADY_VOTE_ERROR_CODE, ALREADY_VOTE_ERROR, null
             ));
