@@ -112,13 +112,8 @@ public class SpotifyService implements ISpotifyService {
                 actualVoting = this.newVoting(token, playbackSPTF, barId);
             }
 
-            //si la votación tiene ganador y faltan mas segundos antes de que termine la canción, no se genera nueva votación
-            if(actualVoting != null
-                    && actualVoting.getSongs().isEmpty()
-                    && actualVoting.getWinnerSong() != null
-                    && playbackSPTF.getItem().getDurationMs() - playbackSPTF.getProgressMs() > this.votesBeforeEndSongMs){
-                actualVoting = this.resolveAndGenerateVotation(request, actualVoting);
-            }
+            //evalua si hay que resolver la votación y si la resuelve, genera una nueva
+            actualVoting = this.resolveAndGenerateVotation(request, actualVoting);
 
             //devuelve la votación actual
             if(actualVoting != null)
@@ -132,6 +127,11 @@ public class SpotifyService implements ISpotifyService {
 
     @Override
     public VotingDTO resolveAndGenerateVotation(BarTokenDTO request, VotingDTO actualVoting){
+
+        //si faltan mas segundos antes de que termine la canción, no se genera nueva votación
+        if(request.getPlayback().getItem().getDurationMs() - request.getPlayback().getProgressMs() > this.votesBeforeEndSongMs){
+            return actualVoting;
+        }
 
         Long barId = request.getId();
         PlaybackSPTF playbackSPTF = request.getPlayback();
