@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -66,10 +67,10 @@ public class SpotifyService implements ISpotifyService {
     }
 
     @Override
-    public void addTrackToQueue(HttpHeaders headers, UriSPTF trackUri) {
+    public void addTrackToQueue(HttpHeaders headers, List<String> tracks, int position, String playlistId) {
 
         HeaderUtils.setParameters(headers);
-        this.feign.addTrackToQueue(headers,trackUri.getUri(), EmptyDTO.builder().build());
+        this.feign.addItemsToPlaylist(headers,playlistId, ItemToPlaylistSPTF.builder().position(position).uris(tracks).build());
     }
 
     @Override
@@ -116,7 +117,7 @@ public class SpotifyService implements ISpotifyService {
 
             //si faltan mas segundos antes de que termine la canción, no se genera nueva votación
             if(actualVoting != null
-                    && !DateUtils.isLowerFromNowThan(actualVoting.getMatch().getStartDate(), this.votesBeforeEndSongMs)
+                    && !DateUtils.isLowerFromNowThan(actualVoting.getMatch().getStartDate(), 60)
                     && request.getPlayback().getItem().getDurationMs() - request.getPlayback().getProgressMs() <= this.votesBeforeEndSongMs){
                 this.resolveAndGenerateVotation(request, actualVoting);
                 actualVoting = null;
@@ -237,14 +238,24 @@ public class SpotifyService implements ISpotifyService {
                 return;
             }
 
-            //quitar la canción de la lista
-            this.feign.removeSongFromPlaylist(headers,
-                    playlistId,
-                    TrackUriListSPTF.builder().tracks(List.of(trackUri)).build()
-            );
+            PlaylistTracksSPTF playlistTracks = this.feign.getPlaylist(headers,playlistId);
+            List<ItemSPTF> tracks = playlistTracks.getTracks().getItems();
+            Optional<ItemSPTF> actualSongOpt = tracks.stream().filter(t -> t.getTrack().getUri().equals(playbackSPTF.getItem().getUri())).findFirst();
 
-            //agregarla a continuación
-            this.addTrackToQueue(headers, trackUri);
+            if(actualSongOpt.isPresent()) {
+
+                int position = tracks.indexOf(actualSongOpt.get());
+                position++;
+
+                //quitar la canción de la lista
+                this.feign.removeSongFromPlaylist(headers,
+                        playlistId,
+                        TrackUriListSPTF.builder().tracks(List.of(trackUri)).build()
+                );
+
+                //agregarla a continuación
+                this.addTrackToQueue(headers, List.of(trackUri.getUri()), position, playlistId);
+            }
         }catch (Exception e){
             log.error(e.getMessage());
         }

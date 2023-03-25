@@ -44,5 +44,4 @@ public class SpotifyController implements ISpotifyController {
         this.service.addVotedSongToNextPlayback(token, PlaybackSPTF.builder().context(UriSPTF.builder().uri(context).build()).build(), SongDTO.builder().uri(song).build());
     }
 
-
 }

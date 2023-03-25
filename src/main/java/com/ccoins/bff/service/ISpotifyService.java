@@ -15,7 +15,7 @@ public interface ISpotifyService {
 
     ResponseEntity<RecentlyPlayedSPTF> getRecentlyPlayed(HttpHeaders headers, Integer limit);
 
-    void addTrackToQueue(HttpHeaders headers, UriSPTF trackUri);
+    void addTrackToQueue(HttpHeaders headers, List<String> tracks, int position, String playlistId);
 
     CredentialsSPTFDTO getCredentials();
 
@@ -33,4 +33,5 @@ public interface ISpotifyService {
     List<SongSPTF> getNextVotes(String token);
 
     void addVotedSongToNextPlayback(String token, PlaybackSPTF playbackSPTF, SongDTO winnerSong) ;
+
 }
