@@ -14,7 +14,7 @@ public interface IVoteService {
 
     VotingDTO getActualVotingByBar(Long barId);
 
-    VotingDTO resolveVoting(Long barId);
+    VotingDTO resolveVoting(VotingDTO voting);
 
     List<String> giveSongCoinsByGame(Long barId, VotingDTO voting);
 

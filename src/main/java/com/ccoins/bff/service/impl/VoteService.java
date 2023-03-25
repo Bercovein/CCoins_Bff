@@ -50,32 +50,40 @@ public class VoteService implements IVoteService {
     }
 
     @Override
-    public VotingDTO resolveVoting(Long barId){
+    public VotingDTO resolveVoting(VotingDTO voting){
 
-        //resolver resultado de la votación, si ninguno fue votado, tomar cualquiera y cerrar la votación
-        VotingDTO voting = this.getActualVotingByBar(barId);
-
+        //si la votación no existe, devuelve null;
         if(voting == null){
             return null;
         }
 
         List<SongDTO> voteList = voting.getSongs();
+
+        //toma el numer del voto mas alto
         Optional<SongDTO> maxValueOpt = voteList.stream().max(Comparator.comparing(SongDTO::getVotes));
         List<SongDTO> winnerSongs;
 
+        //evalua si el voto mas alto no es 0
         if(maxValueOpt.isPresent() && maxValueOpt.get().getVotes() != 0){
-            winnerSongs = voteList.stream().filter(s -> Objects.equals(s.getVotes(), maxValueOpt.get().getVotes())).collect(Collectors.toList());
-        }else{ //si el voto maximo fué 0, entonces nadie votó
+
+            SongDTO maxVote = maxValueOpt.get();
+            
+            //se filtran los ganadores (lista en caso de empates)
+            winnerSongs = voteList.stream().filter(s -> Objects.equals(s.getVotes(), maxVote.getVotes())).collect(Collectors.toList());
+        }else{ //si el voto maximo fué 0, (el caso en que no votó nadie)
             winnerSongs = voteList;
         }
-        Random rand = new Random(); //toma un tema random en caso de empate
+
+        Random rand = new Random();
+        
+        //toma un tema random en caso de empate
         SongDTO winner = winnerSongs.get(rand.nextInt(winnerSongs.size()));
+        
         voting.setWinnerSong(winner);
         voting.getMatch().setEndDate(DateUtils.nowLocalDateTime());
 
-        this.coinsFeign.updateVoting(voting); //actualiza el match y la votación
-
-        return voting;
+        //actualiza el match y la votación
+        return this.coinsFeign.updateVoting(voting);
     }
 
     @Override
@@ -88,6 +96,10 @@ public class VoteService implements IVoteService {
 
         //buscar a los clientes que votaron la canción
         List<Long> clientsIdList = this.coinsFeign.getClientsIdWhoVotedSong(voting.getWinnerSong().getId()).getBody();
+
+        if(clientsIdList.isEmpty()){
+            return ipClients;
+        }
 
         //crear coins en base al match para cada cliente
         assert game != null;
@@ -111,6 +123,13 @@ public class VoteService implements IVoteService {
         List<SongDTO> songDTOList = list.stream().map(SongDTO::convert).collect(Collectors.toList());
 
         GameDTO game = this.barsFeign.findVotingGameByBarId(barId).getBody();
+
+        ResponseEntity<VotingDTO> actualVoting = this.coinsFeign.getActualVotingByBar(barId);
+
+        //si hay una votación en curso, la usa
+        if(actualVoting.hasBody()){
+            return actualVoting.getBody();
+        }
 
         assert game != null;
         MatchDTO matchDTO = MatchDTO.builder()

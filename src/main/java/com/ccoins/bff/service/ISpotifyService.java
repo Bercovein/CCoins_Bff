@@ -19,12 +19,12 @@ public interface ISpotifyService {
 
     CredentialsSPTFDTO getCredentials();
 
-    VotingDTO resolveAndGenerateVotation(BarTokenDTO request, VotingDTO actualVoting);
+    void resolveAndGenerateVotation(BarTokenDTO request, VotingDTO actualVoting);
 
     void changeShuffleState(String token, boolean bool);
 
     @Async
-    SongDTO newWinner(Long barId);
+    SongDTO newWinner(Long barId, VotingDTO actualVoting);
 
     VotingDTO newVoting(String token, PlaybackSPTF playbackSPTF, Long barId);
 
