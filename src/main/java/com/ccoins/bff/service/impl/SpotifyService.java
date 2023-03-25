@@ -9,11 +9,8 @@ import com.ccoins.bff.service.IServerSentEventService;
 import com.ccoins.bff.service.ISpotifyService;
 import com.ccoins.bff.service.IVoteService;
 import com.ccoins.bff.spotify.sto.*;
-import com.ccoins.bff.utils.HeaderUtils;
-import com.ccoins.bff.utils.MapperUtils;
-import com.ccoins.bff.utils.SpotifyUtils;
-import com.ccoins.bff.utils.StringsUtils;
-import com.ccoins.bff.utils.enums.EventNamesEnum;
+import com.ccoins.bff.utils.*;
+import com.ccoins.bff.utils.enums.EventNamesSPTFEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -95,14 +92,14 @@ public class SpotifyService implements ISpotifyService {
         playbackSPTF.setSongLink(trackLink.concat(SpotifyUtils.getUriId(playbackSPTF.getItem().getUri())));
 
         //envia a todos los usuarios el estado de la canción actual (asi se esté reproduciendo o no)
-        this.sseService.dispatchEventToAllClientsFromBar(EventNamesEnum.ACTUAL_SONG_SPTF.name(), playbackSPTF, barId);
+        this.sseService.dispatchEventToAllClientsFromBar(EventNamesSPTFEnum.ACTUAL_SONG_SPTF.name(), playbackSPTF, barId);
 
         //solo si la canción existe
         //si no hay playlist uri entonces no se genera nada
         if(playbackSPTF.getItem() == null
             || playbackSPTF.getContext() == null
             || StringsUtils.isNullOrEmpty(playbackSPTF.getContext().getUri())){
-            this.sseService.dispatchEventToAllClientsFromBar(EventNamesEnum.ACTUAL_VOTES_SPTF.name(), new ArrayList<>(), barId);
+            this.sseService.dispatchEventToAllClientsFromBar(EventNamesSPTFEnum.ACTUAL_VOTES_SPTF.name(), new ArrayList<>(), barId);
             return;
         }
 
@@ -118,7 +115,9 @@ public class SpotifyService implements ISpotifyService {
             VotingDTO actualVoting = this.voteService.getActualVotingByBar(barId);
 
             //si faltan mas segundos antes de que termine la canción, no se genera nueva votación
-            if(actualVoting != null && request.getPlayback().getItem().getDurationMs() - request.getPlayback().getProgressMs() <= this.votesBeforeEndSongMs){
+            if(actualVoting != null
+                    && !DateUtils.isLowerFromNowThan(actualVoting.getMatch().getStartDate(), this.votesBeforeEndSongMs)
+                    && request.getPlayback().getItem().getDurationMs() - request.getPlayback().getProgressMs() <= this.votesBeforeEndSongMs){
                 this.resolveAndGenerateVotation(request, actualVoting);
                 actualVoting = null;
             }
@@ -130,7 +129,7 @@ public class SpotifyService implements ISpotifyService {
 
             //devuelve la votación actual
             if (actualVoting != null)
-                this.sseService.dispatchEventToAllClientsFromBar(EventNamesEnum.ACTUAL_VOTES_SPTF.name(), actualVoting.getSongs(), barId);
+                this.sseService.dispatchEventToAllClientsFromBar(EventNamesSPTFEnum.ACTUAL_VOTES_SPTF.name(), actualVoting.getSongs(), barId);
 
         }catch(Exception e){
             log.error(e.getMessage());
@@ -172,10 +171,10 @@ public class SpotifyService implements ISpotifyService {
 
         if (voting != null) {
             winnerSong = voting.getWinnerSong();
-            this.sseService.dispatchEventToAllClientsFromBar(EventNamesEnum.NEW_WINNER_SPTF.name(), voting.getWinnerSong(), barId);
+            this.sseService.dispatchEventToAllClientsFromBar(EventNamesSPTFEnum.NEW_WINNER_SPTF.name(), voting.getWinnerSong(), barId);
 
             List<String> clientIpList = this.voteService.giveSongCoinsByGame(barId, voting);
-            this.sseService.dispatchEventToSomeClientsFromBar(EventNamesEnum.YOU_WIN_SONG_VOTE_SPTF.name(), null, barId, clientIpList);
+            this.sseService.dispatchEventToSomeClientsFromBar(EventNamesSPTFEnum.YOU_WIN_SONG_VOTE_SPTF.name(), null, barId, clientIpList);
         }
 
         return winnerSong;
@@ -214,7 +213,8 @@ public class SpotifyService implements ISpotifyService {
     }
 
     @Override
-    public void addVotedSongToNextPlayback(String token, PlaybackSPTF playbackSPTF, SongDTO winnerSong){
+    @Async
+    public void addVotedSongToNextPlayback(String token, PlaybackSPTF playbackSPTF, SongDTO winnerSong)  {
 
         if(winnerSong == null || StringsUtils.isNullOrEmpty(winnerSong.getUri())){
             return;
@@ -227,13 +227,26 @@ public class SpotifyService implements ISpotifyService {
 
         UriSPTF trackUri = UriSPTF.builder().uri(winnerSong.getUri()).build();
 
-        //quitar la canción de la lista
-        this.feign.removeSongFromPlaylist(headers,
-                playlistId,
-                TrackUriListSPTF.builder().tracks(List.of(trackUri)).build()
-        );
+        try {
+            //trae la lista actual para validación
+            PlaylistSPTF playlistSPTF = this.feign.getQueue(headers);
+            List<SongSPTF> queue = playlistSPTF.getQueue();
 
-        //agregarla a continuación
-        this.addTrackToQueue(headers,trackUri);
+            //checkea si es el proximo en reproducirse, si lo es o está vacía, no hace nada
+            if (queue.isEmpty() || trackUri.getUri().equals(queue.get(0).getUri())) {
+                return;
+            }
+
+            //quitar la canción de la lista
+            this.feign.removeSongFromPlaylist(headers,
+                    playlistId,
+                    TrackUriListSPTF.builder().tracks(List.of(trackUri)).build()
+            );
+
+            //agregarla a continuación
+            this.addTrackToQueue(headers, trackUri);
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
     }
 }

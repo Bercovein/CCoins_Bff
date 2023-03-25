@@ -1,5 +1,6 @@
 package com.ccoins.bff.utils;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
@@ -53,4 +54,10 @@ public class DateUtils {
     public static boolean isBetweenLocalDateTime(LocalDateTime time, LocalDateTime start, LocalDateTime end){
         return DateUtils.isAfterLocalDateTime(time,start) && DateUtils.isBeforeLocalDateTime(time, end);
     }
+
+    public static boolean isLowerFromNowThan(LocalDateTime time, int seconds){
+        Duration duration = Duration.between(time, LocalDateTime.now());
+        return duration.getSeconds() < seconds;
+    }
+
 }
