@@ -10,10 +10,13 @@ import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.exceptions.UnauthorizedException;
 import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.feign.CoinsFeign;
+import com.ccoins.bff.service.IServerSentEventService;
 import com.ccoins.bff.service.IVoteService;
 import com.ccoins.bff.spotify.sto.SongSPTF;
 import com.ccoins.bff.utils.DateUtils;
 import com.ccoins.bff.utils.HeaderUtils;
+import com.ccoins.bff.utils.MessageTextUtils;
+import com.ccoins.bff.utils.enums.EventNamesSPTFEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -36,12 +39,18 @@ public class VoteService implements IVoteService {
 
     private final PartiesService partiesService;
 
+    private final IServerSentEventService sseService;
+
+    private final MessageTextUtils messageTextUtils;
+
     @Autowired
-    public VoteService(CoinsFeign coinsFeign, BarsFeign barsFeign, ClientService clientService, PartiesService partiesService) {
+    public VoteService(CoinsFeign coinsFeign, BarsFeign barsFeign, ClientService clientService, PartiesService partiesService, IServerSentEventService sseService, MessageTextUtils messageTextUtils) {
         this.coinsFeign = coinsFeign;
         this.barsFeign = barsFeign;
         this.clientService = clientService;
         this.partiesService = partiesService;
+        this.sseService = sseService;
+        this.messageTextUtils = messageTextUtils;
     }
 
     @Override
@@ -113,6 +122,7 @@ public class VoteService implements IVoteService {
 
         if(clientsResponse.hasBody()){
             this.partiesService.findByIdIn(clientsResponse.getBody()).forEach(clientDTO -> ipClients.add(clientDTO.getIp()));
+            this.sseService.dispatchEventToSomeClientsFromBar(EventNamesSPTFEnum.YOU_WIN_SONG_VOTE_SPTF.name(), this.messageTextUtils.winVotingMsg(game.getPoints()), barId, ipClients);
         }
 
         return ipClients;

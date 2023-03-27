@@ -190,8 +190,7 @@ public class SpotifyService implements ISpotifyService {
             winnerSong = voting.getWinnerSong();
             this.sseService.dispatchEventToAllClientsFromBar(EventNamesSPTFEnum.NEW_WINNER_SPTF.name(), voting.getWinnerSong(), barId);
 
-            List<String> clientIpList = this.voteService.giveSongCoinsByGame(barId, voting);
-            this.sseService.dispatchEventToSomeClientsFromBar(EventNamesSPTFEnum.YOU_WIN_SONG_VOTE_SPTF.name(), null, barId, clientIpList);
+            this.voteService.giveSongCoinsByGame(barId, voting);
         }
 
         return winnerSong;
