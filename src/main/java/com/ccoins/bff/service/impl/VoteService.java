@@ -7,6 +7,7 @@ import com.ccoins.bff.dto.bars.BarDTO;
 import com.ccoins.bff.dto.bars.GameDTO;
 import com.ccoins.bff.dto.coins.*;
 import com.ccoins.bff.dto.users.ClientDTO;
+import com.ccoins.bff.exceptions.ForbiddenException;
 import com.ccoins.bff.exceptions.UnauthorizedException;
 import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.feign.CoinsFeign;
@@ -160,8 +161,8 @@ public class VoteService implements IVoteService {
         //buscar si la votación está activa
         VotingDTO voting = this.coinsFeign.getVotingBySong(request.getId());
 
-        if(voting.getWinnerSong() != null){
-            throw new UnauthorizedException(VOTES_IS_OVER_ERROR_CODE, VOTES_IS_OVER_ERROR);
+        if(voting.getWinnerSong() != null || voting.getMatch().getEndDate() != null){
+            throw new ForbiddenException(VOTES_IS_OVER_ERROR_CODE, VOTES_IS_OVER_ERROR);
         }
 
         IdDTO barIdByParty;
