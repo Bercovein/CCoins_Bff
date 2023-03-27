@@ -29,4 +29,7 @@ public interface SpotifyFeign {
 
     @PutMapping(value = "${spotify.path.change-shuffle-state}", produces = "application/json", consumes = "application/json")
     void changeShuffleState(@RequestHeader HttpHeaders headers, @PathVariable("state") boolean bool, @RequestBody EmptyDTO request);
+
+    @PutMapping(value = "${spotify.path.change-repeat-state}", produces = "application/json", consumes = "application/json")
+    void changeRepeatState(@RequestHeader HttpHeaders headers, @PathVariable("state") String state, @RequestBody EmptyDTO request);
 }

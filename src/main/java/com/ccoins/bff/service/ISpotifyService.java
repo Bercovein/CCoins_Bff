@@ -23,6 +23,8 @@ public interface ISpotifyService {
 
     void changeShuffleState(String token, boolean bool);
 
+    void changeRepeatState(String token, String state);
+
     @Async
     SongDTO newWinner(Long barId, VotingDTO actualVoting);
 

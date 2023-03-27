@@ -25,5 +25,8 @@ public class PlaybackSPTF {
     @JsonProperty("shuffle_state")
     private boolean shuffleState;
 
+    @JsonProperty("repeat_state")
+    private String repeatState;
+
     private String songLink;
 }

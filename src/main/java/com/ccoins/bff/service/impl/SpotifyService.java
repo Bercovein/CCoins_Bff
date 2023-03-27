@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import static com.ccoins.bff.utils.SpotifyUtils.REPEAT_STATE;
+
 @Service
 @Slf4j
 public class SpotifyService implements ISpotifyService {
@@ -107,6 +109,9 @@ public class SpotifyService implements ISpotifyService {
         //quita el modo aleatorio de la lista si es que lo tiene
         this.changeShuffleState(token, playbackSPTF.isShuffleState());
 
+        //obliga a dejar el modo de repetición de la playlist
+        this.changeRepeatState(token, playbackSPTF.getRepeatState());
+
         if(!playbackSPTF.isPlaying()){
             return;
         }
@@ -159,6 +164,17 @@ public class SpotifyService implements ISpotifyService {
             if(bool){
                 HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(token);
                 this.feign.changeShuffleState(headers, false, EmptyDTO.builder().build());
+            }
+        }catch (Exception ignored){}
+    }
+
+    @Override
+    public void changeRepeatState(String token, String state){
+
+        try {
+            if(!REPEAT_STATE.equals(state)){
+                HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(token);
+                this.feign.changeRepeatState(headers, REPEAT_STATE, EmptyDTO.builder().build());
             }
         }catch (Exception ignored){}
     }
