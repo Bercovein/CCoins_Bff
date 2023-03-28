@@ -2,6 +2,7 @@ package com.ccoins.bff.service.impl;
 
 import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.LongDTO;
+import com.ccoins.bff.dto.LongListDTO;
 import com.ccoins.bff.dto.bars.BarTableDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.dto.users.ClientDTO;
@@ -174,6 +175,17 @@ public class PartiesService extends ContextService implements IPartiesService {
     public List<ClientDTO> findByIdIn(List<Long> list) {
         try {
             return this.usersFeign.findByIdIn(list);
+        } catch (Exception e) {
+            throw new BadRequestException(ExceptionConstant.CLIENTS_LIST_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.CLIENTS_LIST_ERROR);
+        }
+    }
+
+    @Override
+    public List<Long> findAllIdsByClients(List<Long> clientsIds) {
+
+        try {
+            return this.prizeFeign.findAllIdsByClients(LongListDTO.builder().list(clientsIds).build());
         } catch (Exception e) {
             throw new BadRequestException(ExceptionConstant.CLIENTS_LIST_ERROR_CODE,
                     this.getClass(), ExceptionConstant.CLIENTS_LIST_ERROR);

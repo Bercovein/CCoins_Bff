@@ -3,6 +3,7 @@ package com.ccoins.bff.feign;
 import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.dto.users.OwnerDTO;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,4 +30,7 @@ public interface UsersFeign {
 
     @PostMapping("/client/list")
     List<ClientDTO> findByIdIn(@RequestBody List<Long> list);
+
+    @GetMapping("/client/party/{partyId}")
+    ResponseEntity<List<ClientDTO>> findByParty(@PathVariable("partyId") Long partyId);
 }

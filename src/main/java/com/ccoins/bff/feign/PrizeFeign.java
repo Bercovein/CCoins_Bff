@@ -2,6 +2,7 @@ package com.ccoins.bff.feign;
 
 import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.dto.ListDTO;
+import com.ccoins.bff.dto.LongListDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.dto.prizes.PrizeDTO;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -53,4 +54,7 @@ public interface PrizeFeign {
 
     @GetMapping("/parties/table/code/{code}")
     Optional<PartyDTO> findActivePartyByTableCode(@PathVariable ("code")String code);
+
+    @PostMapping("/parties/clients")
+    List<Long> findAllIdsByClients(@RequestBody LongListDTO list);
 }

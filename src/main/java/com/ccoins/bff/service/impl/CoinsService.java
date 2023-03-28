@@ -7,21 +7,27 @@ import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.CoinsFeign;
 import com.ccoins.bff.service.ICoinsService;
+import com.ccoins.bff.service.IServerSentEventService;
 import com.ccoins.bff.utils.HeaderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import static com.ccoins.bff.utils.enums.EventNamesCoinsEnum.UPDATE_COINS;
 
 @Service
 public class CoinsService implements ICoinsService {
 
     private final CoinsFeign feign;
+    private final IServerSentEventService sseService;
 
     @Autowired
-    public CoinsService(CoinsFeign feign) {
+    public CoinsService(CoinsFeign feign, IServerSentEventService sseService) {
         this.feign = feign;
+        this.sseService = sseService;
     }
 
     @Override
@@ -49,6 +55,9 @@ public class CoinsService implements ICoinsService {
                             .build()
             );
 
+            if (HttpStatus.OK.equals(response.getStatusCode())){
+                this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(),null,partyId);
+            }
 
         }catch (Exception e){
             throw e;

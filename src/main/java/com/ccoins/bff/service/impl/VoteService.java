@@ -28,6 +28,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ccoins.bff.exceptions.constant.ExceptionConstant.*;
+import static com.ccoins.bff.utils.enums.EventNamesCoinsEnum.UPDATE_COINS;
 
 @Service
 public class VoteService implements IVoteService {
@@ -100,6 +101,7 @@ public class VoteService implements IVoteService {
     public List<String> giveSongCoinsByGame(Long barId, VotingDTO voting){
 
         List<String> ipClients = new ArrayList<>();
+        List<Long> clientsIds = new ArrayList<>();
 
         //buscar el game
         GameDTO game = this.barsFeign.findVotingGameByBarId(barId).getBody();
@@ -122,8 +124,15 @@ public class VoteService implements IVoteService {
         ResponseEntity<List<Long>> clientsResponse = this.coinsFeign.giveCoinsToClients(request);
 
         if(clientsResponse.hasBody()){
-            this.partiesService.findByIdIn(clientsResponse.getBody()).forEach(clientDTO -> ipClients.add(clientDTO.getIp()));
+            this.partiesService.findByIdIn(clientsResponse.getBody()).forEach(clientDTO -> {
+                ipClients.add(clientDTO.getIp());
+                clientsIds.add(clientDTO.getId());
+            });
             this.sseService.dispatchEventToSomeClientsFromBar(EventNamesSPTFEnum.YOU_WIN_SONG_VOTE_SPTF.name(), this.messageTextUtils.winVotingMsg(game.getPoints()), barId, ipClients);
+
+            List<Long> parties = this.partiesService.findAllIdsByClients(clientsIds);
+
+            this.sseService.dispatchEventToClientsFromParties(UPDATE_COINS.name(), null,parties);
         }
 
         return ipClients;

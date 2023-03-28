@@ -31,4 +31,5 @@ public interface IPartiesService {
 
     List<ClientDTO> findByIdIn(List<Long> list);
 
+    List<Long> findAllIdsByClients(List<Long> clientsIds);
 }

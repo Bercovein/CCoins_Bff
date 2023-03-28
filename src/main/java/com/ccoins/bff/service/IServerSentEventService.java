@@ -15,4 +15,9 @@ public interface IServerSentEventService {
 
     @Async
     void dispatchEventToSomeClientsFromBar(String eventName, Object data, Long barId, List<String> clients);
+
+    @Async
+    void dispatchEventToClientsFromParty(String eventName, Object data, Long partyId);
+
+    void dispatchEventToClientsFromParties(String eventName, Object data, List<Long> parties);
 }
