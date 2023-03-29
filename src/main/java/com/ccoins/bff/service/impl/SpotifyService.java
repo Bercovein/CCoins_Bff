@@ -92,26 +92,22 @@ public class SpotifyService implements ISpotifyService {
         if(playbackSPTF == null){
             return;
         }
-        playbackSPTF.setSongLink(trackLink.concat(SpotifyUtils.getUriId(playbackSPTF.getItem().getUri())));
+
+        //setea la url de la canción actual
+        playbackSPTF.setSongLink(this.generateSpotifyLinkFromPlaybackItem(playbackSPTF.getItem()));
 
         //envia a todos los usuarios el estado de la canción actual (asi se esté reproduciendo o no)
         this.sseService.dispatchEventToAllClientsFromBar(EventNamesSPTFEnum.ACTUAL_SONG_SPTF.name(), playbackSPTF, barId);
 
-        //solo si la canción existe
-        //si no hay playlist uri entonces no se genera nada
-        if(playbackSPTF.getItem() == null
-            || playbackSPTF.getContext() == null
-//            || !SpotifyUtils.isPlaylist(playbackSPTF.getContext().getType())
-            || StringsUtils.isNullOrEmpty(playbackSPTF.getContext().getUri())){
+        //si no cumple con las condiciones, no se genera la votación
+        if(this.votingIsCanceled(playbackSPTF)){
             this.sseService.dispatchEventToAllClientsFromBar(EventNamesSPTFEnum.ACTUAL_VOTES_SPTF.name(), new ArrayList<>(), barId);
             return;
         }
 
         //quita el modo aleatorio de la lista si es que lo tiene
-        this.changeShuffleState(token, playbackSPTF.isShuffleState());
-
         //obliga a dejar el modo de repetición de la playlist
-        this.changeRepeatState(token, playbackSPTF.getRepeatState());
+        this.changeStateOfPlayback(token, playbackSPTF);
 
         if(!playbackSPTF.isPlaying()){
             return;
@@ -144,6 +140,21 @@ public class SpotifyService implements ISpotifyService {
 
     }
 
+    private boolean votingIsCanceled(PlaybackSPTF playbackSPTF){
+        return playbackSPTF.getItem() == null
+                || playbackSPTF.getContext() == null
+                || !SpotifyUtils.isPlaylist(playbackSPTF.getContext().getType())
+                || StringsUtils.isNullOrEmpty(playbackSPTF.getContext().getUri());
+    }
+
+    private String generateSpotifyLinkFromPlaybackItem(PlaybackItemSPTF item){
+
+        if(item.getUri() != null) {
+            return trackLink.concat(SpotifyUtils.getUriId(item.getUri()));
+        }
+        return null;
+    }
+
     @Override
     public void resolveAndGenerateVotation(BarTokenDTO request, VotingDTO actualVoting){
 
@@ -158,8 +169,16 @@ public class SpotifyService implements ISpotifyService {
         this.addVotedSongToNextPlayback(token, playbackSPTF, winnerSong);
     }
 
-    @Override
-    public void changeShuffleState(String token, boolean bool){
+    private void changeStateOfPlayback(String token,PlaybackSPTF playbackSPTF){
+
+        //quita el modo aleatorio de la lista si es que lo tiene
+        this.changeShuffleState(token, playbackSPTF.isShuffleState());
+
+        //obliga a dejar el modo de repetición de la playlist
+        this.changeRepeatState(token, playbackSPTF.getRepeatState());
+    }
+
+    private void changeShuffleState(String token, boolean bool){
 
         try {
             if(bool){
@@ -169,8 +188,7 @@ public class SpotifyService implements ISpotifyService {
         }catch (Exception ignored){}
     }
 
-    @Override
-    public void changeRepeatState(String token, String state){
+    private void changeRepeatState(String token, String state){
 
         try {
             if(!REPEAT_STATE.equals(state)){

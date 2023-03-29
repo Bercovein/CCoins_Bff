@@ -21,10 +21,6 @@ public interface ISpotifyService {
 
     void resolveAndGenerateVotation(BarTokenDTO request, VotingDTO actualVoting);
 
-    void changeShuffleState(String token, boolean bool);
-
-    void changeRepeatState(String token, String state);
-
     @Async
     SongDTO newWinner(Long barId, VotingDTO actualVoting);
 

@@ -194,5 +194,8 @@ public class ExceptionConstant {
     public static final String BAR_OR_PARTY_NO_EXIST_ERROR_CODE = "0057";
     public static final String BAR_OR_PARTY_NO_EXIST_ERROR = "La party o el bar no existe.";
 
+    public static final String BARS_ALREADY_CREATED_ERROR_CODE = "0058";
+    public static final String BARS_ALREADY_CREATED_ERROR = "Usted ya tiene un bar creado.";
+
 
 }
