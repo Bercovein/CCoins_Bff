@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UriSPTF {
 
+    private String type;
     private String uri;
 }

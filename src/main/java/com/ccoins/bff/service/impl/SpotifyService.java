@@ -101,6 +101,7 @@ public class SpotifyService implements ISpotifyService {
         //si no hay playlist uri entonces no se genera nada
         if(playbackSPTF.getItem() == null
             || playbackSPTF.getContext() == null
+//            || !SpotifyUtils.isPlaylist(playbackSPTF.getContext().getType())
             || StringsUtils.isNullOrEmpty(playbackSPTF.getContext().getUri())){
             this.sseService.dispatchEventToAllClientsFromBar(EventNamesSPTFEnum.ACTUAL_VOTES_SPTF.name(), new ArrayList<>(), barId);
             return;
