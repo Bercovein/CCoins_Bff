@@ -18,10 +18,13 @@ import com.ccoins.bff.utils.DateUtils;
 import com.ccoins.bff.utils.HeaderUtils;
 import com.ccoins.bff.utils.MessageTextUtils;
 import com.ccoins.bff.utils.enums.EventNamesSPTFEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -31,7 +34,10 @@ import static com.ccoins.bff.exceptions.constant.ExceptionConstant.*;
 import static com.ccoins.bff.utils.enums.EventNamesCoinsEnum.UPDATE_COINS;
 
 @Service
+@Slf4j
 public class VoteService implements IVoteService {
+
+    private final Integer maxVotingTime;
 
     private final CoinsFeign coinsFeign;
 
@@ -46,7 +52,8 @@ public class VoteService implements IVoteService {
     private final MessageTextUtils messageTextUtils;
 
     @Autowired
-    public VoteService(CoinsFeign coinsFeign, BarsFeign barsFeign, ClientService clientService, PartiesService partiesService, IServerSentEventService sseService, MessageTextUtils messageTextUtils) {
+    public VoteService(@Value("${voting.expiration-time}") Integer maxVotingTime, CoinsFeign coinsFeign, BarsFeign barsFeign, ClientService clientService, PartiesService partiesService, IServerSentEventService sseService, MessageTextUtils messageTextUtils) {
+        this.maxVotingTime = maxVotingTime;
         this.coinsFeign = coinsFeign;
         this.barsFeign = barsFeign;
         this.clientService = clientService;
@@ -239,5 +246,15 @@ public class VoteService implements IVoteService {
     public void voteSong(Long songId, String clientIp){
         ClientDTO clientDTO = this.clientService.findActiveByIp(clientIp);
         this.coinsFeign.voteSong(VoteDTO.builder().song(songId).client(clientDTO.getId()).build());
+    }
+
+    @Scheduled(fixedDelayString = "${spotify.voting.expiration-time}")
+    public void closeVoting(){
+        //tomar las votaciones que estan hace mas de X min y cerrarlas
+        try {
+            this.coinsFeign.closeVotingByTime(maxVotingTime);
+        }catch (Exception e){
+            log.error(EXPIRED_VOTING_ERROR);
+        }
     }
 }

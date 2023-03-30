@@ -9,7 +9,7 @@ public class UnauthorizedException extends CustomException {
     }
 
     public UnauthorizedException(String code, Class<?> object, String message) {
-        super(code, format("{0}: {1}", object.getSimpleName(), message));
+        super(code, message);
     }
 
     public UnauthorizedException(String code, String message) {

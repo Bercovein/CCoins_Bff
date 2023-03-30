@@ -197,5 +197,8 @@ public class ExceptionConstant {
     public static final String BARS_ALREADY_CREATED_ERROR_CODE = "0058";
     public static final String BARS_ALREADY_CREATED_ERROR = "Usted ya tiene un bar creado.";
 
+    public static final String EXPIRED_VOTING_ERROR_CODE = "0059";
+    public static final String EXPIRED_VOTING_ERROR = "Error al intentar actualizar las votaciones vencidas";
+
 
 }

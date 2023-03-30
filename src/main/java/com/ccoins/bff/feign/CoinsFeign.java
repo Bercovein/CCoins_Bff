@@ -48,4 +48,7 @@ public interface CoinsFeign {
 
     @GetMapping("/vote/client/{userIp}/bar/{barId}")
     boolean hasVotedAlready(@PathVariable("userIp") String userIp, @PathVariable("barId")  Long barId);
+
+    @PutMapping("/vote/expire/{maxVotingTime}")
+    void closeVotingByTime(@PathVariable("maxVotingTime") Integer maxVotingTime);
 }

@@ -2,8 +2,10 @@ package com.ccoins.bff.service.impl;
 
 import com.ccoins.bff.configuration.CredentialsSPTFConfig;
 import com.ccoins.bff.dto.EmptyDTO;
+import com.ccoins.bff.dto.bars.GameDTO;
 import com.ccoins.bff.dto.coins.SongDTO;
 import com.ccoins.bff.dto.coins.VotingDTO;
+import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.feign.SpotifyFeign;
 import com.ccoins.bff.service.IServerSentEventService;
 import com.ccoins.bff.service.ISpotifyService;
@@ -35,6 +37,8 @@ public class SpotifyService implements ISpotifyService {
     private final IServerSentEventService sseService;
     private final IVoteService voteService;
 
+    private final BarsFeign barsFeign;
+
     @Value("${spotify.max-to-vote}")
     private int maxToVote;
 
@@ -45,11 +49,12 @@ public class SpotifyService implements ISpotifyService {
     private int votesBeforeEndSongMs;
 
     @Autowired
-    public SpotifyService(SpotifyFeign feign, CredentialsSPTFConfig credentials, IServerSentEventService sseService, IVoteService voteService) {
+    public SpotifyService(SpotifyFeign feign, CredentialsSPTFConfig credentials, IServerSentEventService sseService, IVoteService voteService, BarsFeign barsFeign) {
         this.feign = feign;
         this.credentials = credentials;
         this.sseService = sseService;
         this.voteService = voteService;
+        this.barsFeign = barsFeign;
     }
 
     @Override
@@ -114,6 +119,12 @@ public class SpotifyService implements ISpotifyService {
         }
 
         try {
+
+            if(!this.isVotingActive(barId)){
+                this.sseService.dispatchEventToAllClientsFromBar(EventNamesSPTFEnum.ACTUAL_VOTES_SPTF.name(), new ArrayList<>(), barId);
+                return;
+            }
+
             //toma la votación actual del bar
             VotingDTO actualVoting = this.voteService.getActualVotingByBar(barId);
 
@@ -138,6 +149,23 @@ public class SpotifyService implements ISpotifyService {
             log.error(e.getMessage());
         }
 
+    }
+
+    private boolean isVotingActive(Long barId){
+
+        boolean response = false;
+        ResponseEntity <GameDTO> gameResponse = this.barsFeign.findVotingGameByBarId(barId);
+
+        if(gameResponse.hasBody()) {
+            GameDTO game = gameResponse.getBody();
+            assert game != null;
+            if (game.isActive()
+                    && ((game.getOpenTime() == null && game.getCloseTime() == null)
+                    || (DateUtils.isNowBetweenLocalTimes(game.getOpenTime(), game.getCloseTime())))) {
+                response = true;
+            }
+        }
+        return response;
     }
 
     private boolean votingIsCanceled(PlaybackSPTF playbackSPTF){
