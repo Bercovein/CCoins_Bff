@@ -134,7 +134,7 @@ public class LoggerAspect {
 			if (!HTTP_HEADERS_TXT.equals(parametersName[i])) {
 				parametersAndValue.append(parametersName[i])
 						.append(EQUALS_TXT)
-						.append(args[i].toString())
+						.append(args[i] != null ? args[i].toString() : Strings.EMPTY)
 						.append((i + 1 < args.length) ? SEPARATOR : Strings.EMPTY);
 			}
 		}
