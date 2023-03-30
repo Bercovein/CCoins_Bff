@@ -69,7 +69,8 @@ public class CoinsService implements ICoinsService {
     public ResponseEntity<CoinsReportDTO> getCoinsReport(HttpHeaders headers, Pageable pagination, String type) {
 
         try{
-            return this.feign.getAllCoinsFromParty(HeaderUtils.getPartyId(headers), pagination, type);
+            ResponseEntity<CoinsReportDTO> response = this.feign.getAllCoinsFromParty(HeaderUtils.getPartyId(headers), pagination, type);
+            return response;
         }catch (Exception e){
             throw new BadRequestException(ExceptionConstant.COINS_BY_PARTY_ERROR_CODE,
                     this.getClass(), ExceptionConstant.COINS_BY_PARTY_ERROR);
