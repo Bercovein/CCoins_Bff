@@ -16,6 +16,11 @@ public class DateUtils {
         return LocalDateTime.now();
     }
 
+    public static String nowCurrentMillis(){
+        return String.valueOf(System.currentTimeMillis());
+    }
+
+
     public static Date nowDate(){
        return new Date(System.currentTimeMillis());
     }

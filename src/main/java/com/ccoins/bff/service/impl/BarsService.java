@@ -31,11 +31,14 @@ public class BarsService extends ContextService implements IBarsService {
         Long ownerId = super.getLoggedUserId();
         barDTO.setOwner(ownerId);
 
-        ResponseEntity<ListDTO> barResponse;
-        try {
-            barResponse = this.barsFeign.findAllBarsByOwner(ownerId);
-        }catch (Exception e){
-            throw new BadRequestException(ExceptionConstant.BARS_CREATE_OR_UPDATE_ERROR_CODE, this.getClass(), ExceptionConstant.BARS_CREATE_OR_UPDATE_ERROR);
+        ResponseEntity<ListDTO> barResponse = null;
+
+        if(barDTO.getId() == null) {
+            try {
+                barResponse = this.barsFeign.findAllBarsByOwner(ownerId);
+            } catch (Exception e) {
+                throw new BadRequestException(ExceptionConstant.BARS_CREATE_OR_UPDATE_ERROR_CODE, this.getClass(), ExceptionConstant.BARS_CREATE_OR_UPDATE_ERROR);
+            }
         }
 
         if(barResponse != null && barResponse.hasBody()){

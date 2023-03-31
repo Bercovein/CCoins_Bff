@@ -9,6 +9,7 @@ import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.service.IImageService;
 import com.ccoins.bff.service.ITablesService;
+import com.ccoins.bff.utils.DateUtils;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.client.j2se.MatrixToImageConfig;
@@ -106,7 +107,7 @@ public class ImageService extends ContextService implements IImageService {
             JRBeanCollectionDataSource jcd = new JRBeanCollectionDataSource(rowList);
             JasperPrint print = JasperFillManager.fillReport(report, null, jcd);
 
-            String tempPath = TEMP_FOLDER_PATH.concat("JR.pdf");
+            String tempPath = TEMP_FOLDER_PATH.concat(DateUtils.nowCurrentMillis()).concat(".pdf");
 
             OutputStream output = new FileOutputStream(tempPath);
             JasperExportManager.exportReportToPdfStream(print, output);
