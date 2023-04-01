@@ -1,5 +1,6 @@
 package com.ccoins.bff.controller;
 
+import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.coins.CoinsReportDTO;
 import com.ccoins.bff.service.ICoinsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,4 +23,12 @@ public class CoinsController {
                                                         @PageableDefault(page = 0, size = 10, sort = "date") Pageable pagination){
         return this.service.getCoinsReport(headers, pagination, type);
     }
+
+    @PostMapping("/party/report")
+    public ResponseEntity<CoinsReportDTO> getCoinsReport(@RequestParam(value = "type", required = false) String type,
+                                                         @RequestBody IdDTO tableId,
+                                                         @PageableDefault(page = 0, size = 10, sort = "date") Pageable pagination){
+        return this.service.getCoinsReport(tableId, pagination, type);
+    }
+
 }
