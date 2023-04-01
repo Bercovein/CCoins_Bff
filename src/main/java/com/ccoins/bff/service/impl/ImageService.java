@@ -124,11 +124,14 @@ public class ImageService extends ContextService implements IImageService {
     private ResponseEntity<byte[]> generateResponseFile(String path) throws IOException {
 
         File file = new File(path);
+        long fileLength;
+        final byte[] bytes = Files.readAllBytes(file.toPath());
+        fileLength = file.length();
 
-        byte[] bytes = Files.readAllBytes(file.toPath());
+        file.delete();
 
         return ResponseEntity.ok()
-                .contentLength(file.length())
+                .contentLength(fileLength)
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(bytes);
     }
