@@ -96,4 +96,13 @@ public interface BarsFeign {
     @GetMapping("/games/bar/{id}/active")
     ResponseEntity<ListDTO> findAllActiveByBar(@PathVariable("id") Long id);
 
+    @GetMapping("/days")
+    ResponseEntity<ListDTO> getDays();
+
+    @GetMapping("/days/bar/{barId}")
+    ResponseEntity<ListDTO> getBarHours(@PathVariable("barId") Long barId);
+
+    @PostMapping("/days/bar")
+    void saveOrUpdateHours(@RequestBody ListDTO request);
+
 }

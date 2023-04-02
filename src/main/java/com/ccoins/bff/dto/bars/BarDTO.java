@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalTime;
+import java.util.List;
 
 import static com.ccoins.bff.utils.DateUtils.HH_MM;
 
@@ -38,4 +39,6 @@ public class BarDTO {
     private LocalTime closeTime;
 
     private String location;
+
+    private List<BarHourDTO> hours;
 }

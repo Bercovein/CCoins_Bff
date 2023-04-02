@@ -67,6 +67,7 @@ public class BarsService extends ContextService implements IBarsService {
 
         try{
             bar = this.barsFeign.findBarById(id.getId()).getBody();
+
         }catch(Exception e){
             throw new BadRequestException(ExceptionConstant.BARS_FIND_BY_ID_ERROR_CODE, this.getClass(), ExceptionConstant.BARS_FIND_BY_ID_ERROR);
         }
@@ -74,6 +75,7 @@ public class BarsService extends ContextService implements IBarsService {
         if(bar != null && !bar.getOwner().equals(ownerId)){
             throw new UnauthorizedException(ExceptionConstant.BARS_UNAUTHORIZED_ERROR_CODE, this.getClass(), ExceptionConstant.BARS_UNAUTHORIZED_ERROR);
         }
+
 
         return ResponseEntity.ok(bar);
     }
