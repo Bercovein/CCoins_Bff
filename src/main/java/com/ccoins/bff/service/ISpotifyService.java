@@ -26,6 +26,10 @@ public interface ISpotifyService {
 
     VotingDTO newVoting(String token, PlaybackSPTF playbackSPTF, Long barId);
 
+    void startPlayback(BarTokenDTO request);
+
+    PlaybackSPTF getPlayback(BarTokenDTO request);
+
     void sendPlaybackToClients(BarTokenDTO request);
 
     List<SongSPTF> getNextVotes(String token);

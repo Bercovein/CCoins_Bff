@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("${spotify.feign.req-map}")
 public interface SpotifyFeign {
 
+    @GetMapping(value = "${spotify.path.get-playback}", produces = "application/json", consumes = "application/json")
+    PlaybackSPTF getPlaybackState(@RequestHeader HttpHeaders headers);
+
     @GetMapping(value = "${spotify.path.get-queue}", produces = "application/json", consumes = "application/json")
     PlaylistSPTF getQueue(@RequestHeader HttpHeaders headers);
 

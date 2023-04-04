@@ -19,12 +19,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.ccoins.bff.utils.SpotifyUtils.REPEAT_STATE;
 
@@ -36,8 +35,9 @@ public class SpotifyService implements ISpotifyService {
     private final CredentialsSPTFConfig credentials;
     private final IServerSentEventService sseService;
     private final IVoteService voteService;
-
     private final BarsFeign barsFeign;
+
+    private Map<Long,BarTokenDTO> barTokens = new ConcurrentHashMap<>();
 
     @Value("${spotify.max-to-vote}")
     private int maxToVote;
@@ -55,6 +55,11 @@ public class SpotifyService implements ISpotifyService {
         this.sseService = sseService;
         this.voteService = voteService;
         this.barsFeign = barsFeign;
+    }
+
+    @Scheduled(fixedDelayString = "${spotify.playback.cron}")
+    public void sendPlayback(){
+        this.barTokens.forEach((c,v) -> this.sendPlaybackToClients(v));
     }
 
     @Override
@@ -85,13 +90,36 @@ public class SpotifyService implements ISpotifyService {
         return MapperUtils.map(this.credentials, CredentialsSPTFDTO.class);
     }
 
+
+    @Override
+    public void startPlayback(BarTokenDTO request){
+
+        if(request != null && request.getToken() != null && request.getId() != null && request.getRefreshToken() != null){
+            this.barTokens.put(request.getId(),request);
+        }
+    }
+
+    @Override
+    public PlaybackSPTF getPlayback(BarTokenDTO request){
+
+        //traer el estado de la canción desde spotify con el token
+        if(request.getToken() != null && request.getRefreshToken() != null){
+            HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(request.getToken());
+            request.setPlayback(this.feign.getPlaybackState(headers));
+        }
+
+        //si falla, tirar el refresh token
+
+        return request.getPlayback();
+    }
+
     @Override
     @Async
     public void sendPlaybackToClients(BarTokenDTO request){
 
         Long barId = request.getId();
 
-        PlaybackSPTF playbackSPTF = request.getPlayback();
+        PlaybackSPTF playbackSPTF = this.getPlayback(request);
         String token = request.getToken();
 
         if(playbackSPTF == null){

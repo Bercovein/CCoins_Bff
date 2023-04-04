@@ -7,6 +7,7 @@ import com.ccoins.bff.service.ISpotifyService;
 import com.ccoins.bff.spotify.sto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,13 @@ public class SpotifyController implements ISpotifyController {
 
     @Autowired
     private ISpotifyService service;
+
+    @PostMapping("/start-playback")
+    @ResponseStatus(HttpStatus.OK)
+    public void startPlayback(@RequestBody @Valid BarTokenDTO request){
+        this.service.startPlayback(request);
+
+    }
 
     @GetMapping("/config")
     @Override

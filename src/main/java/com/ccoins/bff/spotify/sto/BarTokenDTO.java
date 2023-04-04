@@ -20,6 +20,8 @@ public class BarTokenDTO {
     @NotEmpty
     private String token;
 
+    private String refreshToken;
+
     private PlaybackSPTF playback;
 
     private List<SongSPTF> toVote;
