@@ -49,8 +49,21 @@ public class SpotifyController implements ISpotifyController {
 
     @Override
     @GetMapping("/add-voted-song-to-next-playback")
-    public void addVotedSongToNextPlayback(@Param("token") String token,@Param("context") String context,@Param("song")  String song){
+    public void addVotedSongToNextPlayback(@Param("token") String token, @Param("context") String context,@Param("song") String song){
         this.service.addVotedSongToNextPlayback(token, PlaybackSPTF.builder().context(UriSPTF.builder().uri(context).build()).build(), SongDTO.builder().uri(song).build());
     }
 
+    @GetMapping("/is-connected")
+    @Override
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Boolean> isConnected(){
+        return this.service.isConnected();
+    }
+
+    @GetMapping("/disconnect-me")
+    @Override
+    @ResponseStatus(HttpStatus.OK)
+    public void disconnectByOwnerId(){
+        this.service.disconnectByOwnerId();
+    }
 }

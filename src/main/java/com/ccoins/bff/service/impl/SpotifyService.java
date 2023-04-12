@@ -37,7 +37,7 @@ import static com.ccoins.bff.utils.SpotifyUtils.REPEAT_STATE;
 
 @Service
 @Slf4j
-public class SpotifyService implements ISpotifyService {
+public class SpotifyService extends ContextService implements ISpotifyService {
 
     private final SpotifyFeign spotifyFeign;
     private final SpotifyTokenFeign spotifyTokenFeign;
@@ -118,7 +118,7 @@ public class SpotifyService implements ISpotifyService {
 
 //            request.setRefreshToken(response.getRefreshToken());
         }catch (Exception e){
-            this.barTokens.remove(request.getId());
+            this.barTokens.remove(request.getOwnerId());
             this.usersFeign.saveOrUpdateRefreshTokenSpotify(request.getOwnerId(), RefreshTokenDTO.builder().build());
             this.sseService.dispatchEventToSingleBar(EventNamesSPTFEnum.REQUEST_SPOTIFY_AUTHORIZATION.name(),null,request.getId());
         }
@@ -137,13 +137,13 @@ public class SpotifyService implements ISpotifyService {
         if(request.getCode() != null
                 && request.getRefreshToken() == null){
             this.generateToken(headers, request);
-            this.barTokens.put(request.getId(), request);
+            this.barTokens.put(request.getOwnerId(), request);
         }
 
         //si el token expiró, lo renueva (si la hora actual supera a la hora de expiración del token)
         if (DateUtils.isAfterLocalDateTime(DateUtils.nowLocalDateTime(), request.getExpirationDate())){
             this.refreshToken(headers, request);
-            this.barTokens.put(request.getId(), request);
+            this.barTokens.put(request.getOwnerId(), request);
         }
 
         return request;
@@ -461,4 +461,39 @@ public class SpotifyService implements ISpotifyService {
             log.error(e.getMessage());
         }
     }
+
+    @Override
+    public ResponseEntity<Boolean> isConnected() {
+
+        Long ownerId = super.getLoggedUserId();
+        boolean response = false;
+        ResponseEntity<RefreshTokenDTO> refreshToken = null;
+        try {
+             refreshToken = this.usersFeign.getSpotifyRefreshTokenByOwnerId(ownerId);
+        }catch (Exception e){
+            log.error(ExceptionConstant.DISCONNECT_SPTF_ERROR);
+        }
+
+        if(refreshToken != null && refreshToken.hasBody() && refreshToken.getBody() != null && refreshToken.getBody().getRefreshToken() != null){
+            response = true;
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public void disconnectByOwnerId() {
+
+        try {
+            Long ownerId = super.getLoggedUserId();
+            this.barTokens.remove(ownerId);
+            this.usersFeign.saveOrUpdateRefreshTokenSpotify(ownerId, RefreshTokenDTO.builder().refreshToken(null).build());
+
+        }catch (Exception e){
+            throw new BadRequestException(ExceptionConstant.DISCONNECT_SPTF_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.DISCONNECT_SPTF_ERROR);
+        }
+    }
+
+
 }

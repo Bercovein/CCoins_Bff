@@ -200,5 +200,11 @@ public class ExceptionConstant {
     public static final String EXPIRED_VOTING_ERROR_CODE = "0059";
     public static final String EXPIRED_VOTING_ERROR = "Error al intentar actualizar las votaciones vencidas";
 
+    public static final String DISCONNECT_SPTF_ERROR_CODE = "0060";
+    public static final String DISCONNECT_SPTF_ERROR = "Error al intentar desconectar la cuenta con Spotify. Por favor, reintente.";
+
+    public static final String IS_CONNECTED_SPTF_ERROR_CODE = "0061";
+    public static final String IS_CONNECTED_SPTF_ERROR = "Ha ocurrido un error al verificar la conexión";
+
 
 }

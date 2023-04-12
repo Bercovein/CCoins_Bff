@@ -42,4 +42,7 @@ public interface ISpotifyService {
 
     void addVotedSongToNextPlayback(String token, PlaybackSPTF playbackSPTF, SongDTO winnerSong) ;
 
+    void disconnectByOwnerId();
+
+    ResponseEntity<Boolean> isConnected();
 }
