@@ -63,6 +63,81 @@ public class SpotifyService implements ISpotifyService {
     }
 
     @Override
+    public void generateToken(HttpHeaders headers, BarTokenDTO request){
+
+        //debe generar el token en base al id del bar y el codigo
+        //guardarlo en memoria y devolverlo para guardar en la base
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("grant_type",credentials.getAuthorizationCode());
+        requestBody.put("code",request.getCode());
+        requestBody.put("redirect_uri",credentials.getRedirectURI());
+
+//        try {
+            TokenSPTF token = this.spotifyTokenFeign.getOrRefreshToken(headers, requestBody);
+//        }catch (Exception e){
+//            throw
+//        }
+        request.setRefreshToken(token.getRefreshToken());
+        request.setToken(token.getAccessToken());
+        request.setExpirationDate(DateUtils.nowLocalDateTime().plusSeconds(token.getExpiresIn()));
+        request.setExpiresIn(token.getExpiresIn());
+
+        this.usersFeign.saveOrUpdateRefreshTokenSpotify(request.getOwnerId(),
+                RefreshTokenDTO.builder().refreshToken(request.getRefreshToken()).build());
+    }
+
+    @Override
+    public void refreshToken(HttpHeaders headers, BarTokenDTO request){
+        TokenSPTF response;
+
+        //si el refresh falla, debe avisar por socket de que llame de nuevo a la api
+        //tambien debe quitarlo de la lista en memoria
+        try {
+            Map<String, String> requestBody = new HashMap<>();
+            requestBody.put("grant_type",credentials.getRefreshToken());
+            requestBody.put("refresh_token",request.getRefreshToken());
+
+            response = this.spotifyTokenFeign.getOrRefreshToken(
+                    headers,requestBody);
+
+            request.setToken(response.getAccessToken());
+            request.setExpiresIn(response.getExpiresIn());
+            request.setExpirationDate(DateUtils.nowLocalDateTime().plusSeconds(request.getExpiresIn()));
+
+//            request.setRefreshToken(response.getRefreshToken());
+        }catch (Exception e){
+            this.barTokens.remove(request.getId());
+            this.usersFeign.saveOrUpdateRefreshTokenSpotify(request.getOwnerId(), RefreshTokenDTO.builder().build());
+            this.sseService.dispatchEventToSingleBar(EventNamesSPTFEnum.REQUEST_SPOTIFY_AUTHORIZATION.name(),null,request.getId());
+        }
+
+    }
+
+    @Override
+    public BarTokenDTO getOrRefreshToken(BarTokenDTO request){
+
+        HttpHeaders headers = new HttpHeaders();
+        String auth = this.credentials.getClientId().concat(":").concat(this.credentials.getClientSecret());
+        HeaderUtils.setParameterAuthorization(headers, StringsUtils.stringToBase64(auth));
+        HeaderUtils.setParameterContentType(headers, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+
+        //si el code existe y el refresh no, debe pedir un token
+        if(request.getCode() != null
+                && request.getRefreshToken() == null){
+            this.generateToken(headers, request);
+            this.barTokens.put(request.getId(), request);
+        }
+
+        //si el token expiró, lo renueva (si la hora actual supera a la hora de expiración del token)
+        if (DateUtils.isAfterLocalDateTime(DateUtils.nowLocalDateTime(), request.getExpirationDate())){
+            this.refreshToken(headers, request);
+            this.barTokens.put(request.getId(), request);
+        }
+
+        return request;
+    }
+
+    @Override
     public ResponseEntity<PlaylistSPTF> getPlaylist(HttpHeaders headers) {
 
         HeaderUtils.setParameters(headers);
