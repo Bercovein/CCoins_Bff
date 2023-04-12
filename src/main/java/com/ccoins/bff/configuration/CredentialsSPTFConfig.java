@@ -27,6 +27,9 @@ public class CredentialsSPTFConfig {
     @Value("${spotify.config.auth.scopes}")
     private String grantType;
 
+    @Value("${spotify.config.auth-code}")
+    private String authorizationCode;
+
     @Value("${spotify.config.auth.refresh-token}")
     private String refreshToken;
 

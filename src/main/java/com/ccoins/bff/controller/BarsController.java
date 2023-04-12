@@ -2,8 +2,8 @@ package com.ccoins.bff.controller;
 
 import com.ccoins.bff.controller.swagger.IBarsController;
 import com.ccoins.bff.dto.IdDTO;
-import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.bars.BarDTO;
+import com.ccoins.bff.dto.bars.BarListDTO;
 import com.ccoins.bff.service.IBarsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +38,7 @@ public class BarsController implements IBarsController {
 
     @Override
     @GetMapping("/owner")
-    public ResponseEntity<ListDTO> findAllByOwner(){
+    public ResponseEntity<BarListDTO> findAllByOwner(){
         return this.service.findAllByOwner();
     }
 

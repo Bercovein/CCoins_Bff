@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -22,6 +23,10 @@ public class BarTokenDTO {
     private String token;
 
     private String refreshToken;
+
+    private LocalDateTime expirationDate;
+
+    private Integer expiresIn;
 
     private String code;
 

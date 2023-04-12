@@ -2,13 +2,18 @@ package com.ccoins.bff.service.impl;
 
 import com.ccoins.bff.configuration.CredentialsSPTFConfig;
 import com.ccoins.bff.dto.EmptyDTO;
-import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.bars.BarDTO;
+import com.ccoins.bff.dto.bars.BarListDTO;
 import com.ccoins.bff.dto.bars.GameDTO;
 import com.ccoins.bff.dto.coins.SongDTO;
 import com.ccoins.bff.dto.coins.VotingDTO;
 import com.ccoins.bff.dto.users.RefreshTokenDTO;
-import com.ccoins.bff.feign.*;
+import com.ccoins.bff.exceptions.BadRequestException;
+import com.ccoins.bff.exceptions.constant.ExceptionConstant;
+import com.ccoins.bff.feign.BarsFeign;
+import com.ccoins.bff.feign.SpotifyFeign;
+import com.ccoins.bff.feign.SpotifyTokenFeign;
+import com.ccoins.bff.feign.UsersFeign;
 import com.ccoins.bff.service.IServerSentEventService;
 import com.ccoins.bff.service.ISpotifyService;
 import com.ccoins.bff.service.IVoteService;
@@ -19,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -73,11 +79,20 @@ public class SpotifyService implements ISpotifyService {
 
         //debe generar el token en base al id del bar y el codigo
         //guardarlo en memoria y devolverlo para guardar en la base
-        TokenSPTF token = this.spotifyTokenFeign.getOrRefreshToken(credentials.getGrantType(),
-                request.getCode(),null, credentials.getRedirectURI(), headers);
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("grant_type",credentials.getAuthorizationCode());
+        requestBody.put("code",request.getCode());
+        requestBody.put("redirect_uri",credentials.getRedirectURI());
 
+//        try {
+            TokenSPTF token = this.spotifyTokenFeign.getOrRefreshToken(headers, requestBody);
+//        }catch (Exception e){
+//            throw
+//        }
         request.setRefreshToken(token.getRefreshToken());
         request.setToken(token.getAccessToken());
+        request.setExpirationDate(DateUtils.nowLocalDateTime().plusSeconds(token.getExpiresIn()));
+        request.setExpiresIn(token.getExpiresIn());
 
         this.usersFeign.saveOrUpdateRefreshTokenSpotify(request.getOwnerId(),
                 RefreshTokenDTO.builder().refreshToken(request.getRefreshToken()).build());
@@ -85,13 +100,22 @@ public class SpotifyService implements ISpotifyService {
 
     @Override
     public void refreshToken(HttpHeaders headers, BarTokenDTO request){
-        TokenSPTF response = null;
+        TokenSPTF response;
 
         //si el refresh falla, debe avisar por socket de que llame de nuevo a la api
         //tambien debe quitarlo de la lista en memoria
         try {
-            response = this.spotifyTokenFeign.getOrRefreshToken(credentials.getRefreshToken(),null, request.getRefreshToken(),null, headers);
+            Map<String, String> requestBody = new HashMap<>();
+            requestBody.put("grant_type",credentials.getRefreshToken());
+            requestBody.put("refresh_token",request.getRefreshToken());
+
+            response = this.spotifyTokenFeign.getOrRefreshToken(
+                    headers,requestBody);
+
             request.setToken(response.getAccessToken());
+            request.setExpiresIn(response.getExpiresIn());
+            request.setExpirationDate(DateUtils.nowLocalDateTime().plusSeconds(request.getExpiresIn()));
+
 //            request.setRefreshToken(response.getRefreshToken());
         }catch (Exception e){
             this.barTokens.remove(request.getId());
@@ -105,7 +129,9 @@ public class SpotifyService implements ISpotifyService {
     public BarTokenDTO getOrRefreshToken(BarTokenDTO request){
 
         HttpHeaders headers = new HttpHeaders();
-        HeaderUtils.setParameters(headers);
+        String auth = this.credentials.getClientId().concat(":").concat(this.credentials.getClientSecret());
+        HeaderUtils.setParameterAuthorization(headers, StringsUtils.stringToBase64(auth));
+        HeaderUtils.setParameterContentType(headers, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
 
         //si el code existe y el refresh no, debe pedir un token
         if(request.getCode() != null
@@ -114,8 +140,9 @@ public class SpotifyService implements ISpotifyService {
             this.barTokens.put(request.getId(), request);
         }
 
-        //si el token expiró, lo renueva
-        if (TokenUtils.isJWTExpired(request.getToken())){
+        //si el token expiró, lo renueva (si la hora actual supera a la hora de expiración del token)
+//        if (TokenUtils.isJWTExpired(request.getToken())){
+        if (DateUtils.isAfterLocalDateTime(DateUtils.nowLocalDateTime(), request.getExpirationDate())){
             this.refreshToken(headers, request);
             this.barTokens.put(request.getId(), request);
         }
@@ -154,12 +181,18 @@ public class SpotifyService implements ISpotifyService {
 
     @Override
     public void startPlayback(OwnerCodeDTO request){
+        ResponseEntity<BarListDTO> bars;
+        try {
+            bars = this.barsFeign.findAllBarsByOwner(request.getOwnerId());
+        }catch (Exception e){
+            throw new BadRequestException(ExceptionConstant.BARS_FIND_BY_OWNER_ERROR_CODE, this.getClass(), ExceptionConstant.BARS_FIND_BY_OWNER_ERROR);
+        }
 
-        ResponseEntity<ListDTO> bars = this.barsFeign.findAllBarsByOwner(request.getOwnerId());
         BarDTO bar;
 
         if(bars.hasBody() && bars.getBody() != null && bars.getBody().getList() != null && !bars.getBody().getList().isEmpty()){
-            bar = (BarDTO) bars.getBody().getList().get(0);
+            var barIP = bars.getBody().getList().get(0);
+            bar = (BarDTO) barIP;
             BarTokenDTO barTokenDTO = BarTokenDTO.builder()
                                         .code(request.getCode())
                                         .id(bar.getId())

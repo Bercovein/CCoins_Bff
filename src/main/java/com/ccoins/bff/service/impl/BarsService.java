@@ -4,6 +4,7 @@ import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.StringDTO;
 import com.ccoins.bff.dto.bars.BarDTO;
+import com.ccoins.bff.dto.bars.BarListDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.UnauthorizedException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
@@ -31,7 +32,7 @@ public class BarsService extends ContextService implements IBarsService {
         Long ownerId = super.getLoggedUserId();
         barDTO.setOwner(ownerId);
 
-        ResponseEntity<ListDTO> barResponse = null;
+        ResponseEntity<BarListDTO> barResponse = null;
 
         if(barDTO.getId() == null) {
             try {
@@ -43,7 +44,7 @@ public class BarsService extends ContextService implements IBarsService {
 
         if(barResponse != null && barResponse.hasBody()){
 
-            ListDTO barList = barResponse.getBody();
+            BarListDTO barList = barResponse.getBody();
 
             if (barList != null && barList.getList() != null && !barList.getList().isEmpty()) {
                 throw new BadRequestException(ExceptionConstant.BARS_ALREADY_CREATED_ERROR_CODE,
@@ -81,7 +82,7 @@ public class BarsService extends ContextService implements IBarsService {
     }
 
     @Override
-    public ResponseEntity<ListDTO> findAllByOwner() {
+    public ResponseEntity<BarListDTO> findAllByOwner() {
 
         Long ownerId = super.getLoggedUserId();
 
