@@ -7,4 +7,6 @@ public enum EventNamesSPTFEnum {
     NEW_WINNER_SPTF,
     YOU_WIN_SONG_VOTE_SPTF,
 
+    REQUEST_SPOTIFY_AUTHORIZATION
+
 }

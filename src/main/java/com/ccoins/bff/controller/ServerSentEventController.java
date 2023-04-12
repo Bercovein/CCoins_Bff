@@ -21,8 +21,16 @@ public class ServerSentEventController implements IServerSentEventController {
     @CrossOrigin(origins = "${sse.cross-origins}")
     @RequestMapping(value="/subscribe",consumes=MediaType.ALL_VALUE)
     @Override
-    public SseEmitter subscribe(@RequestParam("partyId") Long partyId, @RequestParam("client") String client){
-        return this.service.subscribe(partyId, client);
+    public SseEmitter subscribeClient(@RequestParam("partyId") Long partyId, @RequestParam("client") String client){
+        return this.service.subscribeClient(partyId, client);
+    }
+
+    // method for client subscription
+    @CrossOrigin(origins = "${sse.cross-origins}")
+    @RequestMapping(value="/subscribe/owner",consumes=MediaType.ALL_VALUE)
+    @Override
+    public SseEmitter subscribeOwner(@RequestParam("barId") Long barId){
+        return this.service.subscribeOwner(barId);
     }
 
 }

@@ -2,6 +2,7 @@ package com.ccoins.bff.feign;
 
 import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.dto.users.OwnerDTO;
+import com.ccoins.bff.dto.users.RefreshTokenDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,12 @@ public interface UsersFeign {
     @GetMapping("/owner/email/{email}")
     Optional<OwnerDTO> findByEmail(@PathVariable("email") String email);
 
+    @GetMapping("/owner/{id}")
+    ResponseEntity<RefreshTokenDTO> getSpotifyRefreshTokenByOwnerId(@PathVariable("id") Long id);
+
+    @PutMapping("/owner/{id}")
+    void saveOrUpdateRefreshTokenSpotify(@PathVariable("id") Long id, @RequestBody RefreshTokenDTO request);
+
     @PostMapping("/client")
     ClientDTO saveClient(ClientDTO request);
 
@@ -33,4 +40,6 @@ public interface UsersFeign {
 
     @GetMapping("/client/party/{partyId}")
     ResponseEntity<List<ClientDTO>> findByParty(@PathVariable("partyId") Long partyId);
+
+
 }

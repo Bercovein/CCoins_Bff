@@ -2,11 +2,13 @@ package com.ccoins.bff.service.impl;
 
 import com.ccoins.bff.configuration.CredentialsSPTFConfig;
 import com.ccoins.bff.dto.EmptyDTO;
+import com.ccoins.bff.dto.ListDTO;
+import com.ccoins.bff.dto.bars.BarDTO;
 import com.ccoins.bff.dto.bars.GameDTO;
 import com.ccoins.bff.dto.coins.SongDTO;
 import com.ccoins.bff.dto.coins.VotingDTO;
-import com.ccoins.bff.feign.BarsFeign;
-import com.ccoins.bff.feign.SpotifyFeign;
+import com.ccoins.bff.dto.users.RefreshTokenDTO;
+import com.ccoins.bff.feign.*;
 import com.ccoins.bff.service.IServerSentEventService;
 import com.ccoins.bff.service.ISpotifyService;
 import com.ccoins.bff.service.IVoteService;
@@ -31,11 +33,13 @@ import static com.ccoins.bff.utils.SpotifyUtils.REPEAT_STATE;
 @Slf4j
 public class SpotifyService implements ISpotifyService {
 
-    private final SpotifyFeign feign;
+    private final SpotifyFeign spotifyFeign;
+    private final SpotifyTokenFeign spotifyTokenFeign;
     private final CredentialsSPTFConfig credentials;
     private final IServerSentEventService sseService;
     private final IVoteService voteService;
     private final BarsFeign barsFeign;
+    private final UsersFeign usersFeign;
 
     private Map<Long,BarTokenDTO> barTokens = new ConcurrentHashMap<>();
 
@@ -49,12 +53,14 @@ public class SpotifyService implements ISpotifyService {
     private int votesBeforeEndSongMs;
 
     @Autowired
-    public SpotifyService(SpotifyFeign feign, CredentialsSPTFConfig credentials, IServerSentEventService sseService, IVoteService voteService, BarsFeign barsFeign) {
-        this.feign = feign;
+    public SpotifyService(SpotifyFeign spotifyFeign, SpotifyTokenFeign spotifyTokenFeign, CredentialsSPTFConfig credentials, IServerSentEventService sseService, IVoteService voteService, BarsFeign barsFeign, UsersFeign usersFeign) {
+        this.spotifyFeign = spotifyFeign;
+        this.spotifyTokenFeign = spotifyTokenFeign;
         this.credentials = credentials;
         this.sseService = sseService;
         this.voteService = voteService;
         this.barsFeign = barsFeign;
+        this.usersFeign = usersFeign;
     }
 
     @Scheduled(fixedDelayString = "${spotify.playback.cron}")
@@ -63,10 +69,65 @@ public class SpotifyService implements ISpotifyService {
     }
 
     @Override
+    public void generateToken(HttpHeaders headers, BarTokenDTO request){
+
+        //debe generar el token en base al id del bar y el codigo
+        //guardarlo en memoria y devolverlo para guardar en la base
+        TokenSPTF token = this.spotifyTokenFeign.getOrRefreshToken(credentials.getGrantType(),
+                request.getCode(),null, credentials.getRedirectURI(), headers);
+
+        request.setRefreshToken(token.getRefreshToken());
+        request.setToken(token.getAccessToken());
+
+        this.usersFeign.saveOrUpdateRefreshTokenSpotify(request.getOwnerId(),
+                RefreshTokenDTO.builder().refreshToken(request.getRefreshToken()).build());
+    }
+
+    @Override
+    public void refreshToken(HttpHeaders headers, BarTokenDTO request){
+        TokenSPTF response = null;
+
+        //si el refresh falla, debe avisar por socket de que llame de nuevo a la api
+        //tambien debe quitarlo de la lista en memoria
+        try {
+            response = this.spotifyTokenFeign.getOrRefreshToken(credentials.getRefreshToken(),null, request.getRefreshToken(),null, headers);
+            request.setToken(response.getAccessToken());
+//            request.setRefreshToken(response.getRefreshToken());
+        }catch (Exception e){
+            this.barTokens.remove(request.getId());
+            this.usersFeign.saveOrUpdateRefreshTokenSpotify(request.getOwnerId(), RefreshTokenDTO.builder().build());
+            this.sseService.dispatchEventToSingleBar(EventNamesSPTFEnum.REQUEST_SPOTIFY_AUTHORIZATION.name(),null,request.getId());
+        }
+
+    }
+
+    @Override
+    public BarTokenDTO getOrRefreshToken(BarTokenDTO request){
+
+        HttpHeaders headers = new HttpHeaders();
+        HeaderUtils.setParameters(headers);
+
+        //si el code existe y el refresh no, debe pedir un token
+        if(request.getCode() != null
+                && request.getRefreshToken() == null){
+            this.generateToken(headers, request);
+            this.barTokens.put(request.getId(), request);
+        }
+
+        //si el token expiró, lo renueva
+        if (TokenUtils.isJWTExpired(request.getToken())){
+            this.refreshToken(headers, request);
+            this.barTokens.put(request.getId(), request);
+        }
+
+        return request;
+    }
+
+    @Override
     public ResponseEntity<PlaylistSPTF> getPlaylist(HttpHeaders headers) {
 
         HeaderUtils.setParameters(headers);
-        PlaylistSPTF response =  this.feign.getQueue(headers);
+        PlaylistSPTF response =  this.spotifyFeign.getQueue(headers);
         return ResponseEntity.ok(response);
     }
 
@@ -74,7 +135,7 @@ public class SpotifyService implements ISpotifyService {
     public ResponseEntity<RecentlyPlayedSPTF> getRecentlyPlayed(HttpHeaders headers, Integer limit) {
 
         HeaderUtils.setParameters(headers);
-        RecentlyPlayedSPTF response =  this.feign.getRecentlyPlayed(headers,limit);
+        RecentlyPlayedSPTF response =  this.spotifyFeign.getRecentlyPlayed(headers,limit);
         return ResponseEntity.ok(response);
     }
 
@@ -82,7 +143,7 @@ public class SpotifyService implements ISpotifyService {
     public void addTrackToQueue(HttpHeaders headers, List<String> tracks, int position, String playlistId) {
 
         HeaderUtils.setParameters(headers);
-        this.feign.addItemsToPlaylist(headers,playlistId, ItemToPlaylistSPTF.builder().position(position).uris(tracks).build());
+        this.spotifyFeign.addItemsToPlaylist(headers,playlistId, ItemToPlaylistSPTF.builder().position(position).uris(tracks).build());
     }
 
     @Override
@@ -92,23 +153,42 @@ public class SpotifyService implements ISpotifyService {
 
 
     @Override
-    public void startPlayback(BarTokenDTO request){
+    public void startPlayback(OwnerCodeDTO request){
 
-        if(request != null && request.getToken() != null && request.getId() != null && request.getRefreshToken() != null){
-            this.barTokens.put(request.getId(),request);
+        ResponseEntity<ListDTO> bars = this.barsFeign.findAllBarsByOwner(request.getOwnerId());
+        BarDTO bar;
+
+        if(bars.hasBody() && bars.getBody() != null && bars.getBody().getList() != null && !bars.getBody().getList().isEmpty()){
+            bar = (BarDTO) bars.getBody().getList().get(0);
+            BarTokenDTO barTokenDTO = BarTokenDTO.builder()
+                                        .code(request.getCode())
+                                        .id(bar.getId())
+                                        .ownerId(request.getOwnerId()).build();
+            if(request.getCode() == null) {
+                ResponseEntity<RefreshTokenDTO> refreshTokenDTO = this.usersFeign.getSpotifyRefreshTokenByOwnerId(request.getOwnerId());
+                if(refreshTokenDTO.hasBody() && refreshTokenDTO.getBody() != null){
+                    barTokenDTO.setRefreshToken(refreshTokenDTO.getBody().getRefreshToken());
+                }
+            }
+            //genera un token nuevo, evalua expiración y/o lo regenera con refresh token
+            this.getOrRefreshToken(barTokenDTO);
         }
     }
 
     @Override
     public PlaybackSPTF getPlayback(BarTokenDTO request){
 
+        request = this.getOrRefreshToken(request);
+
+        if(request == null){
+            return null;
+        }
+
         //traer el estado de la canción desde spotify con el token
         if(request.getToken() != null && request.getRefreshToken() != null){
             HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(request.getToken());
-            request.setPlayback(this.feign.getPlaybackState(headers));
+            request.setPlayback(this.spotifyFeign.getPlaybackState(headers));
         }
-
-        //si falla, tirar el refresh token
 
         return request.getPlayback();
     }
@@ -239,7 +319,7 @@ public class SpotifyService implements ISpotifyService {
         try {
             if(bool){
                 HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(token);
-                this.feign.changeShuffleState(headers, false, EmptyDTO.builder().build());
+                this.spotifyFeign.changeShuffleState(headers, false, EmptyDTO.builder().build());
             }
         }catch (Exception ignored){}
     }
@@ -249,7 +329,7 @@ public class SpotifyService implements ISpotifyService {
         try {
             if(!REPEAT_STATE.equals(state)){
                 HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(token);
-                this.feign.changeRepeatState(headers, REPEAT_STATE, EmptyDTO.builder().build());
+                this.spotifyFeign.changeRepeatState(headers, REPEAT_STATE, EmptyDTO.builder().build());
             }
         }catch (Exception ignored){}
     }
@@ -264,7 +344,6 @@ public class SpotifyService implements ISpotifyService {
         if (voting != null) {
             winnerSong = voting.getWinnerSong();
             this.sseService.dispatchEventToAllClientsFromBar(EventNamesSPTFEnum.NEW_WINNER_SPTF.name(), voting.getWinnerSong(), barId);
-
             this.voteService.giveSongCoinsByGame(barId, voting);
         }
 
@@ -287,7 +366,7 @@ public class SpotifyService implements ISpotifyService {
     public List<SongSPTF> getNextVotes(String token){
 
         HttpHeaders headers = HeaderUtils.getHeaderFromTokenWithEncodingAndWithoutContentLength(token);
-        PlaylistSPTF playlistSPTF = this.feign.getQueue(headers); //trae la playlist actual
+        PlaylistSPTF playlistSPTF = this.spotifyFeign.getQueue(headers); //trae la playlist actual
         List<SongSPTF> songs = playlistSPTF.getQueue();
 
         if(songs.isEmpty() || songs.size() == 1)
@@ -320,7 +399,7 @@ public class SpotifyService implements ISpotifyService {
 
         try {
             //trae la lista actual para validación
-            PlaylistSPTF playlistSPTF = this.feign.getQueue(headers);
+            PlaylistSPTF playlistSPTF = this.spotifyFeign.getQueue(headers);
             List<SongSPTF> queue = playlistSPTF.getQueue();
 
             //checkea si es el proximo en reproducirse, si lo es o está vacía, no hace nada
@@ -328,7 +407,7 @@ public class SpotifyService implements ISpotifyService {
                 return;
             }
 
-            PlaylistTracksSPTF playlistTracks = this.feign.getPlaylist(headers,playlistId);
+            PlaylistTracksSPTF playlistTracks = this.spotifyFeign.getPlaylist(headers,playlistId);
             List<ItemSPTF> tracks = playlistTracks.getTracks().getItems();
             Optional<ItemSPTF> actualSongOpt = tracks.stream().filter(t -> t.getTrack().getUri().equals(playbackSPTF.getItem().getUri())).findFirst();
 
@@ -338,7 +417,7 @@ public class SpotifyService implements ISpotifyService {
                 position++;
 
                 //quitar la canción de la lista
-                this.feign.removeSongFromPlaylist(headers,
+                this.spotifyFeign.removeSongFromPlaylist(headers,
                         playlistId,
                         TrackUriListSPTF.builder().tracks(List.of(trackUri)).build()
                 );

@@ -23,4 +23,15 @@ public class CredentialsSPTFConfig {
 
     @Value("${spotify.config.auth.scopes}")
     private String[] scopes;
+
+    @Value("${spotify.config.auth.scopes}")
+    private String grantType;
+
+    @Value("${spotify.config.auth.refresh-token}")
+    private String refreshToken;
+
+    @Value("${spotify.config.auth.redirect-uri}")
+    private String redirectURI;
+
+
 }

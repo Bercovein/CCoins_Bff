@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.ccoins.bff.utils.SSEConstants.OWNER_CODE;
+
 @Service
 @Slf4j
 public class ServerSentEventService implements IServerSentEventService {
@@ -34,31 +36,48 @@ public class ServerSentEventService implements IServerSentEventService {
     }
 
     @Override
-    public SseEmitter subscribe(Long partyId, String client){
+    public SseEmitter subscribeOwner(Long barId){
+
+        String client = "0";
+        return this.subscribe(barId,client);
+    }
+
+    @Override
+    public SseEmitter subscribeClient(Long partyId, String client){
 
         ResponseEntity<IdDTO> responseEntity = this.barsFeign.getBarIdByParty(partyId);
-        Long barId;
+
+        if(!responseEntity.hasBody()){
+            return  new SseEmitter(Long.MAX_VALUE);
+        }
+
+        Long barId = Objects.requireNonNull(responseEntity.getBody()).getId();
+
+        return this.subscribe(barId, client);
+    }
+
+
+    @Override
+    public SseEmitter subscribe(Long barId, String client){
+
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
 
-        if(responseEntity.hasBody()){
-            barId = Objects.requireNonNull(responseEntity.getBody()).getId();
+        this.sendInitEvent(sseEmitter);
 
-            this.sendInitEvent(sseEmitter);
+        Map<String,SseEmitter> sseEmitterMap = emitters.get(barId);
 
-            Map<String,SseEmitter> sseEmitterMap = emitters.get(barId);
-
-            if(sseEmitterMap == null || sseEmitterMap.isEmpty()){
-                sseEmitterMap = new ConcurrentHashMap<>();
-            }
-
-            sseEmitterMap.put(client,sseEmitter);
-
-            emitters.put(barId,sseEmitterMap);
-
-            sseEmitter.onCompletion(()->emitters.get(barId).remove(client));
-            sseEmitter.onTimeout(()->emitters.get(barId).remove(client));
-            sseEmitter.onError(e->emitters.get(barId).remove(client));
+        if(sseEmitterMap == null || sseEmitterMap.isEmpty()){
+            sseEmitterMap = new ConcurrentHashMap<>();
         }
+
+        sseEmitterMap.put(client,sseEmitter);
+
+        emitters.put(barId,sseEmitterMap);
+
+        sseEmitter.onCompletion(()->emitters.get(barId).remove(client));
+        sseEmitter.onTimeout(()->emitters.get(barId).remove(client));
+        sseEmitter.onError(e->emitters.get(barId).remove(client));
+
         return sseEmitter;
     }
 
@@ -72,7 +91,8 @@ public class ServerSentEventService implements IServerSentEventService {
 
             sseEmitterMap.forEach((client,emitter) -> {
                 try{
-                    emitter.send(SseEmitter.event().name(eventName).data(data, MediaType.APPLICATION_JSON));
+                    if(!OWNER_CODE.equals(client))
+                        emitter.send(SseEmitter.event().name(eventName).data(data, MediaType.APPLICATION_JSON));
                 }catch(IOException e){
                     sseEmitterMap.remove(client);
                     log.error("Error while sending event to client.");
@@ -143,6 +163,30 @@ public class ServerSentEventService implements IServerSentEventService {
         parties.parallelStream().forEach(party -> this.dispatchEventToClientsFromParty(eventName,data,party));
     }
 
+    @Override
+    public void dispatchEventToSingleBar(String eventName, Object data, Long barId){
+
+        Map<String,SseEmitter> sseEmitterMap = emitters.get(barId);
+        try{
+            sseEmitterMap.get(OWNER_CODE).send(SseEmitter.event().name(eventName).data(data, MediaType.APPLICATION_JSON));
+        }catch(IOException e){
+            sseEmitterMap.remove(OWNER_CODE);
+            log.error("Error while sending event to owner.");
+        }
+    }
+
+    @Override
+    public void dispatchEventToAllBars(String eventName, Object data){
+
+        emitters.forEach((barId, sseEmitterMap) -> {
+            try{
+                sseEmitterMap.get(OWNER_CODE).send(SseEmitter.event().name(eventName).data(data, MediaType.APPLICATION_JSON));
+            }catch(IOException e){
+                sseEmitterMap.remove(OWNER_CODE);
+                log.error("Error while sending event to owner.");
+            }
+        });
+    }
 
     private void sendInitEvent(SseEmitter sseEmitter){
         try{

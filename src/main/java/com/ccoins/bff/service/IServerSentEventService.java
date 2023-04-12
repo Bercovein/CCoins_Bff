@@ -8,7 +8,11 @@ import java.util.List;
 public interface IServerSentEventService {
 
 
-    SseEmitter subscribe(Long partyId, String client);
+    SseEmitter subscribeOwner(Long barId);
+
+    SseEmitter subscribeClient(Long partyId, String client);
+
+    SseEmitter subscribe(Long barId, String client);
 
     @Async
     void dispatchEventToAllClientsFromBar(String eventName, Object data, Long barId);
@@ -20,4 +24,8 @@ public interface IServerSentEventService {
     void dispatchEventToClientsFromParty(String eventName, Object data, Long partyId);
 
     void dispatchEventToClientsFromParties(String eventName, Object data, List<Long> parties);
+
+    void dispatchEventToSingleBar(String eventName, Object data, Long barId);
+
+    void dispatchEventToAllBars(String eventName, Object data);
 }

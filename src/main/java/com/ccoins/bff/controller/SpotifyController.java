@@ -23,7 +23,8 @@ public class SpotifyController implements ISpotifyController {
 
     @PostMapping("/start-playback")
     @ResponseStatus(HttpStatus.OK)
-    public void startPlayback(@RequestBody @Valid BarTokenDTO request){
+    @Override
+    public void startPlayback(@RequestBody @Valid OwnerCodeDTO request){
         this.service.startPlayback(request);
 
     }
