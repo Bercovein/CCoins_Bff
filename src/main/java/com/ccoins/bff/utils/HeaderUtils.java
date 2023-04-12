@@ -10,6 +10,8 @@ public class HeaderUtils {
     public static final String AUTHORIZATION = "Authorization";
     public static final String BEARER = "Bearer ";
 
+    public static final String CONTENT_TYPE = "Content-Type";
+
     public static String getBearerFromToken(String token){
         return HeaderUtils.BEARER.concat(token);
     }
@@ -46,5 +48,13 @@ public class HeaderUtils {
     public static void setParameters(HttpHeaders headers){
         headers.set("Accept-Encoding", "identity");
         headers.remove("Content-Length");
+    }
+
+    public static void setParameterAuthorization(HttpHeaders headers, String value){
+        headers.set(HeaderUtils.AUTHORIZATION, "Basic " + value);
+    }
+
+    public static void setParameterContentType(HttpHeaders headers, String value){
+        headers.set(HeaderUtils.CONTENT_TYPE, value);
     }
 }

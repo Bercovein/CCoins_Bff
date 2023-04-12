@@ -18,7 +18,7 @@ public interface BarsFeign {
     ResponseEntity<BarDTO> saveOrUpdateBar(@RequestBody BarDTO barDTO);
 
     @GetMapping("/bars/owner/{ownerId}")
-    ResponseEntity<ListDTO> findAllBarsByOwner(@PathVariable("ownerId") Long ownerId);
+    ResponseEntity<BarListDTO> findAllBarsByOwner(@PathVariable("ownerId") Long ownerId);
 
     @GetMapping("/bars/{id}")
     ResponseEntity<BarDTO> findBarById(@PathVariable("id") Long id);

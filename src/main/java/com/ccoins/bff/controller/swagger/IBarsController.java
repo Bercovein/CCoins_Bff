@@ -1,8 +1,8 @@
 package com.ccoins.bff.controller.swagger;
 
 import com.ccoins.bff.dto.IdDTO;
-import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.bars.BarDTO;
+import com.ccoins.bff.dto.bars.BarListDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public interface IBarsController {
     ResponseEntity<BarDTO> findById(@RequestBody IdDTO id);
 
     @ApiOperation(value = FIND_ALL_BY + OWNER)
-    ResponseEntity<ListDTO> findAllByOwner();
+    ResponseEntity<BarListDTO> findAllByOwner();
 
 
     @ApiOperation(value = ACTIVATE_DEACTIVATE)

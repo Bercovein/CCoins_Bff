@@ -11,6 +11,12 @@ import java.util.List;
 
 public interface ISpotifyService {
 
+    void generateToken(HttpHeaders headers, BarTokenDTO request);
+
+    void refreshToken(HttpHeaders headers, BarTokenDTO request);
+
+    BarTokenDTO getOrRefreshToken(BarTokenDTO request);
+
     ResponseEntity<PlaylistSPTF> getPlaylist(HttpHeaders headers);
 
     ResponseEntity<RecentlyPlayedSPTF> getRecentlyPlayed(HttpHeaders headers, Integer limit);
@@ -26,7 +32,7 @@ public interface ISpotifyService {
 
     VotingDTO newVoting(String token, PlaybackSPTF playbackSPTF, Long barId);
 
-    void startPlayback(BarTokenDTO request);
+    void startPlayback(OwnerCodeDTO request);
 
     PlaybackSPTF getPlayback(BarTokenDTO request);
 
