@@ -3,7 +3,7 @@ package com.ccoins.bff.controller.swagger;
 import com.ccoins.bff.dto.StringDTO;
 import com.ccoins.bff.spotify.sto.BarTokenDTO;
 import com.ccoins.bff.spotify.sto.CredentialsSPTFDTO;
-import com.ccoins.bff.spotify.sto.OwnerCodeDTO;
+import com.ccoins.bff.spotify.sto.CodeDTO;
 import com.ccoins.bff.spotify.sto.SongSPTF;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,7 +21,7 @@ import java.util.List;
 public interface ISpotifyController {
 
     @ApiOperation(value = "Start to broadcast playable songs")
-    void startPlayback(@RequestBody @Valid OwnerCodeDTO request);
+    void startPlayback(@RequestBody @Valid CodeDTO request);
 
     @ApiOperation(value = "Return config to authorize Spotify")
     ResponseEntity<CredentialsSPTFDTO> getCredentials();

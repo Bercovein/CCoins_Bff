@@ -36,8 +36,8 @@ import static com.ccoins.bff.utils.enums.EventNamesCoinsEnum.UPDATE_COINS;
 @Service
 @Slf4j
 public class VoteService implements IVoteService {
-
-    private final Integer maxVotingTime;
+    @Value("${voting.expiration-time}")
+    private Integer maxVotingTime;
 
     private final CoinsFeign coinsFeign;
 
@@ -52,8 +52,7 @@ public class VoteService implements IVoteService {
     private final MessageTextUtils messageTextUtils;
 
     @Autowired
-    public VoteService(@Value("${voting.expiration-time}") Integer maxVotingTime, CoinsFeign coinsFeign, BarsFeign barsFeign, ClientService clientService, PartiesService partiesService, IServerSentEventService sseService, MessageTextUtils messageTextUtils) {
-        this.maxVotingTime = maxVotingTime;
+    public VoteService(CoinsFeign coinsFeign, BarsFeign barsFeign, ClientService clientService, PartiesService partiesService, IServerSentEventService sseService, MessageTextUtils messageTextUtils) {
         this.coinsFeign = coinsFeign;
         this.barsFeign = barsFeign;
         this.clientService = clientService;
@@ -77,7 +76,7 @@ public class VoteService implements IVoteService {
 
         List<SongDTO> voteList = voting.getSongs();
 
-        //toma el numer del voto mas alto
+        //toma el número del voto mas alto
         Optional<SongDTO> maxValueOpt = voteList.stream().max(Comparator.comparing(SongDTO::getVotes));
         List<SongDTO> winnerSongs;
 
@@ -246,6 +245,13 @@ public class VoteService implements IVoteService {
     public void voteSong(Long songId, String clientIp){
         ClientDTO clientDTO = this.clientService.findActiveByIp(clientIp);
         this.coinsFeign.voteSong(VoteDTO.builder().song(songId).client(clientDTO.getId()).build());
+    }
+
+    @Override
+    public void closeVoting(Long barId){
+
+        if(barId != null)
+            this.coinsFeign.closeVotingByBarId(barId);
     }
 
     @Scheduled(fixedDelayString = "${spotify.voting.expiration-time}")

@@ -23,4 +23,6 @@ public interface IVoteService {
     void voteSong(HttpHeaders headers, IdDTO request);
 
     ResponseEntity<GenericRsDTO<ResponseDTO>> checkVote(HttpHeaders headers);
+
+    void closeVoting(Long barId);
 }

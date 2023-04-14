@@ -51,4 +51,13 @@ public interface CoinsFeign {
 
     @PutMapping("/vote/expire/{maxVotingTime}")
     void closeVotingByTime(@PathVariable("maxVotingTime") Integer maxVotingTime);
+
+    @PutMapping("/vote/close/bar/{id}")
+    void closeVotingByBarId(@PathVariable("id") Long barId);
+
+    @GetMapping("/coins/states")
+    ResponseEntity<CoinStateListDTO> getAllStates();
+
+    @GetMapping("/coins/active-states")
+    ResponseEntity<CoinStateListDTO> getActiveStates();
 }

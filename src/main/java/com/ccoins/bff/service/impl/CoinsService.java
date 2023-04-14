@@ -2,6 +2,7 @@ package com.ccoins.bff.service.impl;
 
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ResponseDTO;
+import com.ccoins.bff.dto.coins.CoinStateListDTO;
 import com.ccoins.bff.dto.coins.CoinsReportDTO;
 import com.ccoins.bff.dto.coins.SpendCoinsRqDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;

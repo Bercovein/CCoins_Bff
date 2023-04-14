@@ -32,7 +32,7 @@ public interface ISpotifyService {
 
     VotingDTO newVoting(String token, PlaybackSPTF playbackSPTF, Long barId);
 
-    void startPlayback(OwnerCodeDTO request);
+    void startPlayback(CodeDTO request);
 
     PlaybackSPTF getPlayback(BarTokenDTO request);
 

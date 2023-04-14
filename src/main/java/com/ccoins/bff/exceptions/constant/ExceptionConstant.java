@@ -206,5 +206,11 @@ public class ExceptionConstant {
     public static final String IS_CONNECTED_SPTF_ERROR_CODE = "0061";
     public static final String IS_CONNECTED_SPTF_ERROR = "Ha ocurrido un error al verificar la conexión";
 
+    public static final String GET_TOKEN_SPTF_ERROR_CODE = "0062";
+    public static final String GET_TOKEN_SPTF_ERROR = "Ha ocurrido un error al recuperar el token de spotify";
+
+    public static final String GET_COIN_STATES_ERROR_CODE = "0063";
+    public static final String GET_COIN_STATES_ERROR = "Ha ocurrido un error al traer los estados de los premios";
+
 
 }

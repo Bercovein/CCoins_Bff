@@ -84,11 +84,11 @@ public class SpotifyService extends ContextService implements ISpotifyService {
         requestBody.put("code",request.getCode());
         requestBody.put("redirect_uri",credentials.getRedirectURI());
 
-//        try {
-            TokenSPTF token = this.spotifyTokenFeign.getOrRefreshToken(headers, requestBody);
-//        }catch (Exception e){
-//            throw
-//        }
+        TokenSPTF token;
+
+        try {
+            token = this.spotifyTokenFeign.getOrRefreshToken(headers, requestBody);
+
         request.setRefreshToken(token.getRefreshToken());
         request.setToken(token.getAccessToken());
         request.setExpirationDate(DateUtils.nowLocalDateTime().plusSeconds(token.getExpiresIn()));
@@ -96,6 +96,12 @@ public class SpotifyService extends ContextService implements ISpotifyService {
 
         this.usersFeign.saveOrUpdateRefreshTokenSpotify(request.getOwnerId(),
                 RefreshTokenDTO.builder().refreshToken(request.getRefreshToken()).build());
+
+        }catch (Exception e){
+            this.voteService.closeVoting(request.getId());
+            throw new BadRequestException(ExceptionConstant.GET_TOKEN_SPTF_ERROR_CODE, this.getClass(),
+                    ExceptionConstant.GET_TOKEN_SPTF_ERROR);
+        }
     }
 
     @Override
@@ -116,8 +122,8 @@ public class SpotifyService extends ContextService implements ISpotifyService {
             request.setExpiresIn(response.getExpiresIn());
             request.setExpirationDate(DateUtils.nowLocalDateTime().plusSeconds(request.getExpiresIn()));
 
-//            request.setRefreshToken(response.getRefreshToken());
         }catch (Exception e){
+            this.voteService.closeVoting(request.getId());
             this.barTokens.remove(request.getOwnerId());
             this.usersFeign.saveOrUpdateRefreshTokenSpotify(request.getOwnerId(), RefreshTokenDTO.builder().build());
             this.sseService.dispatchEventToSingleBar(EventNamesSPTFEnum.REQUEST_SPOTIFY_AUTHORIZATION.name(),null,request.getId());
@@ -179,10 +185,12 @@ public class SpotifyService extends ContextService implements ISpotifyService {
 
 
     @Override
-    public void startPlayback(OwnerCodeDTO request){
+    public void startPlayback(CodeDTO request){
         ResponseEntity<BarListDTO> bars;
+        Long ownerId;
         try {
-            bars = this.barsFeign.findAllBarsByOwner(request.getOwnerId());
+            ownerId = super.getLoggedUserId();
+            bars = this.barsFeign.findAllBarsByOwner(ownerId);
         }catch (Exception e){
             throw new BadRequestException(ExceptionConstant.BARS_FIND_BY_OWNER_ERROR_CODE, this.getClass(), ExceptionConstant.BARS_FIND_BY_OWNER_ERROR);
         }
@@ -190,14 +198,13 @@ public class SpotifyService extends ContextService implements ISpotifyService {
         BarDTO bar;
 
         if(bars.hasBody() && bars.getBody() != null && bars.getBody().getList() != null && !bars.getBody().getList().isEmpty()){
-            var barIP = bars.getBody().getList().get(0);
-            bar = (BarDTO) barIP;
+            bar = bars.getBody().getList().get(0);
             BarTokenDTO barTokenDTO = BarTokenDTO.builder()
                                         .code(request.getCode())
                                         .id(bar.getId())
-                                        .ownerId(request.getOwnerId()).build();
+                                        .ownerId(ownerId).build();
             if(request.getCode() == null) {
-                ResponseEntity<RefreshTokenDTO> refreshTokenDTO = this.usersFeign.getSpotifyRefreshTokenByOwnerId(request.getOwnerId());
+                ResponseEntity<RefreshTokenDTO> refreshTokenDTO = this.usersFeign.getSpotifyRefreshTokenByOwnerId(ownerId);
                 if(refreshTokenDTO.hasBody() && refreshTokenDTO.getBody() != null){
                     barTokenDTO.setRefreshToken(refreshTokenDTO.getBody().getRefreshToken());
                 }
@@ -246,6 +253,7 @@ public class SpotifyService extends ContextService implements ISpotifyService {
 
         //si no cumple con las condiciones, no se genera la votación
         if(this.votingIsCanceled(playbackSPTF)){
+            this.voteService.closeVoting(barId);
             this.sseService.dispatchEventToAllClientsFromBar(EventNamesSPTFEnum.ACTUAL_VOTES_SPTF.name(), new ArrayList<>(), barId);
             return;
         }
@@ -288,7 +296,6 @@ public class SpotifyService extends ContextService implements ISpotifyService {
         }catch(Exception e){
             log.error(e.getMessage());
         }
-
     }
 
     private boolean isVotingActive(Long barId){
