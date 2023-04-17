@@ -104,6 +104,26 @@ public class ServerSentEventService implements IServerSentEventService {
 
     @Override
     @Async
+    public void dispatchEventToAllClientsFromBarAndBarToo(String eventName, Object data, Long barId){
+
+        Map<String,SseEmitter> sseEmitterMap = emitters.get(barId);
+
+        if(sseEmitterMap != null && !sseEmitterMap.isEmpty()){
+
+            sseEmitterMap.forEach((client,emitter) -> {
+                try{
+                    emitter.send(SseEmitter.event().name(eventName).data(data, MediaType.APPLICATION_JSON));
+                }catch(IOException e){
+                    sseEmitterMap.remove(client);
+                    log.error("Error while sending event to client.");
+                }
+            });
+            emitters.put(barId, sseEmitterMap);
+        }
+    }
+
+    @Override
+    @Async
     public void dispatchEventToSomeClientsFromBar(String eventName, Object data, Long barId, List<String> clients){
 
         Map<String,SseEmitter> sseEmitterMap = emitters.get(barId);

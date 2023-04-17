@@ -249,7 +249,7 @@ public class SpotifyService extends ContextService implements ISpotifyService {
         playbackSPTF.setSongLink(this.generateSpotifyLinkFromPlaybackItem(playbackSPTF.getItem()));
 
         //envia a todos los usuarios el estado de la canción actual (asi se esté reproduciendo o no)
-        this.sseService.dispatchEventToAllClientsFromBar(EventNamesSPTFEnum.ACTUAL_SONG_SPTF.name(), playbackSPTF, barId);
+        this.sseService.dispatchEventToAllClientsFromBarAndBarToo(EventNamesSPTFEnum.ACTUAL_SONG_SPTF.name(), playbackSPTF, barId);
 
         //si no cumple con las condiciones, no se genera la votación
         if(this.votingIsCanceled(playbackSPTF)){
