@@ -56,8 +56,8 @@ public interface CoinsFeign {
     void closeVotingByBarId(@PathVariable("id") Long barId);
 
     @GetMapping("/coins/states")
-    ResponseEntity<CoinStateListDTO> getAllStates();
+    ResponseEntity<List<String>> getAllStates();
 
     @GetMapping("/coins/active-states")
-    ResponseEntity<CoinStateListDTO> getActiveStates();
+    ResponseEntity<List<String>> getActiveStates();
 }

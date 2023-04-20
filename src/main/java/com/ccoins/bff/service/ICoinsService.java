@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 public interface ICoinsService {
 
     Long countCoinsByParty(Long id);
@@ -18,4 +20,6 @@ public interface ICoinsService {
     ResponseEntity<CoinsReportDTO> getCoinsReport(IdDTO tableId, Pageable pagination, String type);
 
     ResponseEntity<CoinsReportDTO> getCoinsReportByParty(Long partyId, Pageable pagination, String type);
+
+    ResponseEntity<List<String>> getActiveStates();
 }

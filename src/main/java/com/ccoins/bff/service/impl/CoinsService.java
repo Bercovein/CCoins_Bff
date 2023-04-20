@@ -2,7 +2,6 @@ package com.ccoins.bff.service.impl;
 
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ResponseDTO;
-import com.ccoins.bff.dto.coins.CoinStateListDTO;
 import com.ccoins.bff.dto.coins.CoinsReportDTO;
 import com.ccoins.bff.dto.coins.SpendCoinsRqDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
@@ -20,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.ccoins.bff.utils.enums.EventNamesCoinsEnum.UPDATE_COINS;
@@ -105,6 +105,17 @@ public class CoinsService implements ICoinsService {
         }catch (Exception e){
             throw new BadRequestException(ExceptionConstant.COINS_BY_PARTY_ERROR_CODE,
                     this.getClass(), ExceptionConstant.COINS_BY_PARTY_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<String>> getActiveStates() {
+
+        try{
+            return this.coinsFeign.getActiveStates();
+        }catch (Exception e){
+            throw new BadRequestException(ExceptionConstant.GET_COIN_STATES_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.GET_COIN_STATES_ERROR);
         }
     }
 }

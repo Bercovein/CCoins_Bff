@@ -10,6 +10,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/coins")
 public class CoinsController {
@@ -31,4 +33,8 @@ public class CoinsController {
         return this.service.getCoinsReport(tableId, pagination, type);
     }
 
+    @GetMapping("/active-states")
+    public ResponseEntity<List<String>> getActiveStates(){
+        return this.service.getActiveStates();
+    }
 }

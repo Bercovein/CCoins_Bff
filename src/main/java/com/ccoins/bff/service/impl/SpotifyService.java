@@ -324,7 +324,7 @@ public class SpotifyService extends ContextService implements ISpotifyService {
 
     private String generateSpotifyLinkFromPlaybackItem(PlaybackItemSPTF item){
 
-        if(item.getUri() != null) {
+        if(item != null && item.getUri() != null) {
             return trackLink.concat(SpotifyUtils.getUriId(item.getUri()));
         }
         return null;
