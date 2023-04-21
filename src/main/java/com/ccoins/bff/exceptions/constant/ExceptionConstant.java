@@ -212,5 +212,8 @@ public class ExceptionConstant {
     public static final String GET_COIN_STATES_ERROR_CODE = "0063";
     public static final String GET_COIN_STATES_ERROR = "Ha ocurrido un error al traer los estados de los premios";
 
+    public static final String COIN_STATES_ERROR_CODE = "0064";
+    public static final String COIN_STATES_ERROR = "Ha ocurrido un error al intentar modificar el estado.";
+
 
 }

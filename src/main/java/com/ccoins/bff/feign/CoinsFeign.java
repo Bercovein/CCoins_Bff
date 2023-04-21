@@ -60,4 +60,13 @@ public interface CoinsFeign {
 
     @GetMapping("/coins/active-states")
     ResponseEntity<List<String>> getActiveStates();
+
+    @PostMapping("/coins/{id}/deliver")
+    ResponseEntity<ResponseDTO> deliverPrizeOrCoins(@PathVariable("id") Long id);
+
+    @PostMapping("/coins/{id}/cancel")
+    ResponseEntity<ResponseDTO> cancelPrizeOrCoins(@PathVariable("id") Long id);
+
+    @PostMapping("/coins/{id}/adjust")
+    ResponseEntity<ResponseDTO> adjustPrizeOrCoins(@PathVariable("id") Long id);
 }

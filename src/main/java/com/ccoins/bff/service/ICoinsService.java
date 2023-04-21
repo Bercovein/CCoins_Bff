@@ -22,4 +22,10 @@ public interface ICoinsService {
     ResponseEntity<CoinsReportDTO> getCoinsReportByParty(Long partyId, Pageable pagination, String type);
 
     ResponseEntity<List<String>> getActiveStates();
+
+    ResponseEntity<ResponseDTO> deliverPrizeOrCoins(Long id);
+
+    ResponseEntity<ResponseDTO> cancelPrizeOrCoins(Long id);
+
+    ResponseEntity<ResponseDTO> adjustPrizeOrCoins(Long id);
 }

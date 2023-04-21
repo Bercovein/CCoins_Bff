@@ -118,4 +118,34 @@ public class CoinsService implements ICoinsService {
                     this.getClass(), ExceptionConstant.GET_COIN_STATES_ERROR);
         }
     }
+
+    @Override
+    public ResponseEntity<ResponseDTO> deliverPrizeOrCoins(Long id){
+        try{
+            return this.coinsFeign.deliverPrizeOrCoins(id);
+        }catch (Exception e){
+            throw new BadRequestException(ExceptionConstant.COIN_STATES_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.COIN_STATES_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseDTO> cancelPrizeOrCoins(Long id){
+        try{
+            return this.coinsFeign.cancelPrizeOrCoins(id);
+        }catch (Exception e){
+            throw new BadRequestException(ExceptionConstant.COIN_STATES_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.COIN_STATES_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<ResponseDTO> adjustPrizeOrCoins(Long id){
+        try{
+            return this.coinsFeign.adjustPrizeOrCoins(id);
+        }catch (Exception e){
+            throw new BadRequestException(ExceptionConstant.COIN_STATES_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.COIN_STATES_ERROR);
+        }
+    }
 }
