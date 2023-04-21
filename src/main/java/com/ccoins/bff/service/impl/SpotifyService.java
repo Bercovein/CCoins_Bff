@@ -34,6 +34,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.ccoins.bff.utils.SpotifyUtils.REPEAT_STATE;
+import static com.ccoins.bff.utils.enums.EventNamesSPTFEnum.LOGOUT_SPOTIFY;
 
 @Service
 @Slf4j
@@ -493,9 +494,9 @@ public class SpotifyService extends ContextService implements ISpotifyService {
 
         try {
             Long ownerId = super.getLoggedUserId();
-            this.barTokens.remove(ownerId);
+            BarTokenDTO barTokenDTO = this.barTokens.remove(ownerId);
             this.usersFeign.saveOrUpdateRefreshTokenSpotify(ownerId, RefreshTokenDTO.builder().refreshToken(null).build());
-
+            this.sseService.dispatchEventToAllClientsFromBar(LOGOUT_SPOTIFY.name(),null,barTokenDTO.getId());
         }catch (Exception e){
             throw new BadRequestException(ExceptionConstant.DISCONNECT_SPTF_ERROR_CODE,
                     this.getClass(), ExceptionConstant.DISCONNECT_SPTF_ERROR);
