@@ -4,6 +4,7 @@ import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.dto.coins.CoinsReportDTO;
+import com.ccoins.bff.dto.coins.StateDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public interface ICoinsService {
 
     ResponseEntity<CoinsReportDTO> getCoinsReportByParty(Long partyId, Pageable pagination, String type);
 
-    ResponseEntity<List<String>> getActiveStates();
+    ResponseEntity<List<StateDTO>> getActiveStates();
 
     ResponseEntity<GenericRsDTO<Long>> deliverPrizeOrCoins(Long id);
 

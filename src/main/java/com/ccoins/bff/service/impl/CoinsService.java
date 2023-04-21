@@ -5,6 +5,7 @@ import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.dto.coins.CoinsReportDTO;
 import com.ccoins.bff.dto.coins.SpendCoinsRqDTO;
+import com.ccoins.bff.dto.coins.StateDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
@@ -110,7 +111,7 @@ public class CoinsService implements ICoinsService {
     }
 
     @Override
-    public ResponseEntity<List<String>> getActiveStates() {
+    public ResponseEntity<List<StateDTO>> getActiveStates() {
 
         try{
             return this.coinsFeign.getActiveStates();

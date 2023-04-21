@@ -3,6 +3,7 @@ package com.ccoins.bff.controller;
 import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.coins.CoinsReportDTO;
+import com.ccoins.bff.dto.coins.StateDTO;
 import com.ccoins.bff.service.ICoinsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +36,7 @@ public class CoinsController {
     }
 
     @GetMapping("/active-states")
-    public ResponseEntity<List<String>> getActiveStates(){
+    public ResponseEntity<List<StateDTO>> getActiveStates(){
         return this.service.getActiveStates();
     }
 
