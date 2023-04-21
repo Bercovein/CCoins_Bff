@@ -1,5 +1,6 @@
 package com.ccoins.bff.service.impl;
 
+import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.dto.coins.CoinsReportDTO;
@@ -120,9 +121,20 @@ public class CoinsService implements ICoinsService {
     }
 
     @Override
-    public ResponseEntity<ResponseDTO> deliverPrizeOrCoins(Long id){
+    public ResponseEntity<GenericRsDTO<Long>> deliverPrizeOrCoins(Long id){
         try{
-            return this.coinsFeign.deliverPrizeOrCoins(id);
+            ResponseEntity<GenericRsDTO<Long>> response =  this.coinsFeign.deliverPrizeOrCoins(id);
+
+            if(response.hasBody()){
+                GenericRsDTO<Long> generic = response.getBody();
+
+                Long partyId = generic.getData();
+
+                if(partyId != null){
+                    this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(),null,partyId);
+                }
+            }
+            return response;
         }catch (Exception e){
             throw new BadRequestException(ExceptionConstant.COIN_STATES_ERROR_CODE,
                     this.getClass(), ExceptionConstant.COIN_STATES_ERROR);
@@ -130,9 +142,20 @@ public class CoinsService implements ICoinsService {
     }
 
     @Override
-    public ResponseEntity<ResponseDTO> cancelPrizeOrCoins(Long id){
+    public ResponseEntity<GenericRsDTO<Long>> cancelPrizeOrCoins(Long id){
         try{
-            return this.coinsFeign.cancelPrizeOrCoins(id);
+            ResponseEntity<GenericRsDTO<Long>> response = this.coinsFeign.cancelPrizeOrCoins(id);
+
+            if(response.hasBody()){
+                GenericRsDTO<Long> generic = response.getBody();
+
+                Long partyId = generic.getData();
+
+                if(partyId != null){
+                    this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(),null,partyId);
+                }
+            }
+            return response;
         }catch (Exception e){
             throw new BadRequestException(ExceptionConstant.COIN_STATES_ERROR_CODE,
                     this.getClass(), ExceptionConstant.COIN_STATES_ERROR);
@@ -140,9 +163,20 @@ public class CoinsService implements ICoinsService {
     }
 
     @Override
-    public ResponseEntity<ResponseDTO> adjustPrizeOrCoins(Long id){
+    public ResponseEntity<GenericRsDTO<Long>> adjustPrizeOrCoins(Long id){
         try{
-            return this.coinsFeign.adjustPrizeOrCoins(id);
+            ResponseEntity<GenericRsDTO<Long>> response =this.coinsFeign.adjustPrizeOrCoins(id);
+
+            if(response.hasBody()){
+                GenericRsDTO<Long> generic = response.getBody();
+
+                Long partyId = generic.getData();
+
+                if(partyId != null){
+                    this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(),null,partyId);
+                }
+            }
+            return response;
         }catch (Exception e){
             throw new BadRequestException(ExceptionConstant.COIN_STATES_ERROR_CODE,
                     this.getClass(), ExceptionConstant.COIN_STATES_ERROR);

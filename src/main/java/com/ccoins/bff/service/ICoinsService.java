@@ -1,5 +1,6 @@
 package com.ccoins.bff.service;
 
+import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.dto.coins.CoinsReportDTO;
@@ -23,9 +24,9 @@ public interface ICoinsService {
 
     ResponseEntity<List<String>> getActiveStates();
 
-    ResponseEntity<ResponseDTO> deliverPrizeOrCoins(Long id);
+    ResponseEntity<GenericRsDTO<Long>> deliverPrizeOrCoins(Long id);
 
-    ResponseEntity<ResponseDTO> cancelPrizeOrCoins(Long id);
+    ResponseEntity<GenericRsDTO<Long>> cancelPrizeOrCoins(Long id);
 
-    ResponseEntity<ResponseDTO> adjustPrizeOrCoins(Long id);
+    ResponseEntity<GenericRsDTO<Long>> adjustPrizeOrCoins(Long id);
 }

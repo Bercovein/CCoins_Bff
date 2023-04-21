@@ -1,5 +1,6 @@
 package com.ccoins.bff.feign;
 
+import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.dto.coins.*;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -62,11 +63,11 @@ public interface CoinsFeign {
     ResponseEntity<List<String>> getActiveStates();
 
     @PostMapping("/coins/{id}/deliver")
-    ResponseEntity<ResponseDTO> deliverPrizeOrCoins(@PathVariable("id") Long id);
+    ResponseEntity<GenericRsDTO<Long>> deliverPrizeOrCoins(@PathVariable("id") Long id);
 
     @PostMapping("/coins/{id}/cancel")
-    ResponseEntity<ResponseDTO> cancelPrizeOrCoins(@PathVariable("id") Long id);
+    ResponseEntity<GenericRsDTO<Long>> cancelPrizeOrCoins(@PathVariable("id") Long id);
 
     @PostMapping("/coins/{id}/adjust")
-    ResponseEntity<ResponseDTO> adjustPrizeOrCoins(@PathVariable("id") Long id);
+    ResponseEntity<GenericRsDTO<Long>> adjustPrizeOrCoins(@PathVariable("id") Long id);
 }
