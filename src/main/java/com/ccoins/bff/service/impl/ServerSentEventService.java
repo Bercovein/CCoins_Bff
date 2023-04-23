@@ -92,7 +92,7 @@ public class ServerSentEventService implements IServerSentEventService {
             sseEmitterMap.forEach((client,emitter) -> {
                 try{
                     if(!OWNER_CODE.equals(client))
-                        emitter.send(SseEmitter.event().name(eventName).data(data, MediaType.APPLICATION_JSON));
+                        emitter.send(SseEmitter.event().name(eventName).data(data != null ? data : "", MediaType.APPLICATION_JSON));
                 }catch(IOException e){
                     sseEmitterMap.remove(client);
                     log.error("Error while sending event to client.");
