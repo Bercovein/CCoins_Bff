@@ -22,6 +22,7 @@ public class TablesService extends ContextService implements ITablesService {
 
     @Autowired
     public TablesService(BarsFeign barsFeign) {
+        super(barsFeign);
         this.barsFeign = barsFeign;
     }
 

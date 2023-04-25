@@ -21,6 +21,7 @@ public class GamesService extends ContextService implements IGamesService {
 
     @Autowired
     public GamesService(BarsFeign barsFeign) {
+        super(barsFeign);
         this.barsFeign = barsFeign;
     }
 

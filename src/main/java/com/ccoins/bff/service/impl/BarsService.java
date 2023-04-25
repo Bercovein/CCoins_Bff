@@ -19,11 +19,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class BarsService extends ContextService implements IBarsService {
 
-    private final BarsFeign barsFeign;
-
     @Autowired
     public BarsService(BarsFeign barsFeign) {
-        this.barsFeign = barsFeign;
+        super(barsFeign);
     }
 
     @Override

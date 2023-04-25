@@ -112,7 +112,7 @@ public class ServerSentEventService implements IServerSentEventService {
 
             sseEmitterMap.forEach((client,emitter) -> {
                 try{
-                    emitter.send(SseEmitter.event().name(eventName).data(data, MediaType.APPLICATION_JSON));
+                    emitter.send(SseEmitter.event().name(eventName).data(data != null ? data : "", MediaType.APPLICATION_JSON));
                 }catch(IOException e){
                     sseEmitterMap.remove(client);
                     log.error("Error while sending event to client.");
@@ -132,7 +132,7 @@ public class ServerSentEventService implements IServerSentEventService {
 
             clients.forEach(client -> {
                 try{
-                    sseEmitterMap.get(client).send(SseEmitter.event().name(eventName).data(data, MediaType.APPLICATION_JSON));
+                    sseEmitterMap.get(client).send(SseEmitter.event().name(eventName).data(data != null ? data : "", MediaType.APPLICATION_JSON));
                 }catch(IOException e){
                     sseEmitterMap.remove(client);
                     log.error("Error while sending event to client.");
@@ -168,7 +168,7 @@ public class ServerSentEventService implements IServerSentEventService {
 
             clients.forEach(client -> {
                 try{
-                    sseEmitterMap.get(client.getIp()).send(SseEmitter.event().name(eventName).data(data, MediaType.APPLICATION_JSON));
+                    sseEmitterMap.get(client.getIp()).send(SseEmitter.event().name(eventName).data(data != null ? data : "", MediaType.APPLICATION_JSON));
                 }catch(IOException e){
                     sseEmitterMap.remove(client.getIp());
                     log.error("Error while sending event to client.");
@@ -200,7 +200,7 @@ public class ServerSentEventService implements IServerSentEventService {
 
         emitters.forEach((barId, sseEmitterMap) -> {
             try{
-                sseEmitterMap.get(OWNER_CODE).send(SseEmitter.event().name(eventName).data(data, MediaType.APPLICATION_JSON));
+                sseEmitterMap.get(OWNER_CODE).send(SseEmitter.event().name(eventName).data(data != null ? data : "", MediaType.APPLICATION_JSON));
             }catch(IOException e){
                 sseEmitterMap.remove(OWNER_CODE);
                 log.error("Error while sending event to owner.");

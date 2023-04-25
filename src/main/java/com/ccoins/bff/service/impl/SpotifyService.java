@@ -61,6 +61,7 @@ public class SpotifyService extends ContextService implements ISpotifyService {
 
     @Autowired
     public SpotifyService(SpotifyFeign spotifyFeign, SpotifyTokenFeign spotifyTokenFeign, CredentialsSPTFConfig credentials, IServerSentEventService sseService, IVoteService voteService, BarsFeign barsFeign, UsersFeign usersFeign) {
+        super(barsFeign);
         this.spotifyFeign = spotifyFeign;
         this.spotifyTokenFeign = spotifyTokenFeign;
         this.credentials = credentials;
@@ -502,6 +503,5 @@ public class SpotifyService extends ContextService implements ISpotifyService {
                     this.getClass(), ExceptionConstant.DISCONNECT_SPTF_ERROR);
         }
     }
-
 
 }

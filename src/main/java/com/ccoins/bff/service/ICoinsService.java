@@ -4,6 +4,7 @@ import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.dto.coins.CoinsReportDTO;
+import com.ccoins.bff.dto.coins.CoinsReportStatesDTO;
 import com.ccoins.bff.dto.coins.StateDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -30,4 +31,8 @@ public interface ICoinsService {
     ResponseEntity<GenericRsDTO<Long>> cancelPrizeOrCoins(Long id);
 
     ResponseEntity<GenericRsDTO<Long>> adjustPrizeOrCoins(Long id);
+
+    ResponseEntity<GenericRsDTO<List<CoinsReportStatesDTO>>> getInDemandReport();
+
+    ResponseEntity<GenericRsDTO<List<CoinsReportStatesDTO>>> getNotDemandedReport();
 }

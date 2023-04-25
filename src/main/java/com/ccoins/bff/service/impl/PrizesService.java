@@ -11,6 +11,7 @@ import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.ObjectNotFoundException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
+import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.feign.PrizeFeign;
 import com.ccoins.bff.service.ICoinsService;
 import com.ccoins.bff.service.IPrizesService;
@@ -40,7 +41,8 @@ public class PrizesService extends ContextService implements IPrizesService {
     private final ICoinsService coinsService;
 
     @Autowired
-    public PrizesService(PrizeFeign prizeFeign, ClientService clientService, PartiesService partiesService, TablesService tablesService, ICoinsService coinsService) {
+    public PrizesService(PrizeFeign prizeFeign, BarsFeign barsFeign, ClientService clientService, PartiesService partiesService, TablesService tablesService, ICoinsService coinsService) {
+        super(barsFeign);
         this.prizeFeign = prizeFeign;
         this.clientService = clientService;
         this.partiesService = partiesService;

@@ -70,4 +70,10 @@ public interface CoinsFeign {
 
     @PostMapping("/coins/{id}/adjust")
     ResponseEntity<GenericRsDTO<Long>> adjustPrizeOrCoins(@PathVariable("id") Long id);
+
+    @GetMapping("/coins/bar/{id}/ended-coins")
+    ResponseEntity<GenericRsDTO<List<CoinsReportStatesDTO>>> getNotDemandedReport(@PathVariable("id") Long id);
+
+    @GetMapping("/coins/bar/{id}/in-demand")
+    ResponseEntity<GenericRsDTO<List<CoinsReportStatesDTO>>> getInDemandReport(@PathVariable("id") Long id);
 }

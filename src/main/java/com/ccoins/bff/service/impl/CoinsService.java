@@ -4,11 +4,13 @@ import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.dto.coins.CoinsReportDTO;
+import com.ccoins.bff.dto.coins.CoinsReportStatesDTO;
 import com.ccoins.bff.dto.coins.SpendCoinsRqDTO;
 import com.ccoins.bff.dto.coins.StateDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
+import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.feign.CoinsFeign;
 import com.ccoins.bff.feign.PrizeFeign;
 import com.ccoins.bff.service.ICoinsService;
@@ -27,7 +29,7 @@ import java.util.Optional;
 import static com.ccoins.bff.utils.enums.EventNamesCoinsEnum.UPDATE_COINS;
 
 @Service
-public class CoinsService implements ICoinsService {
+public class CoinsService extends ContextService implements ICoinsService {
 
     private final CoinsFeign coinsFeign;
 
@@ -36,7 +38,8 @@ public class CoinsService implements ICoinsService {
     private final IServerSentEventService sseService;
 
     @Autowired
-    public CoinsService(CoinsFeign coinsFeign, PrizeFeign prizeFeign, IServerSentEventService sseService) {
+    public CoinsService(CoinsFeign coinsFeign, PrizeFeign prizeFeign, IServerSentEventService sseService, BarsFeign barsFeign) {
+        super(barsFeign);
         this.coinsFeign = coinsFeign;
         this.prizeFeign = prizeFeign;
         this.sseService = sseService;
@@ -181,6 +184,28 @@ public class CoinsService implements ICoinsService {
         }catch (Exception e){
             throw new BadRequestException(ExceptionConstant.COIN_STATES_ERROR_CODE,
                     this.getClass(), ExceptionConstant.COIN_STATES_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<GenericRsDTO<List<CoinsReportStatesDTO>>> getInDemandReport(){
+
+        try{
+            return this.coinsFeign.getInDemandReport(super.findBarIdByOwner());
+        }catch (Exception e){
+            throw new BadRequestException(ExceptionConstant.COIN_STATE_REPORT_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.COIN_STATE_REPORT_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<GenericRsDTO<List<CoinsReportStatesDTO>>> getNotDemandedReport(){
+
+        try{
+            return this.coinsFeign.getNotDemandedReport(super.findBarIdByOwner());
+        }catch (Exception e){
+            throw new BadRequestException(ExceptionConstant.COIN_STATE_REPORT_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.COIN_STATE_REPORT_ERROR);
         }
     }
 }

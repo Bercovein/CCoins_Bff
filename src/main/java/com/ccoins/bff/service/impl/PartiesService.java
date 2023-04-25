@@ -8,6 +8,7 @@ import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
+import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.feign.PrizeFeign;
 import com.ccoins.bff.feign.UsersFeign;
 import com.ccoins.bff.service.ICoinsService;
@@ -39,7 +40,8 @@ public class PartiesService extends ContextService implements IPartiesService {
     private final IRandomNameService randomizer;
 
     @Autowired
-    public PartiesService(PrizeFeign prizeFeign, ITablesService tablesService, UsersFeign usersFeign, ICoinsService coinsService, IRandomNameService randomizer) {
+    public PartiesService(PrizeFeign prizeFeign, BarsFeign barsFeign, ITablesService tablesService, UsersFeign usersFeign, ICoinsService coinsService, IRandomNameService randomizer) {
+        super(barsFeign);
         this.prizeFeign = prizeFeign;
         this.tablesService = tablesService;
         this.usersFeign = usersFeign;

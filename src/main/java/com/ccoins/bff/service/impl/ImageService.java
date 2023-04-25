@@ -7,6 +7,7 @@ import com.ccoins.bff.dto.image.ImageToPdfDTO;
 import com.ccoins.bff.dto.image.RowToPdfDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
+import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.service.IImageService;
 import com.ccoins.bff.service.ITablesService;
 import com.ccoins.bff.utils.DateUtils;
@@ -60,7 +61,8 @@ public class ImageService extends ContextService implements IImageService {
     private final ITablesService tablesService;
 
     @Autowired
-    public ImageService(ITablesService tablesService) {
+    public ImageService(BarsFeign barsFeign, ITablesService tablesService) {
+        super(barsFeign);
         this.tablesService = tablesService;
     }
 
