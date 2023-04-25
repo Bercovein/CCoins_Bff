@@ -3,6 +3,7 @@ package com.ccoins.bff.controller;
 import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.coins.CoinsReportDTO;
+import com.ccoins.bff.dto.coins.CoinsReportStatesDTO;
 import com.ccoins.bff.dto.coins.StateDTO;
 import com.ccoins.bff.service.ICoinsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,5 +54,15 @@ public class CoinsController {
     @PostMapping("/adjust")
     ResponseEntity<GenericRsDTO<Long>> adjustPrizeOrCoins(@RequestBody IdDTO id){
         return this.service.adjustPrizeOrCoins(id.getId());
+    }
+
+    @GetMapping("/report/in-demand")
+    ResponseEntity<GenericRsDTO<List<CoinsReportStatesDTO>>> getInDemandReport(){
+        return this.service.getInDemandReport();
+    }
+
+    @GetMapping("/report/out-demand")
+    ResponseEntity<GenericRsDTO<List<CoinsReportStatesDTO>>> getNotDemandedReport(){
+        return this.service.getNotDemandedReport();
     }
 }

@@ -203,6 +203,7 @@ public class CoinsService extends ContextService implements ICoinsService {
 
         try{
             return this.coinsFeign.getNotDemandedReport(super.findBarIdByOwner());
+
         }catch (Exception e){
             throw new BadRequestException(ExceptionConstant.COIN_STATE_REPORT_ERROR_CODE,
                     this.getClass(), ExceptionConstant.COIN_STATE_REPORT_ERROR);
