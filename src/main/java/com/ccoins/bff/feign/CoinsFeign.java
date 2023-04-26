@@ -1,6 +1,7 @@
 package com.ccoins.bff.feign;
 
 import com.ccoins.bff.dto.GenericRsDTO;
+import com.ccoins.bff.dto.LongDTO;
 import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.dto.coins.*;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -76,4 +77,7 @@ public interface CoinsFeign {
 
     @GetMapping("/coins/bar/{id}/in-demand")
     ResponseEntity<GenericRsDTO<List<CoinsReportStatesDTO>>> getInDemandReport(@PathVariable("id") Long id);
+
+    @GetMapping("/coins/bar/{id}/count-demand")
+    ResponseEntity<LongDTO> countInDemandReport(@PathVariable("id") Long id);
 }

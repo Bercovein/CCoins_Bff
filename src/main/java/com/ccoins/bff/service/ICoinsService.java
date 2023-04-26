@@ -2,6 +2,7 @@ package com.ccoins.bff.service;
 
 import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.dto.IdDTO;
+import com.ccoins.bff.dto.LongDTO;
 import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.dto.coins.CoinsReportDTO;
 import com.ccoins.bff.dto.coins.CoinsReportStatesDTO;
@@ -35,4 +36,6 @@ public interface ICoinsService {
     ResponseEntity<GenericRsDTO<List<CoinsReportStatesDTO>>> getInDemandReport();
 
     ResponseEntity<GenericRsDTO<List<CoinsReportStatesDTO>>> getNotDemandedReport();
+
+    ResponseEntity<LongDTO> countInDemandReport();
 }

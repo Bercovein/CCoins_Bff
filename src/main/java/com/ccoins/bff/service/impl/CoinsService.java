@@ -2,6 +2,7 @@ package com.ccoins.bff.service.impl;
 
 import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.dto.IdDTO;
+import com.ccoins.bff.dto.LongDTO;
 import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.dto.coins.CoinsReportDTO;
 import com.ccoins.bff.dto.coins.CoinsReportStatesDTO;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static com.ccoins.bff.utils.enums.EventNamesCoinsEnum.NEW_DEMAND;
 import static com.ccoins.bff.utils.enums.EventNamesCoinsEnum.UPDATE_COINS;
 
 @Service
@@ -69,14 +71,22 @@ public class CoinsService extends ContextService implements ICoinsService {
                             .prizePoints(prizePoints)
                             .build()
             );
-
-            if (HttpStatus.OK.equals(response.getStatusCode())){
-                this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(),null,partyId);
-            }
-
         }catch (Exception e){
             throw e;
         }
+            try {
+                if (HttpStatus.OK.equals(response.getStatusCode())) {
+                    this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(), null, partyId);
+
+                    ResponseEntity<IdDTO> barResponse = this.barsFeign.getBarIdByParty(partyId);
+
+                    if (barResponse.hasBody() && barResponse.getBody() != null) {
+                        Long barId = barResponse.getBody().getId();
+                        this.sseService.dispatchEventToSingleBar(NEW_DEMAND.name(), null, barId);
+                    }
+                }
+            }catch (Exception ignored){}
+
         return response;
     }
 
@@ -207,6 +217,17 @@ public class CoinsService extends ContextService implements ICoinsService {
         }catch (Exception e){
             throw new BadRequestException(ExceptionConstant.COIN_STATE_REPORT_ERROR_CODE,
                     this.getClass(), ExceptionConstant.COIN_STATE_REPORT_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<LongDTO> countInDemandReport() {
+
+        try{
+            Long barId = super.findBarIdByOwner();
+            return this.coinsFeign.countInDemandReport(barId);
+        }catch (Exception e){
+            return ResponseEntity.ok(LongDTO.builder().value(0L).build());
         }
     }
 }

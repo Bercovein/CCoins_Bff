@@ -2,6 +2,7 @@ package com.ccoins.bff.controller;
 
 import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.dto.IdDTO;
+import com.ccoins.bff.dto.LongDTO;
 import com.ccoins.bff.dto.coins.CoinsReportDTO;
 import com.ccoins.bff.dto.coins.CoinsReportStatesDTO;
 import com.ccoins.bff.dto.coins.StateDTO;
@@ -64,5 +65,10 @@ public class CoinsController {
     @GetMapping("/report/out-demand")
     ResponseEntity<GenericRsDTO<List<CoinsReportStatesDTO>>> getNotDemandedReport(){
         return this.service.getNotDemandedReport();
+    }
+
+    @GetMapping("/count-demand")
+    ResponseEntity<LongDTO> countInDemandReport(){
+        return this.service.countInDemandReport();
     }
 }
