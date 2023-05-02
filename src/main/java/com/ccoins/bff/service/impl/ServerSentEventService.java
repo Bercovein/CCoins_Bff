@@ -188,7 +188,7 @@ public class ServerSentEventService implements IServerSentEventService {
 
         Map<String,SseEmitter> sseEmitterMap = emitters.get(barId);
         try{
-            sseEmitterMap.get(OWNER_CODE).send(SseEmitter.event().name(eventName).data(data, MediaType.APPLICATION_JSON));
+            sseEmitterMap.get(OWNER_CODE).send(SseEmitter.event().name(eventName).data(data != null ? data : "", MediaType.APPLICATION_JSON));
         }catch(IOException e){
             sseEmitterMap.remove(OWNER_CODE);
             log.error("Error while sending event to owner.");
