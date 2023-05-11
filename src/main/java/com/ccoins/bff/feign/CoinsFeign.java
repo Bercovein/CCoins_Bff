@@ -3,13 +3,16 @@ package com.ccoins.bff.feign;
 import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.dto.LongDTO;
 import com.ccoins.bff.dto.ResponseDTO;
+import com.ccoins.bff.dto.StringDTO;
 import com.ccoins.bff.dto.coins.*;
+import com.ccoins.bff.spotify.sto.CodeDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @FeignClient(name = "${feign.coins-ms.name}", url = "${feign.coins-ms.url}")
@@ -80,4 +83,16 @@ public interface CoinsFeign {
 
     @GetMapping("/coins/bar/{id}/count-demand")
     ResponseEntity<LongDTO> countInDemandReport(@PathVariable("id") Long id);
+
+    @PostMapping("/codes")
+    ResponseEntity<List<CodeDTO>> createCodeByGameBarId(@RequestBody @Valid CodeRqDTO request);
+
+    @PutMapping("/codes/invalidate")
+    ResponseEntity<CodeDTO> invalidateCode(@RequestBody @Valid StringDTO request);
+
+    @GetMapping("/codes/game/{id}/{state}")
+    ResponseEntity<List<CodeDTO>> getByActive(@PathVariable("id") Long id, @PathVariable("state") String state);
+
+    @PostMapping("/codes/redeem")
+    ResponseEntity<GenericRsDTO<CoinsDTO>> redeemCode(@RequestBody @Valid RedeemCodeRqDTO request);
 }

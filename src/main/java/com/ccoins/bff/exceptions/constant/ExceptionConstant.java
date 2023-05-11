@@ -218,5 +218,11 @@ public class ExceptionConstant {
     public static final String COIN_STATE_REPORT_ERROR_CODE = "0065";
     public static final String COIN_STATE_REPORT_ERROR = "Ha ocurrido un error al intentar traer el reporte.";
 
+    public static final String GET_CODE_GAME_ERROR_CODE = "0066";
+    public static final String GET_CODE_GAME_ERROR = "Lo siento, no se pudo generar el código. Reintente más tarde.";
+
+    public static final String WRONG_REGEX_CODE_ERROR_CODE = "0067";
+    public static final String WRONG_REGEX_CODE_ERROR = "El código solo admite letras en mayúscula, guión medio y no se admiten acentos.";
+
 
 }
