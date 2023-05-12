@@ -17,7 +17,6 @@ public class RedeemCodeRqDTO {
     @NotEmpty
     private String code;
 
-    @NotNull
     private Long clientId;
 
     @NotNull

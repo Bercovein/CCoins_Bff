@@ -1,9 +1,8 @@
 package com.ccoins.bff.service.impl;
 
-import com.ccoins.bff.dto.ListDTO;
-import com.ccoins.bff.dto.LongDTO;
-import com.ccoins.bff.dto.LongListDTO;
+import com.ccoins.bff.dto.*;
 import com.ccoins.bff.dto.bars.BarTableDTO;
+import com.ccoins.bff.dto.prizes.ClientPartyDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
@@ -11,20 +10,17 @@ import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.feign.PrizeFeign;
 import com.ccoins.bff.feign.UsersFeign;
-import com.ccoins.bff.service.ICoinsService;
-import com.ccoins.bff.service.IPartiesService;
-import com.ccoins.bff.service.IRandomNameService;
-import com.ccoins.bff.service.ITablesService;
+import com.ccoins.bff.service.*;
 import com.ccoins.bff.utils.HeaderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.ccoins.bff.utils.enums.EventNamesCoinsEnum.NEW_LEADER;
 
 @Service
 public class PartiesService extends ContextService implements IPartiesService {
@@ -37,15 +33,18 @@ public class PartiesService extends ContextService implements IPartiesService {
 
     private final ICoinsService coinsService;
 
+    private final IServerSentEventService sseService;
+
     private final IRandomNameService randomizer;
 
     @Autowired
-    public PartiesService(PrizeFeign prizeFeign, BarsFeign barsFeign, ITablesService tablesService, UsersFeign usersFeign, ICoinsService coinsService, IRandomNameService randomizer) {
+    public PartiesService(PrizeFeign prizeFeign, BarsFeign barsFeign, ITablesService tablesService, UsersFeign usersFeign, ICoinsService coinsService, IServerSentEventService sseService, IRandomNameService randomizer) {
         super(barsFeign);
         this.prizeFeign = prizeFeign;
         this.tablesService = tablesService;
         this.usersFeign = usersFeign;
         this.coinsService = coinsService;
+        this.sseService = sseService;
         this.randomizer = randomizer;
     }
 
@@ -55,7 +54,7 @@ public class PartiesService extends ContextService implements IPartiesService {
 
         PartyDTO party;
         Optional<PartyDTO> partyOpt;
-
+        boolean leader = false;
         //hay party activa en la mesa?
             //traer mesa por codigo y party por id de mesa
         BarTableDTO barTableDTO = this.tablesService.findByCode(code);
@@ -64,20 +63,21 @@ public class PartiesService extends ContextService implements IPartiesService {
 
         if(partyOpt.isEmpty()){ //no -> crear party
             party = this.createParty(barTableDTO.getId());
+            leader = true;
         }else{
             party = partyOpt.get();
         }
 
-        this.asignClientToParty(party.getId(),clientDTO.getId());
+        this.asignClientToParty(party.getId(),clientDTO.getId(), leader);
 
         return party.getId();
     }
 
     @Override
-    public void asignClientToParty(Long partyId, Long clientId){
+    public void asignClientToParty(Long partyId, Long clientId, boolean leader){
 
         try {
-            this.prizeFeign.asignClientToParty(partyId, clientId);
+            this.prizeFeign.asignClientToParty(partyId, clientId, leader);
         }catch (Exception e){
             throw new BadRequestException(ExceptionConstant.ADD_CLIENT_TO_PARTY_ERROR_CODE,
                     this.getClass(), ExceptionConstant.ADD_CLIENT_TO_PARTY_ERROR);
@@ -142,21 +142,34 @@ public class PartiesService extends ContextService implements IPartiesService {
     public ListDTO findClientsFromParty(Long id, HttpHeaders headers) {
 
         String clientIp = HeaderUtils.getClient(headers);
-        List<Long> longList;
+        List<ClientPartyDTO> list;
         List<ClientDTO> clients = new ArrayList<>();
 
         try {
-            longList = this.prizeFeign.findClientsByPartyId(id);
+            list = this.prizeFeign.findClientsByPartyId(id);
         }catch(Exception e){
             throw new BadRequestException(ExceptionConstant.PARTY_CLIENTS_ERROR_CODE,
                     this.getClass(), ExceptionConstant.PARTY_CLIENTS_ERROR);
         }
 
-        if(!longList.isEmpty()){
-            clients = this.findByIdIn(longList);
+        List<Long> idList = new ArrayList<>();
+        list.forEach(cp -> idList.add(cp.getClient()));
+
+        if(!list.isEmpty()){
+            clients = this.findByIdIn(idList);
         }
 
         clients.removeIf(clientDTO -> clientDTO.getIp().equals(clientIp));
+
+        for (ClientDTO client: clients) {
+
+            Optional<ClientPartyDTO> cpOpt = list.stream().filter( c -> c.getClient().equals(client.getId())).findAny();
+            if(cpOpt.isPresent()){
+                client.setLeader(cpOpt.get().isLeader());
+            }else{
+                client.setLeader(false);
+            }
+        }
 
         clients = clients.stream().sorted(Comparator.comparing(ClientDTO::getNickName)).collect(Collectors.toList());
 
@@ -192,5 +205,22 @@ public class PartiesService extends ContextService implements IPartiesService {
             throw new BadRequestException(ExceptionConstant.CLIENTS_LIST_ERROR_CODE,
                     this.getClass(), ExceptionConstant.CLIENTS_LIST_ERROR);
         }
+    }
+
+    @Override
+    public ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderTo(HttpHeaders headers, IdDTO request) {
+
+        Long leader = Long.getLong(HeaderUtils.getClient(headers));
+        Long newLeader = request.getId();
+
+        Long partyId = HeaderUtils.getPartyId(headers);
+
+        ResponseEntity<GenericRsDTO<ResponseDTO>> response = this.prizeFeign.giveLeaderTo(leader, newLeader);
+
+        if(response.hasBody() && Objects.requireNonNull(response.getBody()).getCode() == null){
+            this.sseService.dispatchEventToClientsFromParty(NEW_LEADER.name(),response.getBody().getMessage(),partyId);
+        }
+
+        return response;
     }
 }

@@ -3,6 +3,8 @@ package com.ccoins.bff.feign;
 import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.LongListDTO;
+import com.ccoins.bff.dto.ResponseDTO;
+import com.ccoins.bff.dto.prizes.ClientPartyDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.dto.prizes.PrizeDTO;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -40,14 +42,14 @@ public interface PrizeFeign {
     @PostMapping("/parties/table")
     PartyDTO createParty(PartyDTO partyDTO);
 
-    @PostMapping({"/parties/{partyId}/client/{clientId}"})
-    void asignClientToParty(@PathVariable("partyId") Long partyId, @PathVariable("clientId") Long clientId);
+    @PostMapping({"/parties/{partyId}/client/{clientId}/leader/{leader}"})
+    void asignClientToParty(@PathVariable("partyId") Long partyId, @PathVariable("clientId") Long clientId, @PathVariable("leader") boolean leader);
 
     @GetMapping("/parties/{id}")
     Optional<PartyDTO> findById(@PathVariable("id")Long id);
 
     @GetMapping("/parties/{id}/clients")
-    List<Long> findClientsByPartyId(@PathVariable("id") Long id);
+    List<ClientPartyDTO> findClientsByPartyId(@PathVariable("id") Long id);
 
     @DeleteMapping("/parties/client/{client}")
     void logoutClientFromTables(@PathVariable ("client") String client);
@@ -57,4 +59,7 @@ public interface PrizeFeign {
 
     @PostMapping("/parties/clients")
     List<Long> findAllIdsByClients(@RequestBody LongListDTO list);
+
+    @PutMapping("/parties/leader/{leaderId}/to/{clientId}")
+    ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderTo(@PathVariable("leaderId") Long leaderId, @PathVariable("clientId") Long clientId);
 }

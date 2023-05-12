@@ -24,4 +24,6 @@ public class ClientDTO {
     private boolean active;
 
     private LocalDateTime startDate;
+
+    private boolean leader;
 }

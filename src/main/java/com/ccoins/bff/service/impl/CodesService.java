@@ -6,9 +6,11 @@ import com.ccoins.bff.dto.bars.GameDTO;
 import com.ccoins.bff.dto.coins.CodeRqDTO;
 import com.ccoins.bff.dto.coins.CoinsDTO;
 import com.ccoins.bff.dto.coins.RedeemCodeRqDTO;
+import com.ccoins.bff.dto.prizes.ClientPartyDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.feign.CoinsFeign;
+import com.ccoins.bff.feign.PrizeFeign;
 import com.ccoins.bff.service.ICodesService;
 import com.ccoins.bff.service.IServerSentEventService;
 import com.ccoins.bff.spotify.sto.CodeDTO;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.ccoins.bff.exceptions.constant.ExceptionConstant.*;
 import static com.ccoins.bff.utils.enums.EventNamesCoinsEnum.NEW_PRIZE;
@@ -31,13 +34,16 @@ public class CodesService extends ContextService implements ICodesService {
 
     private final CoinsFeign coinsFeign;
 
+    private final PrizeFeign  prizeFeign;
+
     private final IServerSentEventService sseService;
 
     @Autowired
-    public CodesService(CoinsFeign coinsFeign, IServerSentEventService sseService, BarsFeign barsFeign) {
+    public CodesService(CoinsFeign coinsFeign, IServerSentEventService sseService, BarsFeign barsFeign, PrizeFeign prizeFeign) {
         super(barsFeign);
         this.coinsFeign = coinsFeign;
         this.sseService = sseService;
+        this.prizeFeign = prizeFeign;
     }
 
     @Override
@@ -92,6 +98,9 @@ public class CodesService extends ContextService implements ICodesService {
     @Override
     public ResponseEntity<GenericRsDTO<CoinsDTO>> redeemCode(RedeemCodeRqDTO request) {
 
+        //busca al lider si no se envió por la request
+        this.searchLeader(request);
+
         if(RegexUtils.validateRegexAtoZMiddleDash(request.getCode())){
             throw new BadRequestException(WRONG_REGEX_CODE_ERROR_CODE, this.getClass(), WRONG_REGEX_CODE_ERROR);
         }
@@ -111,4 +120,17 @@ public class CodesService extends ContextService implements ICodesService {
         return response;
     }
 
+    public void  searchLeader(RedeemCodeRqDTO request){
+        if(request.getClientId() == null){
+            List<ClientPartyDTO> clients = this.prizeFeign.findClientsByPartyId(request.getPartyId());
+
+            Optional<ClientPartyDTO> leaderOpt = clients.stream().filter(ClientPartyDTO::isLeader).findFirst();
+
+            if(leaderOpt.isPresent()){
+                request.setClientId(leaderOpt.get().getClient());
+            }else{
+                request.setClientId(clients.stream().findAny().get().getClient());
+            }
+        }
+    }
 }

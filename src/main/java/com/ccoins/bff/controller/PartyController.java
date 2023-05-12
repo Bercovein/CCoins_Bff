@@ -2,10 +2,7 @@ package com.ccoins.bff.controller;
 
 import com.ccoins.bff.annotation.LimitedTime;
 import com.ccoins.bff.controller.swagger.IPartyController;
-import com.ccoins.bff.dto.IdDTO;
-import com.ccoins.bff.dto.ListDTO;
-import com.ccoins.bff.dto.LongDTO;
-import com.ccoins.bff.dto.ResponseDTO;
+import com.ccoins.bff.dto.*;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.service.IGamesService;
 import com.ccoins.bff.service.IPartiesService;
@@ -72,5 +69,12 @@ public class PartyController implements IPartyController {
     @GetMapping("/bar/games")
     public ResponseEntity<ListDTO> findGamesByBar(@RequestHeader HttpHeaders headers){
         return this.gameService.findGamesByBarToClients(headers);
+    }
+
+    @Override
+    @PostMapping("/leader")
+    @LimitedTime
+    public ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderTo(@RequestBody IdDTO idDTO, @RequestHeader HttpHeaders headers){
+        return this.partiesService.giveLeaderTo(headers,idDTO);
     }
 }

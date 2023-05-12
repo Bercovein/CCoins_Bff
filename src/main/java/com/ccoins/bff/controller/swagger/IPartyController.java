@@ -1,10 +1,7 @@
 package com.ccoins.bff.controller.swagger;
 
 import com.ccoins.bff.annotation.LimitedTime;
-import com.ccoins.bff.dto.IdDTO;
-import com.ccoins.bff.dto.ListDTO;
-import com.ccoins.bff.dto.LongDTO;
-import com.ccoins.bff.dto.ResponseDTO;
+import com.ccoins.bff.dto.*;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import io.swagger.annotations.Api;
 import org.springframework.http.HttpHeaders;
@@ -40,4 +37,8 @@ public interface IPartyController {
 
     @GetMapping("/bar/games")
     ResponseEntity<ListDTO> findGamesByBar(@RequestHeader HttpHeaders headers);
+
+    @PostMapping("/leader")
+    @LimitedTime
+    ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderTo(@RequestBody IdDTO idDTO, @RequestHeader HttpHeaders headers);
 }

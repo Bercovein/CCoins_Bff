@@ -4,5 +4,6 @@ public enum EventNamesCoinsEnum {
 
     UPDATE_COINS,
     NEW_DEMAND,
-    NEW_PRIZE;
+    NEW_PRIZE,
+    NEW_LEADER;
 }
