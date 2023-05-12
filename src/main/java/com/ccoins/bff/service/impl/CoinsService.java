@@ -27,8 +27,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static com.ccoins.bff.utils.enums.EventNamesCoinsEnum.NEW_DEMAND;
-import static com.ccoins.bff.utils.enums.EventNamesCoinsEnum.UPDATE_COINS;
+import static com.ccoins.bff.utils.enums.EventNamesEnum.NEW_DEMAND;
+import static com.ccoins.bff.utils.enums.EventNamesEnum.UPDATE_COINS;
 
 @Service
 public class CoinsService extends ContextService implements ICoinsService {

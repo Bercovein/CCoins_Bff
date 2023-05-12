@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ccoins.bff.utils.enums.EventNamesCoinsEnum.NEW_LEADER;
+import static com.ccoins.bff.utils.enums.EventNamesEnum.NEW_LEADER;
 
 @Service
 public class PartiesService extends ContextService implements IPartiesService {

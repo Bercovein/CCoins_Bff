@@ -9,10 +9,13 @@ import com.ccoins.bff.feign.UsersFeign;
 import com.ccoins.bff.service.IClientService;
 import com.ccoins.bff.service.IPartiesService;
 import com.ccoins.bff.service.IRandomNameService;
+import com.ccoins.bff.service.IServerSentEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+
+import static com.ccoins.bff.utils.enums.EventNamesEnum.NEW_CLIENT_TO_PARTY;
 
 @Service
 public class ClientService implements IClientService {
@@ -21,12 +24,15 @@ public class ClientService implements IClientService {
 
     private final UsersFeign usersFeign;
 
+    private final IServerSentEventService sseService;
+
     private final IRandomNameService randomize;
 
     @Autowired
-    public ClientService(IPartiesService partyService, UsersFeign usersFeign, IRandomNameService randomize) {
+    public ClientService(IPartiesService partyService, UsersFeign usersFeign, IServerSentEventService sseService, IRandomNameService randomize) {
         this.partyService = partyService;
         this.usersFeign = usersFeign;
+        this.sseService = sseService;
         this.randomize = randomize;
     }
 
@@ -39,6 +45,10 @@ public class ClientService implements IClientService {
         clientDTO = this.findOrCreateClient(clientDTO);
 
         Long partyId = this.partyService.asignOrCreatePartyByCode(request.getTableCode(), clientDTO);
+
+        if (partyId != null){
+            this.sseService.dispatchEventToClientsFromParty(NEW_CLIENT_TO_PARTY.name(),NEW_CLIENT_TO_PARTY.getMessage().replace("?", request.getNickName()),partyId);
+        }
 
         return ClientTableDTO.builder().partyId(partyId).clientIp(clientDTO.getIp()).clientId(clientDTO.getId()).tableCode(request.getTableCode()).nickName(clientDTO.getNickName()).build();
     }

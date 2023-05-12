@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.ccoins.bff.exceptions.constant.ExceptionConstant.*;
-import static com.ccoins.bff.utils.enums.EventNamesCoinsEnum.NEW_PRIZE;
-import static com.ccoins.bff.utils.enums.EventNamesCoinsEnum.UPDATE_COINS;
+import static com.ccoins.bff.utils.enums.EventNamesEnum.NEW_PRIZE;
+import static com.ccoins.bff.utils.enums.EventNamesEnum.UPDATE_COINS;
 
 @Service
 public class CodesService extends ContextService implements ICodesService {

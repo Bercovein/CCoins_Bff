@@ -31,7 +31,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ccoins.bff.exceptions.constant.ExceptionConstant.*;
-import static com.ccoins.bff.utils.enums.EventNamesCoinsEnum.UPDATE_COINS;
+import static com.ccoins.bff.utils.enums.EventNamesEnum.UPDATE_COINS;
 
 @Service
 @Slf4j
