@@ -21,4 +21,6 @@ public class CoinsReportStatesDTO {
 
     private String state;
 
+    private Boolean updatable;
+
 }
