@@ -31,5 +31,7 @@ public class SwaggerConstants {
 
     public static final String LOGIN_REGISTER_WITH = "Login / Register with ";
 
+    public static final String LOGOUT = "Logout ";
+
     public static final String COUNT = "Count ";
 }

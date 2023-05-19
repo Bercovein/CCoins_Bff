@@ -1,7 +1,7 @@
 package com.ccoins.bff.service;
 
 import com.ccoins.bff.dto.users.ClientDTO;
-import com.ccoins.bff.dto.users.ClientTableDTO;
+import com.ccoins.bff.dto.ClientTableDTO;
 
 public interface IClientService {
 

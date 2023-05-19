@@ -6,12 +6,15 @@ import com.ccoins.bff.dto.prizes.ClientPartyDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
+import com.ccoins.bff.exceptions.ObjectNotFoundException;
+import com.ccoins.bff.exceptions.UnauthorizedException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.feign.PrizeFeign;
 import com.ccoins.bff.feign.UsersFeign;
 import com.ccoins.bff.service.*;
 import com.ccoins.bff.utils.HeaderUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +23,10 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.ccoins.bff.exceptions.constant.ExceptionConstant.*;
+import static com.ccoins.bff.utils.enums.ClosePartyEnum.CLIENTS_ALREADY_ON_PARTY;
+import static com.ccoins.bff.utils.enums.ClosePartyEnum.CLOSED_PARTY;
+import static com.ccoins.bff.utils.enums.EventNamesEnum.LOGOUT_CLIENT;
 import static com.ccoins.bff.utils.enums.EventNamesEnum.NEW_LEADER;
 
 @Service
@@ -77,7 +84,13 @@ public class PartiesService extends ContextService implements IPartiesService {
     public void asignClientToParty(Long partyId, Long clientId, boolean leader){
 
         try {
-            this.prizeFeign.asignClientToParty(partyId, clientId, leader);
+            ClientPartyDTO request = ClientPartyDTO.builder()
+                    .client(clientId)
+                    .party(partyId)
+                    .active(true)
+                    .leader(leader)
+                    .build();
+            this.prizeFeign.asignClientToParty(request);
         }catch (Exception e){
             throw new BadRequestException(ExceptionConstant.ADD_CLIENT_TO_PARTY_ERROR_CODE,
                     this.getClass(), ExceptionConstant.ADD_CLIENT_TO_PARTY_ERROR);
@@ -222,5 +235,78 @@ public class PartiesService extends ContextService implements IPartiesService {
         }
 
         return response;
+    }
+
+    @Override
+    public ResponseEntity<GenericRsDTO<ResponseDTO>> kickFromPartyByLeader(LongListDTO request, HttpHeaders headers) {
+
+        String leaderIp = HeaderUtils.getClient(headers);
+        Long partyId = HeaderUtils.getPartyId(headers);
+
+        ResponseEntity<Boolean> isLeader = this.prizeFeign.isLeaderFromParty(leaderIp,partyId);
+
+        if(!isLeader.hasBody() || isLeader.getBody() == null || !isLeader.getBody()){
+            throw new ObjectNotFoundException(NO_LEADER_ERROR_CODE,this.getClass(),NO_LEADER_ERROR);
+        }
+
+        return this.kickFromParty(request.getList(), partyId, false);
+
+    }
+
+    @Override
+    public ResponseEntity<GenericRsDTO<ResponseDTO>> kickFromPartyByOwner(LogoutPartyDTO request) {
+
+        ResponseEntity<IdDTO> barIdOpt = this.barsFeign.getBarIdByParty(request.getPartyId());
+        Long barId = super.findBarIdByOwner();
+
+        if (!barIdOpt.hasBody() || (!Objects.equals(barId, Objects.requireNonNull(barIdOpt.getBody()).getId()))){
+            throw new UnauthorizedException(NO_OWNER_FROM_PARTY_ERROR_CODE,this.getClass(),NO_OWNER_FROM_PARTY_ERROR);
+        }
+
+        return this.kickFromParty(request.getList(), request.getPartyId(), request.isBanned());
+
+    }
+
+    @Override
+    public ResponseEntity<GenericRsDTO<ResponseDTO>> kickFromParty(List<Long> list, Long partyId, boolean banned) {
+
+        list.forEach(client -> {
+            try {
+                this.logout(String.valueOf(client));
+                if(banned){
+                    this.prizeFeign.banClientFromParty(client, partyId);
+                }
+            }catch (Exception ignored){
+            }
+        });
+
+        ResponseEntity<IdDTO> barId = this.barsFeign.getBarIdByParty(partyId);
+
+        List<String> clients = new ArrayList<>();
+        list.forEach(c -> clients.add(c.toString()));
+
+        //notifica al front para que le actualice la sesión
+        this.sseService.dispatchEventToSomeClientsFromBar(LOGOUT_CLIENT.name(), Strings.EMPTY, Objects.requireNonNull(barId.getBody()).getId(),clients);
+
+        boolean response = this.prizeFeign.closePartyIfHaveNoClients(partyId);
+
+        if(response){ //avisa si se cerró la party o solo se desloguearon los clientes
+            return ResponseEntity.ok(new GenericRsDTO<>(CLOSED_PARTY.getCode(),CLOSED_PARTY.getMessage(),null));
+        }
+
+        return ResponseEntity.ok(new GenericRsDTO<>(CLIENTS_ALREADY_ON_PARTY.getCode(),CLIENTS_ALREADY_ON_PARTY.getMessage(),null));
+
+    }
+
+    @Override
+    public boolean isBannedFromParty(ClientTableDTO request) {
+
+        ResponseEntity<Boolean> response = this.prizeFeign.isBannedFromParty(request);
+
+        if(!response.hasBody() || response.getBody() == null){
+            return false;
+        }
+
+        return response.getBody();
     }
 }

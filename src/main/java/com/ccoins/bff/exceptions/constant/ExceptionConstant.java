@@ -224,5 +224,14 @@ public class ExceptionConstant {
     public static final String WRONG_REGEX_CODE_ERROR_CODE = "0067";
     public static final String WRONG_REGEX_CODE_ERROR = "El código solo admite letras en mayúscula, guión medio y no se admiten acentos.";
 
+    public static final String NO_LEADER_ERROR_CODE = "0068";
+    public static final String NO_LEADER_ERROR = "No eres el líder como para realizar esta operación.";
+
+    public static final String NO_OWNER_FROM_PARTY_ERROR_CODE = "0069";
+    public static final String NO_OWNER_FROM_PARTY_ERROR = "No puede realizar esta operación.";
+
+    public static final String CLIENT_BANNED_FROM_PARTY_ERROR_CODE = "0070";
+    public static final String CLIENT_BANNED_FROM_PARTY_ERROR = "Usted fué baneado de la mesa.";
+
 
 }

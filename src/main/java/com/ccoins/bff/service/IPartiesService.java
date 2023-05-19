@@ -34,4 +34,12 @@ public interface IPartiesService {
     List<Long> findAllIdsByClients(List<Long> clientsIds);
 
     ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderTo(HttpHeaders headers, IdDTO idDTO);
+
+    ResponseEntity<GenericRsDTO<ResponseDTO>> kickFromPartyByLeader(LongListDTO request, HttpHeaders headers);
+
+    ResponseEntity<GenericRsDTO<ResponseDTO>> kickFromPartyByOwner(LogoutPartyDTO request);
+
+    ResponseEntity<GenericRsDTO<ResponseDTO>> kickFromParty(List<Long> list, Long partyId, boolean banned);
+
+    boolean isBannedFromParty(ClientTableDTO request);
 }

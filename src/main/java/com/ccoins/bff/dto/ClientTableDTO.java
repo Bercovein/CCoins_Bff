@@ -1,4 +1,4 @@
-package com.ccoins.bff.dto.users;
+package com.ccoins.bff.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

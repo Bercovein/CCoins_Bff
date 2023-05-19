@@ -11,7 +11,9 @@ public enum EventNamesEnum {
     NEW_DEMAND(null), //se pide un premio desde una mesa
     NEW_PRIZE(null), //nuevo premio adquirido
     NEW_LEADER(null), //cambió el lider de la mesa
-    NEW_CLIENT_TO_PARTY("El integrante ? se ha sumado a la mesa."); //se suma un cliente a la mesa
+    NEW_CLIENT_TO_PARTY("El integrante %s se ha sumado a la mesa."), //se suma un cliente a la mesa
+
+    LOGOUT_CLIENT(null); // se elimina el cliente de la mesa
 
     private final String message;
 }

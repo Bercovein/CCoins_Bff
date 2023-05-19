@@ -1,6 +1,7 @@
 package com.ccoins.bff.controller.swagger;
 
 import com.ccoins.bff.dto.IdDTO;
+import com.ccoins.bff.dto.LogoutPartyDTO;
 import com.ccoins.bff.dto.bars.BarDTO;
 import com.ccoins.bff.dto.bars.BarListDTO;
 import io.swagger.annotations.Api;
@@ -26,4 +27,6 @@ public interface IBarsController {
     @ApiOperation(value = ACTIVATE_DEACTIVATE)
     ResponseEntity<BarDTO> active(@RequestBody IdDTO id);
 
+    @ApiOperation(value = LOGOUT + "clients")
+    void kickFromPartyByLeader(@RequestBody LogoutPartyDTO request);
 }

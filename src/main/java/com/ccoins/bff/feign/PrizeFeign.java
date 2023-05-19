@@ -7,6 +7,7 @@ import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.dto.prizes.ClientPartyDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.dto.prizes.PrizeDTO;
+import com.ccoins.bff.dto.ClientTableDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,8 +43,8 @@ public interface PrizeFeign {
     @PostMapping("/parties/table")
     PartyDTO createParty(PartyDTO partyDTO);
 
-    @PostMapping({"/parties/{partyId}/client/{clientId}/leader/{leader}"})
-    void asignClientToParty(@PathVariable("partyId") Long partyId, @PathVariable("clientId") Long clientId, @PathVariable("leader") boolean leader);
+    @PostMapping({"/parties/client"})
+    void asignClientToParty(@RequestBody ClientPartyDTO request);
 
     @GetMapping("/parties/{id}")
     Optional<PartyDTO> findById(@PathVariable("id")Long id);
@@ -55,11 +56,23 @@ public interface PrizeFeign {
     void logoutClientFromTables(@PathVariable ("client") String client);
 
     @GetMapping("/parties/table/code/{code}")
-    Optional<PartyDTO> findActivePartyByTableCode(@PathVariable ("code")String code);
+    Optional<PartyDTO> findActivePartyByTableCode(@PathVariable("code") String code);
 
     @PostMapping("/parties/clients")
     List<Long> findAllIdsByClients(@RequestBody LongListDTO list);
 
     @PutMapping("/parties/leader/{leaderId}/to/{clientId}")
     ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderTo(@PathVariable("leaderId") Long leaderId, @PathVariable("clientId") Long clientId);
+
+    @DeleteMapping("/parties/{partyId}/close-if-inactive")
+    boolean closePartyIfHaveNoClients(@PathVariable("partyId") Long partyId);
+
+    @GetMapping("/parties/leader/{leaderIp}/party/{partyId}")
+    ResponseEntity<Boolean> isLeaderFromParty(@PathVariable("leaderIp")String leaderIp, Long partyId);
+
+    @DeleteMapping("/parties/{partyId}/client/{clientId}")
+    void banClientFromParty(@PathVariable("clientId") Long clientId,@PathVariable("partyId") Long partyId);
+
+    @PostMapping("/parties/is-banned")
+    ResponseEntity<Boolean> isBannedFromParty(@RequestBody ClientTableDTO request);
 }

@@ -2,10 +2,13 @@ package com.ccoins.bff.controller;
 
 import com.ccoins.bff.controller.swagger.IBarsController;
 import com.ccoins.bff.dto.IdDTO;
+import com.ccoins.bff.dto.LogoutPartyDTO;
 import com.ccoins.bff.dto.bars.BarDTO;
 import com.ccoins.bff.dto.bars.BarListDTO;
 import com.ccoins.bff.service.IBarsService;
+import com.ccoins.bff.service.IPartiesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,10 +20,12 @@ import static org.springframework.http.HttpStatus.CREATED;
 public class BarsController implements IBarsController {
 
     private final IBarsService service;
+    private final IPartiesService partiesService;
 
     @Autowired
-    public BarsController(IBarsService service) {
+    public BarsController(IBarsService service, IPartiesService partiesService) {
         this.service = service;
+        this.partiesService = partiesService;
     }
 
     @Override
@@ -48,5 +53,10 @@ public class BarsController implements IBarsController {
         return this.service.active(request);
     }
 
-
+    @Override
+    @DeleteMapping("/parties/clients")
+    @ResponseStatus(HttpStatus.OK)
+    public void kickFromPartyByLeader(@RequestBody LogoutPartyDTO request){
+        this.partiesService.kickFromPartyByOwner(request);
+    }
 }

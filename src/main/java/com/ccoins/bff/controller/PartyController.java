@@ -10,6 +10,7 @@ import com.ccoins.bff.service.IPrizesService;
 import com.ccoins.bff.utils.HeaderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -76,5 +77,12 @@ public class PartyController implements IPartyController {
     @LimitedTime
     public ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderTo(@RequestBody IdDTO idDTO, @RequestHeader HttpHeaders headers){
         return this.partiesService.giveLeaderTo(headers,idDTO);
+    }
+
+    @DeleteMapping("/kick")
+    @ResponseStatus(HttpStatus.OK)
+    @LimitedTime
+    public void kickFromPartyByLeader(@RequestBody LongListDTO request, @RequestHeader HttpHeaders headers){
+        this.partiesService.kickFromPartyByLeader(request,headers);
     }
 }
