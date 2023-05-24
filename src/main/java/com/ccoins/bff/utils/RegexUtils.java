@@ -2,7 +2,7 @@ package com.ccoins.bff.utils;
 
 public class RegexUtils {
 
-    public static final String A_TO_Z_AND_MIDDLE_DASH = "^[A-Z\\-]+$";
+    public static final String A_TO_Z_AND_MIDDLE_DASH = "^[A-Z0-9\\-]+$";
 
     private RegexUtils() {
     }
