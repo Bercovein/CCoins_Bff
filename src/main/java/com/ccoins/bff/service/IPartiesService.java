@@ -42,4 +42,6 @@ public interface IPartiesService {
     ResponseEntity<GenericRsDTO<ResponseDTO>> kickFromParty(List<Long> list, Long partyId, boolean banned);
 
     boolean isBannedFromParty(ClientTableDTO request);
+
+    ResponseEntity<List<PartyTableDTO>> findActivePartiesByOwner();
 }

@@ -75,4 +75,7 @@ public interface PrizeFeign {
 
     @PostMapping("/parties/is-banned")
     ResponseEntity<Boolean> isBannedFromParty(@RequestBody ClientTableDTO request);
+
+    @GetMapping("/parties/bar/{id}")
+    ResponseEntity<List<PartyDTO>> findActivePartiesByBar(@PathVariable("id") Long id);
 }

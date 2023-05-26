@@ -20,6 +20,7 @@ public class CodeDTO {
     private String code;
     private Long points;
     private Long prize;
+    private String prizeName;
     private boolean perPerson;
     private boolean oneUse;
     private boolean active;

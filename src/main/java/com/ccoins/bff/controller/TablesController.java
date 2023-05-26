@@ -1,14 +1,10 @@
 package com.ccoins.bff.controller;
 
 import com.ccoins.bff.controller.swagger.ITablesController;
-import com.ccoins.bff.dto.GenericRsDTO;
-import com.ccoins.bff.dto.IdDTO;
-import com.ccoins.bff.dto.ListDTO;
-import com.ccoins.bff.dto.LongListDTO;
+import com.ccoins.bff.dto.*;
 import com.ccoins.bff.dto.bars.BarTableDTO;
 import com.ccoins.bff.dto.bars.TableDTO;
 import com.ccoins.bff.dto.bars.TableQuantityDTO;
-import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.service.ITablesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

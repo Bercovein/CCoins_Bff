@@ -138,7 +138,7 @@ public class VoteService implements IVoteService {
 
             List<Long> parties = this.partiesService.findAllIdsByClients(clientsIds);
 
-            this.sseService.dispatchEventToClientsFromParties(UPDATE_COINS.name(), null,parties);
+            this.sseService.dispatchEventToClientsFromParties(UPDATE_COINS.name(), UPDATE_COINS.getMessage(),parties);
         }
 
         return ipClients;

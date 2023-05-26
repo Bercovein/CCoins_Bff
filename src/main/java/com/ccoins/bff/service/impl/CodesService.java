@@ -15,7 +15,6 @@ import com.ccoins.bff.service.ICodesService;
 import com.ccoins.bff.service.IServerSentEventService;
 import com.ccoins.bff.spotify.sto.CodeDTO;
 import com.ccoins.bff.utils.RegexUtils;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -109,11 +108,11 @@ public class CodesService extends ContextService implements ICodesService {
         if(response.hasBody() && response.getBody() != null && response.getBody().getCode() == null && response.getBody().getData() != null){
 
             if(response.getBody().getData().getQuantity() != null) {
-                this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(), Strings.EMPTY, request.getPartyId());
+                this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(),UPDATE_COINS.getMessage(), request.getPartyId());
             }
 
             if(response.getBody().getData().getQuantity() == null || response.getBody().getData().getQuantity() == 0){
-                this.sseService.dispatchEventToClientsFromParty(NEW_PRIZE.name(), Strings.EMPTY,request.getPartyId());
+                this.sseService.dispatchEventToClientsFromParty(NEW_PRIZE.name(), NEW_PRIZE.getMessage(),request.getPartyId());
             }
         }
 

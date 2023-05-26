@@ -14,7 +14,6 @@ import com.ccoins.bff.feign.PrizeFeign;
 import com.ccoins.bff.feign.UsersFeign;
 import com.ccoins.bff.service.*;
 import com.ccoins.bff.utils.HeaderUtils;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -286,7 +285,7 @@ public class PartiesService extends ContextService implements IPartiesService {
         list.forEach(c -> clients.add(c.toString()));
 
         //notifica al front para que le actualice la sesión
-        this.sseService.dispatchEventToSomeClientsFromBar(LOGOUT_CLIENT.name(), Strings.EMPTY, Objects.requireNonNull(barId.getBody()).getId(),clients);
+        this.sseService.dispatchEventToSomeClientsFromBar(LOGOUT_CLIENT.name(), LOGOUT_CLIENT.getMessage(), Objects.requireNonNull(barId.getBody()).getId(),clients);
 
         boolean response = this.prizeFeign.closePartyIfHaveNoClients(partyId);
 
@@ -308,5 +307,41 @@ public class PartiesService extends ContextService implements IPartiesService {
         }
 
         return response.getBody();
+    }
+
+    @Override
+    public ResponseEntity<List<PartyTableDTO>> findActivePartiesByOwner(){
+
+        Long barId = super.findBarIdByOwner();
+        List<PartyDTO> parties = new ArrayList<>();
+        List<PartyTableDTO> response = new ArrayList<>();
+        List<Long> tablesIds = new ArrayList<>();
+        ResponseEntity<List<PartyDTO>> partiesResponse = this.prizeFeign.findActivePartiesByBar(barId);
+
+        if(partiesResponse.hasBody()){
+            parties = partiesResponse.getBody();
+        }
+
+        if(parties == null || parties.isEmpty()){
+            return ResponseEntity.ok(response);
+        }
+
+        parties.forEach(party -> tablesIds.add(party.getTable()));
+
+        List<BarTableDTO> tables = this.tablesService.findByIdIn(LongListDTO.builder().list(tablesIds).build());
+
+        parties.forEach(partyTable -> {
+            Long number = tables.stream().filter(table -> table.getId().equals(partyTable.getTable())).findFirst().orElseThrow().getNumber();
+            response.add(PartyTableDTO.builder()
+                            .id(partyTable.getId())
+                            .active(partyTable.isActive())
+                            .name(partyTable.getName())
+                            .startDate(partyTable.getStartDate())
+                            .table(partyTable.getTable())
+                            .tableNumber(number)
+                    .build());
+        });
+
+        return ResponseEntity.ok(response);
     }
 }
