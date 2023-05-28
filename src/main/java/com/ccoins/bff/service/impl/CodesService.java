@@ -50,7 +50,7 @@ public class CodesService extends ContextService implements ICodesService {
 
         ResponseEntity<GameDTO> gameRE;
 
-        if(RegexUtils.validateRegexAtoZMiddleDash(request.getCode())){
+        if(request.getCode() != null && RegexUtils.validateRegexAtoZMiddleDash(request.getCode())){
             throw new BadRequestException(WRONG_REGEX_CODE_ERROR_CODE, this.getClass(), WRONG_REGEX_CODE_ERROR);
         }
 
