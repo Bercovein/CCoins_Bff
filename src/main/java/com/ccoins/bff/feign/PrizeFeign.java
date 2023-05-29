@@ -68,7 +68,7 @@ public interface PrizeFeign {
     boolean closePartyIfHaveNoClients(@PathVariable("partyId") Long partyId);
 
     @GetMapping("/parties/leader/{leaderIp}/party/{partyId}")
-    ResponseEntity<Boolean> isLeaderFromParty(@PathVariable("leaderIp")String leaderIp, Long partyId);
+    ResponseEntity<Boolean> isLeaderFromParty(@PathVariable("leaderIp")String leaderIp, @PathVariable("partyId") Long partyId);
 
     @DeleteMapping("/parties/{partyId}/client/{clientId}")
     void banClientFromParty(@PathVariable("clientId") Long clientId,@PathVariable("partyId") Long partyId);
