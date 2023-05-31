@@ -2,6 +2,9 @@ package com.ccoins.bff.exceptions.constant;
 
 public class ExceptionConstant {
 
+    private ExceptionConstant() {
+    }
+
     //LABELS
     public static final String ERROR_LABEL = "Error when trying to ";
     public static final String UNAUTHORIZED_LABEL = "User not authorized to ";
