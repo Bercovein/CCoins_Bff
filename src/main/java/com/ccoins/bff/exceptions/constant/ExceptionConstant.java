@@ -236,5 +236,8 @@ public class ExceptionConstant {
     public static final String GIVE_LEADER_TO_ERROR_CODE = "0071";
     public static final String GIVE_LEADER_TO_ERROR = "Actualmente no se puede ceder el puesto de lider, reintente mas tarde.";
 
+    public static final String URL_MENU_ERROR_CODE = "0072";
+    public static final String URL_MENU_ERROR = "Error al intentar devolver el menú del bar";
+
 
 }

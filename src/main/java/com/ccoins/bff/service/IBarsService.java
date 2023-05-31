@@ -1,7 +1,6 @@
 package com.ccoins.bff.service;
 
 import com.ccoins.bff.dto.IdDTO;
-import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.StringDTO;
 import com.ccoins.bff.dto.bars.BarDTO;
 import com.ccoins.bff.dto.bars.BarListDTO;
@@ -20,5 +19,4 @@ public interface IBarsService {
 
     ResponseEntity<StringDTO> findUrlMenu(HttpHeaders headers);
 
-    ResponseEntity<ListDTO> findGamesByBarToClients(HttpHeaders headers);
 }

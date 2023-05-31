@@ -1,7 +1,6 @@
 package com.ccoins.bff.service.impl;
 
 import com.ccoins.bff.dto.IdDTO;
-import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.StringDTO;
 import com.ccoins.bff.dto.bars.BarDTO;
 import com.ccoins.bff.dto.bars.BarListDTO;
@@ -104,15 +103,13 @@ public class BarsService extends ContextService implements IBarsService {
     @Override
     public ResponseEntity<StringDTO> findUrlMenu(HttpHeaders headers) {
 
-        String code = HeaderUtils.getCode(headers);
-
-        return this.barsFeign.findUrlByTableCode(code);
+        try {
+            String code = HeaderUtils.getCode(headers);
+            return this.barsFeign.findUrlByTableCode(code);
+        }catch (Exception e){
+            throw new BadRequestException(ExceptionConstant.URL_MENU_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.URL_MENU_ERROR);
+        }
     }
 
-    @Override
-    public ResponseEntity<ListDTO> findGamesByBarToClients(HttpHeaders headers) {
-
-        
-        return null;
-    }
 }
