@@ -62,7 +62,7 @@ public interface PrizeFeign {
     List<Long> findAllIdsByClients(@RequestBody LongListDTO list);
 
     @PutMapping("/parties/leader/{leaderId}/to/{clientId}")
-    ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderTo(@PathVariable("leaderId") Long leaderId, @PathVariable("clientId") Long clientId);
+    ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderTo(@PathVariable("leaderId") String leaderId, @PathVariable("clientId") Long clientId);
 
     @DeleteMapping("/parties/{partyId}/close-if-inactive")
     boolean closePartyIfHaveNoClients(@PathVariable("partyId") Long partyId);

@@ -222,7 +222,7 @@ public class PartiesService extends ContextService implements IPartiesService {
     @Override
     public ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderTo(HttpHeaders headers, IdDTO request) {
 
-        Long leader = Long.getLong(HeaderUtils.getClient(headers));
+        String leader = HeaderUtils.getClient(headers);
         Long newLeader = request.getId();
 
         Long partyId = HeaderUtils.getPartyId(headers);
