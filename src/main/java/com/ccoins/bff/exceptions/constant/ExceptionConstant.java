@@ -233,5 +233,8 @@ public class ExceptionConstant {
     public static final String CLIENT_BANNED_FROM_PARTY_ERROR_CODE = "0070";
     public static final String CLIENT_BANNED_FROM_PARTY_ERROR = "Usted fué baneado de la mesa.";
 
+    public static final String GIVE_LEADER_TO_ERROR_CODE = "0071";
+    public static final String GIVE_LEADER_TO_ERROR = "Actualmente no se puede ceder el puesto de lider, reintente mas tarde.";
+
 
 }

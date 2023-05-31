@@ -14,6 +14,7 @@ import com.ccoins.bff.feign.PrizeFeign;
 import com.ccoins.bff.feign.UsersFeign;
 import com.ccoins.bff.service.*;
 import com.ccoins.bff.utils.HeaderUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +26,10 @@ import java.util.stream.Collectors;
 import static com.ccoins.bff.exceptions.constant.ExceptionConstant.*;
 import static com.ccoins.bff.utils.enums.ClosePartyEnum.CLIENTS_ALREADY_ON_PARTY;
 import static com.ccoins.bff.utils.enums.ClosePartyEnum.CLOSED_PARTY;
-import static com.ccoins.bff.utils.enums.EventNamesEnum.LOGOUT_CLIENT;
-import static com.ccoins.bff.utils.enums.EventNamesEnum.NEW_LEADER;
+import static com.ccoins.bff.utils.enums.EventNamesEnum.*;
 
 @Service
+@Slf4j
 public class PartiesService extends ContextService implements IPartiesService {
 
     private final PrizeFeign prizeFeign;
@@ -224,13 +225,35 @@ public class PartiesService extends ContextService implements IPartiesService {
 
         String leader = HeaderUtils.getClient(headers);
         Long newLeader = request.getId();
-
+        ResponseEntity<GenericRsDTO<ResponseDTO>> response;
         Long partyId = HeaderUtils.getPartyId(headers);
 
-        ResponseEntity<GenericRsDTO<ResponseDTO>> response = this.prizeFeign.giveLeaderTo(leader, newLeader);
+        try {
+            response = this.prizeFeign.giveLeaderTo(leader, newLeader);
+        }catch(Exception e){
+            return ResponseEntity.ok(new GenericRsDTO<>(GIVE_LEADER_TO_ERROR_CODE,GIVE_LEADER_TO_ERROR,null));
+        }
 
         if(response.hasBody() && Objects.requireNonNull(response.getBody()).getCode() == null){
             this.sseService.dispatchEventToClientsFromParty(NEW_LEADER.name(),response.getBody().getMessage(),partyId);
+
+            ResponseEntity<IdDTO> barIdResponse = this.barsFeign.getBarIdByParty(partyId);
+
+            if(barIdResponse.hasBody() && barIdResponse.getBody() != null){
+
+                IdDTO idDTO = barIdResponse.getBody();
+                String newLeaderIp;
+                List<Long> newLeaderList = new ArrayList<>();
+                newLeaderList.add(newLeader);
+
+                List<ClientDTO> clientList = this.usersFeign.findByIdIn(newLeaderList);
+
+                if(!clientList.isEmpty()) {
+                    newLeaderIp = clientList.get(0).getIp();
+                    this.sseService.dispatchEventToSomeClientsFromBar(YOU_ARE_THE_LEADER.name(), YOU_ARE_THE_LEADER.getMessage(),idDTO.getId(),List.of(newLeaderIp));
+                }
+            }
+
         }
 
         return response;
@@ -269,13 +292,16 @@ public class PartiesService extends ContextService implements IPartiesService {
     @Override
     public ResponseEntity<GenericRsDTO<ResponseDTO>> kickFromParty(List<Long> list, Long partyId, boolean banned) {
 
-        list.forEach(client -> {
+        List<ClientDTO> clientList = this.usersFeign.findByIdIn(list);
+
+        clientList.forEach(client -> {
             try {
-                this.logout(String.valueOf(client));
+                this.logout(client.getIp());
                 if(banned){
-                    this.prizeFeign.banClientFromParty(client, partyId);
+                    this.prizeFeign.banClientFromParty(client.getId(), partyId);
                 }
             }catch (Exception ignored){
+                log.error("No se pudo kickear al cliente.");
             }
         });
 
@@ -285,8 +311,9 @@ public class PartiesService extends ContextService implements IPartiesService {
         list.forEach(c -> clients.add(c.toString()));
 
         //notifica al front para que le actualice la sesión
-        this.sseService.dispatchEventToSomeClientsFromBar(LOGOUT_CLIENT.name(), LOGOUT_CLIENT.getMessage(), Objects.requireNonNull(barId.getBody()).getId(),clients);
-
+        if(barId.getBody() != null) {
+            this.sseService.dispatchEventToSomeClientsFromBar(LOGOUT_CLIENT.name(), LOGOUT_CLIENT.getMessage(), barId.getBody().getId(), clients);
+        }
         boolean response = this.prizeFeign.closePartyIfHaveNoClients(partyId);
 
         if(response){ //avisa si se cerró la party o solo se desloguearon los clientes
