@@ -11,8 +11,12 @@ import java.util.List;
 @Component
 public class MessageTextUtils {
 
+    private final WinVotingProperties winVotingCoins;
+
     @Autowired
-    private WinVotingProperties winVotingCoins;
+    public MessageTextUtils(WinVotingProperties winVotingCoins) {
+        this.winVotingCoins = winVotingCoins;
+    }
 
     public ListDTO winVotingMsg(long points){
 

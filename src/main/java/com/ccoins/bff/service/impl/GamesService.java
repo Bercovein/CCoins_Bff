@@ -16,13 +16,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class GamesService extends ContextService implements IGamesService {
 
-    private final BarsFeign barsFeign;
-
-
     @Autowired
     public GamesService(BarsFeign barsFeign) {
         super(barsFeign);
-        this.barsFeign = barsFeign;
     }
 
     @Override

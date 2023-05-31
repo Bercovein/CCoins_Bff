@@ -79,7 +79,7 @@ public class CodesService extends ContextService implements ICodesService {
     }
 
     @Override
-    public ResponseEntity<CodeDTO> ínvalidateCode(StringDTO request) {
+    public ResponseEntity<CodeDTO> invalidateCode(StringDTO request) {
 
         if(RegexUtils.validateRegexAtoZMiddleDash(request.getText())){
             throw new BadRequestException(WRONG_REGEX_CODE_ERROR_CODE, this.getClass(), WRONG_REGEX_CODE_ERROR);

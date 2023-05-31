@@ -115,8 +115,7 @@ public class CoinsService extends ContextService implements ICoinsService {
     @Override
     public ResponseEntity<CoinsReportDTO> getCoinsReportByParty(Long partyId, Pageable pagination, String type){
         try{
-            ResponseEntity<CoinsReportDTO> response = this.coinsFeign.getAllCoinsFromParty(partyId, pagination, type);
-            return response;
+            return this.coinsFeign.getAllCoinsFromParty(partyId, pagination, type);
         }catch (Exception e){
             throw new BadRequestException(ExceptionConstant.COINS_BY_PARTY_ERROR_CODE,
                     this.getClass(), ExceptionConstant.COINS_BY_PARTY_ERROR);
@@ -142,6 +141,7 @@ public class CoinsService extends ContextService implements ICoinsService {
             if(response.hasBody()){
                 GenericRsDTO<Long> generic = response.getBody();
 
+                assert generic != null;
                 Long partyId = generic.getData();
 
                 if(partyId != null){

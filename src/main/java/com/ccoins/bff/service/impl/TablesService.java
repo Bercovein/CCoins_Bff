@@ -18,12 +18,9 @@ import java.util.Optional;
 @Service
 public class TablesService extends ContextService implements ITablesService {
 
-    private final BarsFeign barsFeign;
-
     @Autowired
     public TablesService(BarsFeign barsFeign) {
         super(barsFeign);
-        this.barsFeign = barsFeign;
     }
 
     @Override
@@ -40,7 +37,6 @@ public class TablesService extends ContextService implements ITablesService {
     @Override
     public ResponseEntity<BarTableDTO> findById(IdDTO request) {
 
-        Long ownerId = super.getLoggedUserId();
         BarTableDTO table;
 
         try{
@@ -49,17 +45,12 @@ public class TablesService extends ContextService implements ITablesService {
             throw new BadRequestException(ExceptionConstant.TABLES_FIND_BY_ID_ERROR_CODE, this.getClass(), ExceptionConstant.TABLES_FIND_BY_ID_ERROR);
         }
 
-//        if(table != null && !table.getOwner().equals(ownerId)){
-//            throw new UnauthorizedException(ExceptionConstant.BARS_UNAUTHORIZED_ERROR_CODE, this.getClass(), ExceptionConstant.BARS_UNAUTHORIZED_ERROR);
-//        }
-
         return ResponseEntity.ok(table);
     }
 
     @Override
     public ResponseEntity<ListDTO> findAllByBar(IdDTO request, Optional<String> status) {
 
-//        Long ownerId = super.getLoggedUserId();
         try{
             if(status.isPresent()) {
                 return this.barsFeign.findAllTablesByBarAndOptStatus(request.getId(), status);

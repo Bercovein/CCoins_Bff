@@ -95,7 +95,7 @@ public class ServerSentEventService implements IServerSentEventService {
                         emitter.send(SseEmitter.event().name(eventName).data(data != null ? data : "", MediaType.APPLICATION_JSON));
                 }catch(IOException e){
                     sseEmitterMap.remove(client);
-                    log.error("Error while sending event to client.");
+                    log.error("Error while sending event to all clients from bar.");
                 }
             });
             emitters.put(barId, sseEmitterMap);
@@ -115,7 +115,7 @@ public class ServerSentEventService implements IServerSentEventService {
                     emitter.send(SseEmitter.event().name(eventName).data(data != null ? data : "", MediaType.APPLICATION_JSON));
                 }catch(IOException e){
                     sseEmitterMap.remove(client);
-                    log.error("Error while sending event to client.");
+                    log.error("Error while sending event to all clients and bar.");
                 }
             });
             emitters.put(barId, sseEmitterMap);
@@ -135,7 +135,7 @@ public class ServerSentEventService implements IServerSentEventService {
                     sseEmitterMap.get(client).send(SseEmitter.event().name(eventName).data(data != null ? data : "", MediaType.APPLICATION_JSON));
                 }catch(IOException e){
                     sseEmitterMap.remove(client);
-                    log.error("Error while sending event to client.");
+                    log.error("Error while sending event to some clients.");
                 }
             });
             emitters.put(barId, sseEmitterMap);
@@ -174,7 +174,7 @@ public class ServerSentEventService implements IServerSentEventService {
                         emitter.send(SseEmitter.event().name(eventName).data(data != null ? data : "", MediaType.APPLICATION_JSON));
                 }catch(IOException e){
                     sseEmitterMap.remove(client.getIp());
-                    log.error("Error while sending event to client.");
+                    log.error("Error while sending event to clients from party.");
                 }
             });
             emitters.put(barId.getId(), sseEmitterMap);

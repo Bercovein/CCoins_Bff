@@ -6,6 +6,7 @@ import com.ccoins.bff.service.IRandomNameService;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +15,20 @@ import java.io.FileReader;
 @Service
 public class RandomNameService implements IRandomNameService {
 
-    @Value("${folder.files.animals.path}")
-    private String ANIMALS_PATH;
+    private final String animalsPath;
 
-    @Value("${folder.files.adjectives.path}")
-    private String ADJECTIVES_PATH;
+    private final String adjectivesPath;
 
-    @Value("${folder.files.default-names.path}")
-    private String DEFAULT_NAMES_PATH;
+    private final String defaultNamesPath;
+
+    @Autowired
+    public RandomNameService(@Value("${folder.files.animals.path}") String animalsPath,
+                             @Value("${folder.files.adjectives.path}") String adjectivesPath,
+                             @Value("${folder.files.default-names.path}") String defaultNamesPath) {
+        this.animalsPath = animalsPath;
+        this.adjectivesPath = adjectivesPath;
+        this.defaultNamesPath = defaultNamesPath;
+    }
 
     @Override
     public String randomFromFile(String path) {
@@ -44,12 +51,12 @@ public class RandomNameService implements IRandomNameService {
 
     @Override
     public String randomGroupName(){
-        return this.randomFromFile(ADJECTIVES_PATH).concat(" ").concat(this.randomFromFile(ANIMALS_PATH));
+        return this.randomFromFile(adjectivesPath).concat(" ").concat(this.randomFromFile(animalsPath));
     }
 
     @Override
     public String randomDefaultName(){
-        return this.randomFromFile(DEFAULT_NAMES_PATH);
+        return this.randomFromFile(defaultNamesPath);
     }
 
 }

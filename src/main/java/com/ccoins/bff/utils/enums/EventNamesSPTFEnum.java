@@ -9,5 +9,5 @@ public enum EventNamesSPTFEnum {
 
     REQUEST_SPOTIFY_AUTHORIZATION,
 
-    LOGOUT_SPOTIFY;
+    LOGOUT_SPOTIFY
 }

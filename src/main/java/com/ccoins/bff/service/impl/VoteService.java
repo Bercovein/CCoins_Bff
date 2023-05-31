@@ -36,8 +36,8 @@ import static com.ccoins.bff.utils.enums.EventNamesEnum.UPDATE_COINS;
 @Service
 @Slf4j
 public class VoteService implements IVoteService {
-    @Value("${voting.expiration-time}")
-    private Integer maxVotingTime;
+
+    private final Integer maxVotingTime;
 
     private final CoinsFeign coinsFeign;
 
@@ -52,7 +52,11 @@ public class VoteService implements IVoteService {
     private final MessageTextUtils messageTextUtils;
 
     @Autowired
-    public VoteService(CoinsFeign coinsFeign, BarsFeign barsFeign, ClientService clientService, PartiesService partiesService, IServerSentEventService sseService, MessageTextUtils messageTextUtils) {
+    public VoteService(@Value("${voting.expiration-time}")Integer maxVotingTime,
+                        CoinsFeign coinsFeign, BarsFeign barsFeign, ClientService clientService,
+                        PartiesService partiesService, IServerSentEventService sseService,
+                        MessageTextUtils messageTextUtils) {
+        this.maxVotingTime = maxVotingTime;
         this.coinsFeign = coinsFeign;
         this.barsFeign = barsFeign;
         this.clientService = clientService;
@@ -69,7 +73,7 @@ public class VoteService implements IVoteService {
     @Override
     public VotingDTO resolveVoting(VotingDTO voting){
 
-        //si la votación no existe, devuelve null;
+        //si la votación no existe, devuelve null
         if(voting == null){
             return null;
         }
@@ -92,7 +96,7 @@ public class VoteService implements IVoteService {
         }
 
         Random rand = new Random();
-        
+
         //toma un tema random en caso de empate
         SongDTO winner = winnerSongs.get(rand.nextInt(winnerSongs.size()));
         
@@ -115,7 +119,7 @@ public class VoteService implements IVoteService {
         //buscar a los clientes que votaron la canción
         List<Long> clientsIdList = this.coinsFeign.getClientsIdWhoVotedSong(voting.getWinnerSong().getId()).getBody();
 
-        if(clientsIdList.isEmpty()){
+        if(clientsIdList == null || clientsIdList.isEmpty()){
             return ipClients;
         }
 
@@ -196,7 +200,7 @@ public class VoteService implements IVoteService {
             if(barRs.hasBody()){
                 barBySong = barRs.getBody();
 
-                if(!Objects.equals(barBySong.getId(), barIdByParty.getId())){
+                if(barBySong == null || barIdByParty == null || !Objects.equals(barBySong.getId(), barIdByParty.getId())){
                     throw new UnauthorizedException(WRONG_BAR_ERROR_CODE, WRONG_BAR_ERROR);
                 }
 
@@ -255,6 +259,7 @@ public class VoteService implements IVoteService {
     }
 
     @Scheduled(fixedDelayString = "${spotify.voting.expiration-time}")
+    @SuppressWarnings({})
     public void closeVoting(){
         //tomar las votaciones que estan hace mas de X min y cerrarlas
         try {

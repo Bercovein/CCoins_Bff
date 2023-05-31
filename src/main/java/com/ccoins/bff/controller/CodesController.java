@@ -35,7 +35,7 @@ public class CodesController implements ICodesController {
     @PutMapping("/invalidate")
     @Override
     public ResponseEntity<CodeDTO> invalidateCode(@RequestBody StringDTO request){
-        return this.service.ínvalidateCode(request);
+        return this.service.invalidateCode(request);
     }
 
     @GetMapping("/game/{state}")

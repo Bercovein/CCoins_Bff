@@ -12,6 +12,9 @@ public class DateUtils {
 
     public static final String DDMMYYYY_HHMM = "DD/MM/YYYY HH:mm";
 
+    private DateUtils() {
+    }
+
     public static LocalDateTime nowLocalDateTime(){
         return LocalDateTime.now();
     }

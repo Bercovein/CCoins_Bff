@@ -40,34 +40,38 @@ import java.util.*;
 @Service
 public class ImageService extends ContextService implements IImageService {
 
-    @Value("${api.url.path}")
-    private String URL;
+    private final String url;
 
-    @Value("${jasper-report.qr.path}")
-    private String JASPER_REPORT_QR_PATH;
+    private final String jasperReportQrPath;
 
-    @Value("${folder.temp.path}")
-    private String TEMP_FOLDER_PATH;
+    private final String tempFolderPath;
 
-    @Value("${folder.images.path}")
-    private String IMAGES_FOLDER_PATH;
+    private final String imagesFolderPath;
 
-    @Value("${folder.images.logo.name}")
-    private String LOGO_NAME;
+    private final String logoName;
 
-    private static final String JPG = "jpg";
     private static final String PNG = "png";
 
     private final ITablesService tablesService;
 
     @Autowired
-    public ImageService(BarsFeign barsFeign, ITablesService tablesService) {
+    public ImageService(@Value("${api.url.path}") String url,
+                        @Value("${jasper-report.qr.path}") String jasperReportQrPath,
+                        @Value("${folder.temp.path}") String tempFolderPath,
+                        @Value("${folder.images.path}") String imagesFolderPath,
+                        @Value("${folder.images.logo.name}") String logoName,
+                        BarsFeign barsFeign, ITablesService tablesService) {
         super(barsFeign);
+        this.url = url;
+        this.jasperReportQrPath = jasperReportQrPath;
+        this.tempFolderPath = tempFolderPath;
+        this.imagesFolderPath = imagesFolderPath;
+        this.logoName = logoName;
         this.tablesService = tablesService;
     }
 
     @Override
-    public BufferedImage generateQr(final String qrCodeText, final int width, final int height) throws Exception {
+    public BufferedImage generateQr(final String qrCodeText, final int width, final int height) throws BadRequestException, IOException {
         final ByteArrayOutputStream stream = QRCode
                 .from(qrCodeText)
                 .withSize(width, height)
@@ -89,7 +93,7 @@ public class ImageService extends ContextService implements IImageService {
 
         //generar QRs
         for (BarTableDTO table : listed) {
-            InputStream inputStream = this.createQRImage(this.URL.concat("/login").concat(table.getCode()), table.getCode());
+            InputStream inputStream = this.createQRImage(this.url.concat("/login").concat(table.getCode()), table.getCode());
             imageList.add(ImageToPdfDTO.builder().number(table.getNumber()).image(inputStream).build());
         }
 
@@ -102,14 +106,14 @@ public class ImageService extends ContextService implements IImageService {
 
     public  ResponseEntity<byte[]> generatePdfFromList(List<ImageToPdfDTO> list) throws JRException, IOException {
         try {
-            JasperReport report = JasperCompileManager.compileReport(BffApplication.class.getResourceAsStream(JASPER_REPORT_QR_PATH));
+            JasperReport report = JasperCompileManager.compileReport(BffApplication.class.getResourceAsStream(jasperReportQrPath));
 
             List<RowToPdfDTO> rowList = this.imagesToRows(list);
 
             JRBeanCollectionDataSource jcd = new JRBeanCollectionDataSource(rowList);
             JasperPrint print = JasperFillManager.fillReport(report, null, jcd);
 
-            String tempPath = TEMP_FOLDER_PATH.concat(DateUtils.nowCurrentMillis()).concat(".pdf");
+            String tempPath = tempFolderPath.concat(DateUtils.nowCurrentMillis()).concat(".pdf");
 
             OutputStream output = new FileOutputStream(tempPath);
             JasperExportManager.exportReportToPdfStream(print, output);
@@ -193,7 +197,7 @@ public class ImageService extends ContextService implements IImageService {
 
             BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix, config);
 
-            File file = new File(IMAGES_FOLDER_PATH.concat(LOGO_NAME));
+            File file = new File(imagesFolderPath.concat(logoName));
             BufferedImage logoImage = ImageIO.read(file);
 
             int deltaHeight = qrImage.getHeight() - logoImage.getHeight();
@@ -204,9 +208,9 @@ public class ImageService extends ContextService implements IImageService {
             g.drawImage(qrImage, 0, 0, null);
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
-            g.drawImage(logoImage, (int) Math.round(deltaWidth / 2), (int) Math.round(deltaHeight / 2), null);
+            g.drawImage(logoImage, deltaWidth / 2, deltaHeight / 2, null);
 
-            String filePath = TEMP_FOLDER_PATH.concat(fileName.concat(".").concat(PNG));
+            String filePath = tempFolderPath.concat(fileName.concat(".").concat(PNG));
             ImageIO.write(combined, PNG, new File(filePath));
 
             return Files.newInputStream(Path.of(filePath), new StandardOpenOption[]{StandardOpenOption.DELETE_ON_CLOSE});

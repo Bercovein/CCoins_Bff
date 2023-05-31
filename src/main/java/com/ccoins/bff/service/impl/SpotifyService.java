@@ -45,33 +45,39 @@ public class SpotifyService extends ContextService implements ISpotifyService {
     private final CredentialsSPTFConfig credentials;
     private final IServerSentEventService sseService;
     private final IVoteService voteService;
-    private final BarsFeign barsFeign;
     private final UsersFeign usersFeign;
 
-    private Map<Long,BarTokenDTO> barTokens = new ConcurrentHashMap<>();
+    private final Map<Long,BarTokenDTO> barTokens = new ConcurrentHashMap<>();
 
-    @Value("${spotify.max-to-vote}")
-    private int maxToVote;
 
-    @Value("${spotify.playback.track-url}")
-    private String trackLink;
+    private final int maxToVote;
 
-    @Value("${spotify.vote-before-ms}")
-    private int votesBeforeEndSongMs;
+
+    private final String trackLink;
+
+    private final int votesBeforeEndSongMs;
 
     @Autowired
-    public SpotifyService(SpotifyFeign spotifyFeign, SpotifyTokenFeign spotifyTokenFeign, CredentialsSPTFConfig credentials, IServerSentEventService sseService, IVoteService voteService, BarsFeign barsFeign, UsersFeign usersFeign) {
+    public SpotifyService(@Value("${spotify.max-to-vote}") int maxToVote,
+                          @Value("${spotify.playback.track-url}") String trackLink,
+                          @Value("${spotify.vote-before-ms}") int votesBeforeEndSongMs,
+                          SpotifyFeign spotifyFeign, SpotifyTokenFeign spotifyTokenFeign,
+                          CredentialsSPTFConfig credentials, IServerSentEventService sseService,
+                          IVoteService voteService, BarsFeign barsFeign, UsersFeign usersFeign) {
         super(barsFeign);
         this.spotifyFeign = spotifyFeign;
         this.spotifyTokenFeign = spotifyTokenFeign;
         this.credentials = credentials;
         this.sseService = sseService;
         this.voteService = voteService;
-        this.barsFeign = barsFeign;
         this.usersFeign = usersFeign;
+        this.maxToVote = maxToVote;
+        this.trackLink = trackLink;
+        this.votesBeforeEndSongMs = votesBeforeEndSongMs;
     }
 
     @Scheduled(fixedDelayString = "${spotify.playback.cron}")
+    @SuppressWarnings({})
     public void sendPlayback(){
         this.barTokens.forEach((c,v) -> this.sendPlaybackToClients(v));
     }
@@ -417,7 +423,8 @@ public class SpotifyService extends ContextService implements ISpotifyService {
         List<SongSPTF> votingSongs = new ArrayList<>();
 
         for (int i=1; i <= Math.min(songs.size(), maxToVote); i++){
-            votingSongs.add(songs.remove(rand.nextInt(songs.size())));
+            int toRemove = rand.nextInt(songs.size());
+            votingSongs.add(songs.remove(toRemove));
         }
 
         return votingSongs;

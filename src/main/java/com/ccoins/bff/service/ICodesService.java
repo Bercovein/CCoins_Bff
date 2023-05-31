@@ -14,7 +14,7 @@ public interface ICodesService {
 
     ResponseEntity<List<CodeDTO>> createCodeByGameBarId(CodeRqDTO request);
 
-    ResponseEntity<CodeDTO> ínvalidateCode(StringDTO request);
+    ResponseEntity<CodeDTO> invalidateCode(StringDTO request);
 
     ResponseEntity<List<CodeDTO>> getByActive(String state);
 

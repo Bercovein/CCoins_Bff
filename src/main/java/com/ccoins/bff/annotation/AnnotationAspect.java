@@ -5,6 +5,7 @@ import com.ccoins.bff.exceptions.UnauthorizedException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
 import com.ccoins.bff.service.ITablesService;
 import com.ccoins.bff.utils.HeaderUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -24,6 +25,7 @@ import static com.ccoins.bff.exceptions.constant.ExceptionConstant.NOT_MOBILE_ER
 
 @Aspect
 @Component
+@Slf4j
 public class AnnotationAspect {
 
     private final ITablesService tablesService;
@@ -61,11 +63,11 @@ public class AnnotationAspect {
 
         Object[] args = joinPoint.getArgs();
 
-        for (int i = 0; i < args.length; i++) {
-            if (args[i] instanceof Device){
-                Device device = (Device) args[i];
+        for (Object arg : args) {
+            if (arg instanceof Device) {
+                Device device = (Device) arg;
                 if (!device.isMobile()) {
-                    System.out.println("NOT A MOBILE DEVICE");
+                    log.error("NOT A MOBILE DEVICE");
                     throw new UnauthorizedException(ExceptionConstant.NOT_MOBILE_ERROR_CODE,
                             NOT_MOBILE_ERROR);
                 }
