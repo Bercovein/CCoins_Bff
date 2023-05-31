@@ -252,7 +252,6 @@ public class PartiesService extends ContextService implements IPartiesService {
                     this.sseService.dispatchEventToSomeClientsFromBar(YOU_ARE_THE_LEADER.name(), YOU_ARE_THE_LEADER.getMessage(),idDTO.getId(),List.of(newLeaderIp));
                 }
             }
-
         }
 
         return response;

@@ -24,6 +24,7 @@ public class PartyTablesController implements IPartyTablesController {
         this.partiesService = partiesService;
     }
 
+    @Override
     @GetMapping
     public ResponseEntity<List<PartyTableDTO>> findActivePartiesByOwner(){
         return this.partiesService.findActivePartiesByOwner();

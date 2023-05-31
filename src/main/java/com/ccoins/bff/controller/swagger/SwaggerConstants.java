@@ -24,6 +24,8 @@ public class SwaggerConstants {
     public static final String GENERATE_QR_PDF = "Generate PDF from codes";
 
     public static final String FIND_BY_ID = "Find by id";
+
+    public static final String FIND_BY = "Find by";
     public static final String FIND_ALL_BY = "Find All by ";
     public static final String AND_OR_STATUS = " and/or status";
 

@@ -23,7 +23,6 @@ public interface IBarsController {
     @ApiOperation(value = FIND_ALL_BY + OWNER)
     ResponseEntity<BarListDTO> findAllByOwner();
 
-
     @ApiOperation(value = ACTIVATE_DEACTIVATE)
     ResponseEntity<BarDTO> active(@RequestBody IdDTO id);
 
