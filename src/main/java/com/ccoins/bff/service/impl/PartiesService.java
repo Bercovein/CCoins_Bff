@@ -24,8 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ccoins.bff.exceptions.constant.ExceptionConstant.*;
-import static com.ccoins.bff.utils.enums.ClosePartyEnum.CLIENTS_ALREADY_ON_PARTY;
-import static com.ccoins.bff.utils.enums.ClosePartyEnum.CLOSED_PARTY;
+import static com.ccoins.bff.utils.enums.ClosePartyEnum.*;
 import static com.ccoins.bff.utils.enums.EventNamesEnum.*;
 
 @Service
@@ -292,20 +291,26 @@ public class PartiesService extends ContextService implements IPartiesService {
     @Override
     public ResponseEntity<GenericRsDTO<ResponseDTO>> kickFromParty(List<Long> list, Long partyId, boolean banned) {
 
-        List<ClientDTO> clientList = this.usersFeign.findByIdIn(list);
+        List<ClientDTO> clientList;
+        ResponseEntity<IdDTO> barId;
+        try {
+            clientList = this.usersFeign.findByIdIn(list);
 
-        clientList.forEach(client -> {
-            try {
-                this.logout(client.getIp());
-                if(banned){
-                    this.prizeFeign.banClientFromParty(client.getId(), partyId);
+            clientList.forEach(client -> {
+                try {
+                    this.logout(client.getIp());
+                    if (banned) {
+                        this.prizeFeign.banClientFromParty(client.getId(), partyId);
+                    }
+                } catch (Exception ignored) {
+                    log.error("No se pudo kickear al cliente.");
                 }
-            }catch (Exception ignored){
-                log.error("No se pudo kickear al cliente.");
-            }
-        });
+            });
 
-        ResponseEntity<IdDTO> barId = this.barsFeign.getBarIdByParty(partyId);
+            barId = this.barsFeign.getBarIdByParty(partyId);
+        }catch(Exception e){
+            return ResponseEntity.ok(new GenericRsDTO<>(CLOSED_PARTY_ERROR.getCode(),CLOSED_PARTY_ERROR.getMessage(),null));
+        }
 
         List<String> clients = new ArrayList<>();
         list.forEach(c -> clients.add(c.toString()));
@@ -314,7 +319,14 @@ public class PartiesService extends ContextService implements IPartiesService {
         if(barId.getBody() != null) {
             this.sseService.dispatchEventToSomeClientsFromBar(LOGOUT_CLIENT.name(), LOGOUT_CLIENT.getMessage(), barId.getBody().getId(), clients);
         }
-        boolean response = this.prizeFeign.closePartyIfHaveNoClients(partyId);
+
+        boolean response = false;
+
+        try {
+            response = this.prizeFeign.closePartyIfHaveNoClients(partyId);
+        }catch(Exception e){
+            log.error("No se pudo verificar el estado de la mesa.");
+        }
 
         if(response){ //avisa si se cerró la party o solo se desloguearon los clientes
             return ResponseEntity.ok(new GenericRsDTO<>(CLOSED_PARTY.getCode(),CLOSED_PARTY.getMessage(),null));
