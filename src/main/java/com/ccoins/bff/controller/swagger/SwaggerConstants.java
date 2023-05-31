@@ -6,12 +6,15 @@ public class SwaggerConstants {
     public static final String TABLE = "Table";
 
     public static final String CLIENT = "Client";
+    public static final String CODE = "Code";
+    public static final String COINS = "Coins";
     public static final String PRIZE = "Prize";
     public static final String BAR = "Bar";
     public static final String SPOTIFY = "Spotify";
     public static final String OWNER = "Owner";
     public static final String PARTY = "Party";
     public static final String GAME = "Game";
+    public static final String REDEEMS = "Redeems";
     public static final String LOGIN = "Login";
     public static final String GOOGLE = "Google";
     public static final String FACEBOOK = "facebook";

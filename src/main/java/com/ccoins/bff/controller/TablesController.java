@@ -61,12 +61,14 @@ public class TablesController implements ITablesController {
     }
 
     @PutMapping
-    ResponseEntity<GenericRsDTO> activeByList(@RequestBody LongListDTO request){
+    @Override
+    public ResponseEntity<GenericRsDTO> activeByList(@RequestBody LongListDTO request){
         return this.service.activeByList(request);
     }
 
     @PutMapping("/codes")
-    ResponseEntity<ResponseDTO> generateCodesByList(@RequestBody LongListDTO request){
+    @Override
+    public ResponseEntity<ResponseDTO> generateCodesByList(@RequestBody LongListDTO request){
         return this.service.generateCodesByList(request);
     }
 }

@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 public class ClientsController implements IClientsController {
 
-    private IClientService service;
-    private IBarsService barsService;
+    private final IClientService service;
+    private final IBarsService barsService;
 
     @Autowired
     public ClientsController(IClientService service, IBarsService barsService) {
@@ -32,6 +32,7 @@ public class ClientsController implements IClientsController {
     @PostMapping("/login")
 //    @MobileCheck
     @LimitedTime
+    @Override
     public ClientTableDTO login(@RequestHeader HttpHeaders headers, Device device){
 
         ClientTableDTO request = ClientTableDTO.builder()
@@ -44,12 +45,14 @@ public class ClientsController implements IClientsController {
     @PutMapping("/name")
     @LimitedTime
     @ResponseStatus(HttpStatus.CREATED)
+    @Override
     public void changeName(@RequestBody ClientDTO request, @RequestHeader HttpHeaders headers){
         request.setIp(HeaderUtils.getClient(headers));
         this.service.changeName(request);
     }
 
     @GetMapping("/logout")
+    @Override
     public void logout(@RequestHeader HttpHeaders headers){
         this.service.logout(HeaderUtils.getClient(headers));
     }

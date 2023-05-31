@@ -36,4 +36,7 @@ public interface IPartyController {
 
     @ApiOperation("Gives leader to another player")
     ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderTo(@RequestBody IdDTO idDTO, @RequestHeader HttpHeaders headers);
+
+    @ApiOperation("Kick players from party by leader")
+    void kickFromPartyByLeader(@RequestBody LongListDTO request, @RequestHeader HttpHeaders headers);
 }

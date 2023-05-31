@@ -1,5 +1,6 @@
 package com.ccoins.bff.controller;
 
+import com.ccoins.bff.controller.swagger.ICoinsController;
 import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.LongDTO;
@@ -18,57 +19,70 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/coins")
-public class CoinsController {
+public class CoinsController implements ICoinsController {
+
+    private final ICoinsService service;
 
     @Autowired
-    private ICoinsService service;
+    public CoinsController(ICoinsService service) {
+        this.service = service;
+    }
 
     @GetMapping("/party/report")
-    public ResponseEntity<CoinsReportDTO> getCoinsReport(@RequestParam(value = "type", required = false) String type,
-                                                        @RequestHeader HttpHeaders headers,
-                                                        @PageableDefault(page = 0, size = 10, sort = "date") Pageable pagination){
+    @Override
+    public ResponseEntity<CoinsReportDTO> getCoinsReportByTableId(@RequestParam(value = "type", required = false) String type,
+                                                                  @RequestHeader HttpHeaders headers,
+                                                                  @PageableDefault(page = 0, size = 10, sort = "date") Pageable pagination){
         return this.service.getCoinsReport(headers, pagination, type);
     }
 
     @PostMapping("/party/report")
-    public ResponseEntity<CoinsReportDTO> getCoinsReport(@RequestParam(value = "type", required = false) String type,
-                                                         @RequestBody IdDTO tableId,
-                                                         @PageableDefault(page = 0, size = 10, sort = "date") Pageable pagination){
+    @Override
+    public ResponseEntity<CoinsReportDTO> getCoinsReportByTableId(@RequestParam(value = "type", required = false) String type,
+                                                                  @RequestBody IdDTO tableId,
+                                                                  @PageableDefault(page = 0, size = 10, sort = "date") Pageable pagination){
         return this.service.getCoinsReport(tableId, pagination, type);
     }
 
     @GetMapping("/active-states")
+    @Override
     public ResponseEntity<List<StateDTO>> getActiveStates(){
         return this.service.getActiveStates();
     }
 
     @PostMapping("/deliver")
-    ResponseEntity<GenericRsDTO<Long>> deliverPrizeOrCoins(@RequestBody IdDTO id){
+    @Override
+    public ResponseEntity<GenericRsDTO<Long>> deliverPrizeOrCoins(@RequestBody IdDTO id){
         return this.service.deliverPrizeOrCoins(id.getId());
     }
 
     @PostMapping("/cancel")
-    ResponseEntity<GenericRsDTO<Long>> cancelPrizeOrCoins(@RequestBody IdDTO id){
+    @Override
+    public ResponseEntity<GenericRsDTO<Long>> cancelPrizeOrCoins(@RequestBody IdDTO id){
         return this.service.cancelPrizeOrCoins(id.getId());
     }
 
     @PostMapping("/adjust")
-    ResponseEntity<GenericRsDTO<Long>> adjustPrizeOrCoins(@RequestBody IdDTO id){
+    @Override
+    public ResponseEntity<GenericRsDTO<Long>> adjustPrizeOrCoins(@RequestBody IdDTO id){
         return this.service.adjustPrizeOrCoins(id.getId());
     }
 
     @GetMapping("/report/in-demand")
-    ResponseEntity<GenericRsDTO<List<CoinsReportStatesDTO>>> getInDemandReport(){
+    @Override
+    public ResponseEntity<GenericRsDTO<List<CoinsReportStatesDTO>>> getInDemandReport(){
         return this.service.getInDemandReport();
     }
 
     @GetMapping("/report/out-demand")
-    ResponseEntity<GenericRsDTO<List<CoinsReportStatesDTO>>> getNotDemandedReport(){
+    @Override
+    public ResponseEntity<GenericRsDTO<List<CoinsReportStatesDTO>>> getNotDemandedReport(){
         return this.service.getNotDemandedReport();
     }
 
     @GetMapping("/count-demand")
-    ResponseEntity<LongDTO> countInDemandReport(){
+    @Override
+    public ResponseEntity<LongDTO> countInDemandReport(){
         return this.service.countInDemandReport();
     }
 }

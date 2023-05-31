@@ -18,8 +18,12 @@ import java.util.List;
 @RequestMapping("/spotify")
 public class SpotifyController implements ISpotifyController {
 
+    private final ISpotifyService service;
+
     @Autowired
-    private ISpotifyService service;
+    public SpotifyController(ISpotifyService service) {
+        this.service = service;
+    }
 
     @PostMapping("/start-playback")
     @ResponseStatus(HttpStatus.OK)

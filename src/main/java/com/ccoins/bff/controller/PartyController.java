@@ -82,6 +82,7 @@ public class PartyController implements IPartyController {
     @DeleteMapping("/kick")
     @ResponseStatus(HttpStatus.OK)
     @LimitedTime
+    @Override
     public void kickFromPartyByLeader(@RequestBody LongListDTO request, @RequestHeader HttpHeaders headers){
         this.partiesService.kickFromPartyByLeader(request,headers);
     }

@@ -1,5 +1,6 @@
 package com.ccoins.bff.controller;
 
+import com.ccoins.bff.controller.swagger.IRedeemsController;
 import com.ccoins.bff.dto.GenericRsDTO;
 import com.ccoins.bff.dto.StringDTO;
 import com.ccoins.bff.dto.coins.CoinsDTO;
@@ -13,18 +14,22 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/redeem")
-public class RedeemsController {
+public class RedeemsController implements IRedeemsController {
+
+    private final ICodesService service;
 
     @Autowired
-    private ICodesService service;
-
+    public RedeemsController(ICodesService service) {
+        this.service = service;
+    }
 
     @PostMapping("/code")
+    @Override
     public ResponseEntity<GenericRsDTO<CoinsDTO>> redeemCode(@RequestBody StringDTO request, @RequestHeader HttpHeaders headers){
 
         RedeemCodeRqDTO redeemCode = RedeemCodeRqDTO.builder()
                 .code(request.getText())
-                .clientId(Long.getLong(HeaderUtils.getClient(headers)))
+                .clientIp(HeaderUtils.getClient(headers))
                 .partyId(HeaderUtils.getPartyId(headers))
                 .build();
 

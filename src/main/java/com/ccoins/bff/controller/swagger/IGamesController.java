@@ -22,7 +22,9 @@ public interface IGamesController {
     @ApiOperation(value = FIND_ALL_BY + GAME)
     ResponseEntity<ListDTO> findAllByBar(Long id);
 
-
     @ApiOperation(value = ACTIVATE_DEACTIVATE)
     ResponseEntity<GameDTO> active(@RequestBody IdDTO id);
+
+    @ApiOperation(value = "Find all type of games availables")
+    ResponseEntity<ListDTO> findAllTypes();
 }

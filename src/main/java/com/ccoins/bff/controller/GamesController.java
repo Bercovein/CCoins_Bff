@@ -49,7 +49,8 @@ public class GamesController implements IGamesController {
     }
 
     @GetMapping("/types")
-    ResponseEntity<ListDTO> findAllTypes() {
+    @Override
+    public ResponseEntity<ListDTO> findAllTypes() {
         return this.service.findAllGamesTypes();
     }
 }

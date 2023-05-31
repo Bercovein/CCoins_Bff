@@ -31,6 +31,7 @@ public class ImageController implements IImageController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Override
     public  ResponseEntity<byte[]> generatePDFWithQRCodes(@RequestBody LongListDTO tableList) throws JRException, IOException {
         return this.service.generatePDFWithQRCodes(tableList);
     }

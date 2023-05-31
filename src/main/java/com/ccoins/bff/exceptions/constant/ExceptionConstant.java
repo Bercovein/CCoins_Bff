@@ -242,5 +242,8 @@ public class ExceptionConstant {
     public static final String URL_MENU_ERROR_CODE = "0072";
     public static final String URL_MENU_ERROR = "Error al intentar devolver el menú del bar";
 
+    public static final String CLIENT_REDEEM_CODE_ERROR_CODE = "0073";
+    public static final String CLIENT_REDEEM_CODE_ERROR = "El cliente no se encuentra para reclamar el codigo";
+
 
 }

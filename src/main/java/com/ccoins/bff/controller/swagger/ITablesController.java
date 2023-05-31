@@ -1,8 +1,6 @@
 package com.ccoins.bff.controller.swagger;
 
-import com.ccoins.bff.dto.GenericRsDTO;
-import com.ccoins.bff.dto.IdDTO;
-import com.ccoins.bff.dto.ListDTO;
+import com.ccoins.bff.dto.*;
 import com.ccoins.bff.dto.bars.BarTableDTO;
 import com.ccoins.bff.dto.bars.TableDTO;
 import com.ccoins.bff.dto.bars.TableQuantityDTO;
@@ -36,4 +34,10 @@ public interface ITablesController {
 
     @ApiOperation(value = DELETE_BY_QUANTITY)
     ResponseEntity<GenericRsDTO> deleteByQuantity(@RequestBody TableQuantityDTO request);
+
+    @ApiOperation(value = "Change state of tables by id list")
+    ResponseEntity<GenericRsDTO> activeByList(@RequestBody LongListDTO request);
+
+    @ApiOperation(value = "Generate qr codes by table id list")
+    ResponseEntity<ResponseDTO> generateCodesByList(@RequestBody LongListDTO request);
 }

@@ -18,6 +18,7 @@ public class RedeemCodeRqDTO {
     private String code;
 
     private Long clientId;
+    private String clientIp;
 
     @NotNull
     private Long partyId;

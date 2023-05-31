@@ -7,10 +7,13 @@ import com.ccoins.bff.dto.coins.CodeRqDTO;
 import com.ccoins.bff.dto.coins.CoinsDTO;
 import com.ccoins.bff.dto.coins.RedeemCodeRqDTO;
 import com.ccoins.bff.dto.prizes.ClientPartyDTO;
+import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
+import com.ccoins.bff.exceptions.ObjectNotFoundException;
 import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.feign.CoinsFeign;
 import com.ccoins.bff.feign.PrizeFeign;
+import com.ccoins.bff.feign.UsersFeign;
 import com.ccoins.bff.service.ICodesService;
 import com.ccoins.bff.service.IServerSentEventService;
 import com.ccoins.bff.spotify.sto.CodeDTO;
@@ -35,14 +38,17 @@ public class CodesService extends ContextService implements ICodesService {
 
     private final PrizeFeign  prizeFeign;
 
+    private final UsersFeign usersFeign;
+
     private final IServerSentEventService sseService;
 
     @Autowired
-    public CodesService(CoinsFeign coinsFeign, IServerSentEventService sseService, BarsFeign barsFeign, PrizeFeign prizeFeign) {
+    public CodesService(CoinsFeign coinsFeign, IServerSentEventService sseService, BarsFeign barsFeign, PrizeFeign prizeFeign, UsersFeign usersFeign) {
         super(barsFeign);
         this.coinsFeign = coinsFeign;
         this.sseService = sseService;
         this.prizeFeign = prizeFeign;
+        this.usersFeign = usersFeign;
     }
 
     @Override
@@ -103,6 +109,15 @@ public class CodesService extends ContextService implements ICodesService {
         if(RegexUtils.validateRegexAtoZMiddleDash(request.getCode())){
             throw new BadRequestException(WRONG_REGEX_CODE_ERROR_CODE, this.getClass(), WRONG_REGEX_CODE_ERROR);
         }
+
+        Optional<ClientDTO> client = this.usersFeign.findActiveByIp(request.getClientIp());
+
+        if(client.isEmpty()){
+            throw new ObjectNotFoundException(CLIENT_REDEEM_CODE_ERROR_CODE, this.getClass(), CLIENT_REDEEM_CODE_ERROR);
+        }
+
+        request.setClientId(client.get().getId());
+
         ResponseEntity<GenericRsDTO<CoinsDTO>> response = this.coinsFeign.redeemCode(request);
 
         if(response.hasBody() && response.getBody() != null && response.getBody().getCode() == null && response.getBody().getData() != null){

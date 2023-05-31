@@ -14,10 +14,13 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequestMapping("/sse")
 public class ServerSentEventController implements IServerSentEventController {
 
-    @Autowired
-    private IServerSentEventService service;
+    private final IServerSentEventService service;
 
-    // method for client subscription
+    @Autowired
+    public ServerSentEventController(IServerSentEventService service) {
+        this.service = service;
+    }
+
     @CrossOrigin(origins = "${sse.cross-origins}")
     @RequestMapping(value="/subscribe",consumes=MediaType.ALL_VALUE)
     @Override
@@ -25,7 +28,6 @@ public class ServerSentEventController implements IServerSentEventController {
         return this.service.subscribeClient(partyId, client);
     }
 
-    // method for client subscription
     @CrossOrigin(origins = "${sse.cross-origins}")
     @RequestMapping(value="/subscribe/owner",consumes=MediaType.ALL_VALUE)
     @Override
