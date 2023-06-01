@@ -103,12 +103,12 @@ public class CodesService extends ContextService implements ICodesService {
     @Override
     public ResponseEntity<GenericRsDTO<CoinsDTO>> redeemCode(RedeemCodeRqDTO request) {
 
-        //busca al lider si no se envió por la request
-        this.searchLeader(request);
 
         if(RegexUtils.validateRegexAtoZMiddleDash(request.getCode())){
             throw new BadRequestException(WRONG_REGEX_CODE_ERROR_CODE, this.getClass(), WRONG_REGEX_CODE_ERROR);
         }
+
+        this.searchLeader(request);
 
         Optional<ClientDTO> client = this.usersFeign.findActiveByIp(request.getClientIp());
 
@@ -134,16 +134,24 @@ public class CodesService extends ContextService implements ICodesService {
         return response;
     }
 
-    public void  searchLeader(RedeemCodeRqDTO request){
-        if(request.getClientId() == null){
+    public void searchLeader(RedeemCodeRqDTO request){
+
+        if(request.getClientIp() == null){
             List<ClientPartyDTO> clients = this.prizeFeign.findClientsByPartyId(request.getPartyId());
 
             Optional<ClientPartyDTO> leaderOpt = clients.stream().filter(ClientPartyDTO::isLeader).findFirst();
 
             if(leaderOpt.isPresent()){
                 request.setClientId(leaderOpt.get().getClient());
+                //setear ip?
             }else{
                 request.setClientId(clients.stream().findAny().get().getClient());
+            }
+
+            List<ClientDTO> clientsList = this.usersFeign.findByIdIn(List.of(request.getClientId()));
+
+            if(!clientsList.isEmpty()){
+                request.setClientIp(clientsList.get(0).getIp());
             }
         }
     }
