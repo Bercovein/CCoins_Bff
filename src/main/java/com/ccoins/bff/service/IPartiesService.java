@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface IPartiesService {
 
-    Long asignOrCreatePartyByCode(String code, ClientDTO clientDTO);
+    void asignOrCreatePartyByCode(ClientTableDTO request, ClientDTO clientDTO);
 
     void asignClientToParty(Long partyId, Long clientId, boolean leader);
 

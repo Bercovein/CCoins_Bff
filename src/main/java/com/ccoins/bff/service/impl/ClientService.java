@@ -53,7 +53,9 @@ public class ClientService implements IClientService {
             throw new UnauthorizedException(CLIENT_BANNED_FROM_PARTY_ERROR_CODE, this.getClass(),CLIENT_BANNED_FROM_PARTY_ERROR);
         }
 
-        Long partyId = this.partyService.asignOrCreatePartyByCode(request.getTableCode(), clientDTO);
+        this.partyService.asignOrCreatePartyByCode(request, clientDTO);
+
+        Long partyId = request.getPartyId();
 
         if (partyId != null){
             this.sseService.dispatchEventToClientsFromParty(NEW_CLIENT_TO_PARTY.name(),String.format(NEW_CLIENT_TO_PARTY.getMessage(),clientDTO.getNickName()),partyId);

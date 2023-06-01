@@ -20,4 +20,6 @@ public class ClientTableDTO {
     private String nickName;
 
     private Long partyId;
+
+    private boolean leader;
 }

@@ -56,14 +56,14 @@ public class PartiesService extends ContextService implements IPartiesService {
 
 
     @Override
-    public Long asignOrCreatePartyByCode(String code, ClientDTO clientDTO) {
+    public void asignOrCreatePartyByCode(ClientTableDTO request, ClientDTO clientDTO) {
 
         PartyDTO party;
         Optional<PartyDTO> partyOpt;
         boolean leader = false;
         //hay party activa en la mesa?
             //traer mesa por codigo y party por id de mesa
-        BarTableDTO barTableDTO = this.tablesService.findByCode(code);
+        BarTableDTO barTableDTO = this.tablesService.findByCode(request.getTableCode());
 
         partyOpt = this.findActivePartyByTable(barTableDTO.getId());
 
@@ -76,7 +76,8 @@ public class PartiesService extends ContextService implements IPartiesService {
 
         this.asignClientToParty(party.getId(),clientDTO.getId(), leader);
 
-        return party.getId();
+        request.setPartyId(party.getId());
+        request.setLeader(leader);
     }
 
     @Override
