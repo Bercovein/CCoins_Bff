@@ -165,6 +165,8 @@ public class PartiesService extends ContextService implements IPartiesService {
                     this.getClass(), ExceptionConstant.PARTY_CLIENTS_ERROR);
         }
 
+        list.removeIf(clientDTO -> !clientDTO.isActive());
+
         List<Long> idList = new ArrayList<>();
         list.forEach(cp -> idList.add(cp.getClient()));
 
@@ -181,8 +183,6 @@ public class PartiesService extends ContextService implements IPartiesService {
                 client.setLeader(false);
             }
         }
-
-        clients.removeIf(clientDTO -> !clientDTO.isActive());
 
         clients = clients.stream().sorted(Comparator.comparing(ClientDTO::getNickName)).collect(Collectors.toList());
 
