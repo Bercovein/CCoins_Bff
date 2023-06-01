@@ -182,6 +182,8 @@ public class PartiesService extends ContextService implements IPartiesService {
             }
         }
 
+        clients.removeIf(clientDTO -> !clientDTO.isActive());
+
         clients = clients.stream().sorted(Comparator.comparing(ClientDTO::getNickName)).collect(Collectors.toList());
 
         //pone al cliente actual en el inicio de la lista
