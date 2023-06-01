@@ -74,14 +74,18 @@ public class PartiesService extends ContextService implements IPartiesService {
             party = partyOpt.get();
         }
 
-        this.asignClientToParty(party.getId(),clientDTO.getId(), leader);
+        ResponseEntity<ClientPartyDTO> response = this.asignClientToParty(party.getId(),clientDTO.getId(), leader);
+
+        if(response.hasBody() && response.getBody() != null){
+            leader = response.getBody().isLeader();
+        }
 
         request.setPartyId(party.getId());
         request.setLeader(leader);
     }
 
     @Override
-    public void asignClientToParty(Long partyId, Long clientId, boolean leader){
+    public  ResponseEntity<ClientPartyDTO> asignClientToParty(Long partyId, Long clientId, boolean leader){
 
         try {
             ClientPartyDTO request = ClientPartyDTO.builder()
@@ -90,7 +94,7 @@ public class PartiesService extends ContextService implements IPartiesService {
                     .active(true)
                     .leader(leader)
                     .build();
-            this.prizeFeign.asignClientToParty(request);
+            return this.prizeFeign.asignClientToParty(request);
         }catch (Exception e){
             throw new BadRequestException(ExceptionConstant.ADD_CLIENT_TO_PARTY_ERROR_CODE,
                     this.getClass(), ExceptionConstant.ADD_CLIENT_TO_PARTY_ERROR);

@@ -1,6 +1,7 @@
 package com.ccoins.bff.service;
 
 import com.ccoins.bff.dto.*;
+import com.ccoins.bff.dto.prizes.ClientPartyDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.dto.users.ClientDTO;
 import org.springframework.http.HttpHeaders;
@@ -13,7 +14,7 @@ public interface IPartiesService {
 
     void asignOrCreatePartyByCode(ClientTableDTO request, ClientDTO clientDTO);
 
-    void asignClientToParty(Long partyId, Long clientId, boolean leader);
+    ResponseEntity<ClientPartyDTO> asignClientToParty(Long partyId, Long clientId, boolean leader);
 
     PartyDTO createParty(Long tableId);
 

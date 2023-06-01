@@ -44,7 +44,7 @@ public interface PrizeFeign {
     PartyDTO createParty(PartyDTO partyDTO);
 
     @PostMapping({"/parties/client"})
-    void asignClientToParty(@RequestBody ClientPartyDTO request);
+    ResponseEntity<ClientPartyDTO> asignClientToParty(@RequestBody ClientPartyDTO request);
 
     @GetMapping("/parties/{id}")
     Optional<PartyDTO> findById(@PathVariable("id")Long id);
