@@ -195,9 +195,10 @@ public class PartiesService extends ContextService implements IPartiesService {
     }
 
     @Override
-    public void logout(String client) {
+    public void logout(String client, Long partyId) {
         try {
             this.prizeFeign.logoutClientFromTables(client);
+            this.closeIfNotClients(partyId);
         } catch (Exception e) {
             throw new BadRequestException(ExceptionConstant.LOGOUT_CLIENT_ERROR_CODE,
                     this.getClass(), ExceptionConstant.LOGOUT_CLIENT_ERROR);
@@ -303,7 +304,7 @@ public class PartiesService extends ContextService implements IPartiesService {
 
             clientList.forEach(client -> {
                 try {
-                    this.logout(client.getIp());
+                    this.logout(client.getIp(), partyId);
                     if (banned) {
                         this.prizeFeign.banClientFromParty(client.getId(), partyId);
                     }
@@ -325,13 +326,7 @@ public class PartiesService extends ContextService implements IPartiesService {
             this.sseService.dispatchEventToSomeClientsFromBar(LOGOUT_CLIENT.name(), LOGOUT_CLIENT.getMessage(), barId.getBody().getId(), clients);
         }
 
-        boolean response = false;
-
-        try {
-            response = this.prizeFeign.closePartyIfHaveNoClients(partyId);
-        }catch(Exception e){
-            log.error("No se pudo verificar el estado de la mesa.");
-        }
+        boolean response = this.closeIfNotClients(partyId);
 
         if(response){ //avisa si se cerró la party o solo se desloguearon los clientes
             return ResponseEntity.ok(new GenericRsDTO<>(CLOSED_PARTY.getCode(),CLOSED_PARTY.getMessage(),null));
@@ -339,6 +334,15 @@ public class PartiesService extends ContextService implements IPartiesService {
 
         return ResponseEntity.ok(new GenericRsDTO<>(CLIENTS_ALREADY_ON_PARTY.getCode(),CLIENTS_ALREADY_ON_PARTY.getMessage(),null));
 
+    }
+
+    private boolean closeIfNotClients(Long partyId){
+        try {
+            return this.prizeFeign.closePartyIfHaveNoClients(partyId);
+        }catch(Exception e){
+            log.error("No se pudo verificar el estado de la mesa.");
+        }
+        return false;
     }
 
     @Override

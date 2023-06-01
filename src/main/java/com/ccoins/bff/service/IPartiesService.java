@@ -27,7 +27,7 @@ public interface IPartiesService {
 
     ListDTO findClientsFromParty(Long id, HttpHeaders headers);
 
-    void logout(String client);
+    void logout(String client, Long partyId);
 
     List<ClientDTO> findByIdIn(List<Long> list);
 

@@ -54,7 +54,7 @@ public class ClientsController implements IClientsController {
     @GetMapping("/logout")
     @Override
     public void logout(@RequestHeader HttpHeaders headers){
-        this.service.logout(HeaderUtils.getClient(headers));
+        this.service.logout(HeaderUtils.getClient(headers),HeaderUtils.getPartyId(headers));
     }
 
     @GetMapping("/menu")
