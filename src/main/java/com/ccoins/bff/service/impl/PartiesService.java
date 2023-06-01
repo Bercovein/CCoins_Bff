@@ -172,8 +172,6 @@ public class PartiesService extends ContextService implements IPartiesService {
             clients = this.findByIdIn(idList);
         }
 
-        clients.removeIf(clientDTO -> clientDTO.getIp().equals(clientIp));
-
         for (ClientDTO client: clients) {
 
             Optional<ClientPartyDTO> cpOpt = list.stream().filter( c -> c.getClient().equals(client.getId())).findAny();
@@ -185,6 +183,11 @@ public class PartiesService extends ContextService implements IPartiesService {
         }
 
         clients = clients.stream().sorted(Comparator.comparing(ClientDTO::getNickName)).collect(Collectors.toList());
+
+        //pone al cliente actual en el inicio de la lista
+        ClientDTO actualClient = clients.stream().filter(clientDTO -> clientDTO.getIp().equals(clientIp)).collect(Collectors.toList()).get(0);
+        clients.removeIf(clientDTO -> clientDTO.getIp().equals(clientIp));
+        clients.add(0, actualClient);
 
         return ListDTO.builder().list(clients).build();
     }
