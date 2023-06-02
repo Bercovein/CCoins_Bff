@@ -55,13 +55,16 @@ public class ClientService implements IClientService {
 
         this.partyService.asignOrCreatePartyByCode(request, clientDTO);
 
+        request.setClientId(clientDTO.getId());
+        request.setNickName(clientDTO.getNickName());
+
         Long partyId = request.getPartyId();
 
         if (partyId != null){
             this.sseService.dispatchEventToClientsFromParty(NEW_CLIENT_TO_PARTY.name(),String.format(NEW_CLIENT_TO_PARTY.getMessage(),clientDTO.getNickName()),partyId);
         }
 
-        return ClientTableDTO.builder().partyId(partyId).clientIp(clientDTO.getIp()).clientId(clientDTO.getId()).tableCode(request.getTableCode()).nickName(clientDTO.getNickName()).build();
+        return request;
     }
 
     @Override

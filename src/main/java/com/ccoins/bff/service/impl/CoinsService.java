@@ -179,7 +179,7 @@ public class CoinsService extends ContextService implements ICoinsService {
     @Override
     public ResponseEntity<GenericRsDTO<Long>> adjustPrizeOrCoins(Long id){
         try{
-            ResponseEntity<GenericRsDTO<Long>> response =this.coinsFeign.adjustPrizeOrCoins(id);
+            ResponseEntity<GenericRsDTO<Long>> response = this.coinsFeign.adjustPrizeOrCoins(id);
 
             if(response.hasBody()){
                 GenericRsDTO<Long> generic = response.getBody();
