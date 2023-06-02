@@ -1,13 +1,9 @@
 package com.ccoins.bff.feign;
 
-import com.ccoins.bff.dto.GenericRsDTO;
-import com.ccoins.bff.dto.ListDTO;
-import com.ccoins.bff.dto.LongListDTO;
-import com.ccoins.bff.dto.ResponseDTO;
+import com.ccoins.bff.dto.*;
 import com.ccoins.bff.dto.prizes.ClientPartyDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.dto.prizes.PrizeDTO;
-import com.ccoins.bff.dto.ClientTableDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,7 +57,7 @@ public interface PrizeFeign {
     @PostMapping("/parties/clients")
     List<Long> findAllIdsByClients(@RequestBody LongListDTO list);
 
-    @PutMapping("/parties/leader/{leaderId}/to/{clientId}")
+    @PutMapping(value = "/parties/leader/{leaderId}/to/{clientId}")
     ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderTo(@PathVariable("leaderId") String leaderId, @PathVariable("clientId") Long clientId);
 
     @DeleteMapping("/parties/{partyId}/close-if-inactive")
