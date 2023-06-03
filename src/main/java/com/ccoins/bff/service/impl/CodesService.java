@@ -7,6 +7,7 @@ import com.ccoins.bff.dto.coins.CodeRqDTO;
 import com.ccoins.bff.dto.coins.CoinsDTO;
 import com.ccoins.bff.dto.coins.RedeemCodeRqDTO;
 import com.ccoins.bff.dto.prizes.ClientPartyDTO;
+import com.ccoins.bff.dto.prizes.PrizeDTO;
 import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.ObjectNotFoundException;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.ccoins.bff.exceptions.constant.ExceptionConstant.*;
@@ -61,7 +63,7 @@ public class CodesService extends ContextService implements ICodesService {
         }
 
         try {
-            gameRE = super.barsFeign.findCodeGameByBarId(super.getLoggedUserId());
+            gameRE = super.barsFeign.findCodeGameByBarId(super.findBarIdByOwner());
 
             if(!gameRE.hasBody() || gameRE.getBody() == null){
                 throw new BadRequestException();
@@ -91,13 +93,22 @@ public class CodesService extends ContextService implements ICodesService {
     @Override
     public ResponseEntity<List<CodeDTO>> getByActive(String state) {
 
-        ResponseEntity<GameDTO> id = this.barsFeign.findCodeGameByBarId(super.getLoggedUserId());
+        ResponseEntity<GameDTO> id = this.barsFeign.findCodeGameByBarId(super.findBarIdByOwner());
 
         if(!id.hasBody()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ArrayList<>());
         }
 
-        return this.coinsFeign.getByActive(id.getBody().getId(),state);
+        ResponseEntity<List<CodeDTO>> response = this.coinsFeign.getByActive(id.getBody().getId(),state);
+
+        Objects.requireNonNull(response.getBody()).stream().filter(codeDTO -> codeDTO.getPrize() != null).forEach(codeDTO -> {
+            ResponseEntity<PrizeDTO> prize = this.prizeFeign.findPrizeById(codeDTO.getPrize());
+            if(prize.hasBody() && prize.getBody() != null){
+                codeDTO.setPrizeName(prize.getBody().getName());
+            }
+        });
+
+        return response;
     }
 
     @Override

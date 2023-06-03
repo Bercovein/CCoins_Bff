@@ -245,7 +245,9 @@ public class PartiesService extends ContextService implements IPartiesService {
         }
 
         if(response.hasBody() && Objects.requireNonNull(response.getBody()).getCode() == null){
-            this.sseService.dispatchEventToClientsFromParty(NEW_LEADER.name(),response.getBody().getMessage(),partyId);
+            String message = response.getBody().getMessage().toString();
+
+            this.sseService.dispatchEventToClientsFromParty(NEW_LEADER.name(),message,partyId);
 
             ResponseEntity<IdDTO> barIdResponse = this.barsFeign.getBarIdByParty(partyId);
 
