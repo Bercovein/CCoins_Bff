@@ -24,10 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static com.ccoins.bff.exceptions.constant.ExceptionConstant.*;
 import static com.ccoins.bff.utils.enums.EventNamesEnum.NEW_PRIZE;
@@ -101,11 +98,16 @@ public class CodesService extends ContextService implements ICodesService {
 
         ResponseEntity<List<CodeDTO>> response = this.coinsFeign.getByActive(id.getBody().getId(),state);
 
-        Objects.requireNonNull(response.getBody()).stream().filter(codeDTO -> codeDTO.getPrize() != null).forEach(codeDTO -> {
-            ResponseEntity<PrizeDTO> prize = this.prizeFeign.findPrizeById(codeDTO.getPrize());
-            if(prize.hasBody() && prize.getBody() != null){
-                codeDTO.setPrizeName(prize.getBody().getName());
-            }
+        Set<Long> prizeIds = new HashSet<>();
+
+        List<CodeDTO> codes = response.getBody() != null ? response.getBody() : new ArrayList<>();
+
+        codes.stream().filter(codeDTO -> codeDTO.getPrize() != null).forEach(code -> prizeIds.add(code.getPrize()));
+
+        prizeIds.forEach(prizeId -> {
+            ResponseEntity<PrizeDTO> prize = this.prizeFeign.findPrizeById(prizeId);
+            codes.stream().filter(codeDTO -> Objects.equals(codeDTO.getPrize(), prizeId))
+                    .forEach(codeDTO -> codeDTO.setPrizeName(prize.getBody() != null? prize.getBody().getName() : null));
         });
 
         return response;
