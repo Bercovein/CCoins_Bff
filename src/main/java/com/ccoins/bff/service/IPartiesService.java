@@ -26,7 +26,7 @@ public interface IPartiesService {
 
     PartyDTO findById(Long id);
 
-    ListDTO findClientsFromParty(Long id, HttpHeaders headers);
+    ListDTO findClientsFromPartyToClients(Long id, HttpHeaders headers);
 
     void logout(String client, Long partyId);
 
@@ -45,4 +45,6 @@ public interface IPartiesService {
     boolean isBannedFromParty(ClientTableDTO request);
 
     ResponseEntity<List<PartyTableDTO>> findActivePartiesByOwner();
+
+    ListDTO findClientsByPartyIdToOwner(IdDTO request);
 }

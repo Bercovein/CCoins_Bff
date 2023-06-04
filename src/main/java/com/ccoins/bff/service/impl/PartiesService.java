@@ -155,15 +155,13 @@ public class PartiesService extends ContextService implements IPartiesService {
         }
     }
 
-    @Override
-    public ListDTO findClientsFromParty(Long id, HttpHeaders headers) {
+    private List<ClientDTO> findClientsFromParty(Long partyId){
 
-        String clientIp = HeaderUtils.getClient(headers);
         List<ClientPartyDTO> list;
         List<ClientDTO> clients = new ArrayList<>();
 
         try {
-            list = this.prizeFeign.findClientsByPartyId(id);
+            list = this.prizeFeign.findClientsByPartyId(partyId);
         }catch(Exception e){
             throw new BadRequestException(ExceptionConstant.PARTY_CLIENTS_ERROR_CODE,
                     this.getClass(), ExceptionConstant.PARTY_CLIENTS_ERROR);
@@ -189,6 +187,15 @@ public class PartiesService extends ContextService implements IPartiesService {
         }
 
         clients = clients.stream().sorted(Comparator.comparing(ClientDTO::getNickName)).collect(Collectors.toList());
+
+        return clients;
+    }
+
+    @Override
+    public ListDTO findClientsFromPartyToClients(Long id, HttpHeaders headers) {
+
+        String clientIp = HeaderUtils.getClient(headers);
+        List<ClientDTO> clients = this.findClientsFromParty(id);
 
         //pone al cliente actual en el inicio de la lista
         ClientDTO actualClient = clients.stream().filter(clientDTO -> clientDTO.getIp().equals(clientIp)).collect(Collectors.toList()).get(0);
@@ -278,7 +285,7 @@ public class PartiesService extends ContextService implements IPartiesService {
 
         ResponseEntity<Boolean> isLeader = this.prizeFeign.isLeaderFromParty(leaderIp,partyId);
 
-        if(!isLeader.hasBody() || isLeader.getBody() == null || !isLeader.getBody()){
+        if(!isLeader.hasBody() || isLeader.getBody() == null || Boolean.TRUE.equals(!isLeader.getBody())){
             throw new ObjectNotFoundException(NO_LEADER_ERROR_CODE,this.getClass(),NO_LEADER_ERROR);
         }
 
@@ -397,5 +404,11 @@ public class PartiesService extends ContextService implements IPartiesService {
         });
 
         return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ListDTO findClientsByPartyIdToOwner(IdDTO request) {
+        List<ClientDTO> clients = this.findClientsFromParty(request.getId());
+        return ListDTO.builder().list(clients).build();
     }
 }

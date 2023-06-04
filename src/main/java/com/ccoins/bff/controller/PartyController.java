@@ -49,7 +49,7 @@ public class PartyController implements IPartyController {
     @LimitedTime
     @Override
     public ResponseEntity<ListDTO> getClientsFromParty(@RequestBody IdDTO id, @RequestHeader HttpHeaders headers){
-        return ResponseEntity.ok(this.partiesService.findClientsFromParty(id.getId(), headers));
+        return ResponseEntity.ok(this.partiesService.findClientsFromPartyToClients(id.getId(), headers));
     }
 
     @Override
