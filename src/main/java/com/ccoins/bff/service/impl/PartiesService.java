@@ -67,12 +67,16 @@ public class PartiesService extends ContextService implements IPartiesService {
 
         partyOpt = this.findActivePartyByTable(barTableDTO.getId());
 
+        //si no hay una party activa crea una, sino la usa
         if(partyOpt.isEmpty()){ //no -> crear party
             party = this.createParty(barTableDTO.getId());
             leader = true;
         }else{
             party = partyOpt.get();
         }
+        //lo desloguea del resto de parties si esta activo
+        //menos de la party actual si es que está reingresando
+        this.logoutFromAnyPartyBut(clientDTO.getIp(), party.getId());
 
         ResponseEntity<ClientPartyDTO> response = this.asignClientToParty(party.getId(),clientDTO.getId(), leader);
 
@@ -206,10 +210,20 @@ public class PartiesService extends ContextService implements IPartiesService {
     }
 
     @Override
-    public void logout(String client, Long partyId) {
+    public void logoutFromAnyParty(String client, Long partyId) {
         try {
-            this.prizeFeign.logoutClientFromTables(client);
+            this.prizeFeign.logoutClientFromParties(client);
             this.closeIfNotClients(partyId);
+        } catch (Exception e) {
+            throw new BadRequestException(ExceptionConstant.LOGOUT_CLIENT_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.LOGOUT_CLIENT_ERROR);
+        }
+    }
+
+    @Override
+    public void logoutFromAnyPartyBut(String client, Long partyId) {
+        try {
+            this.prizeFeign.logoutClientFromPartiesBut(client,partyId);
         } catch (Exception e) {
             throw new BadRequestException(ExceptionConstant.LOGOUT_CLIENT_ERROR_CODE,
                     this.getClass(), ExceptionConstant.LOGOUT_CLIENT_ERROR);
@@ -317,7 +331,7 @@ public class PartiesService extends ContextService implements IPartiesService {
 
             clientList.forEach(client -> {
                 try {
-                    this.logout(client.getIp(), partyId);
+                    this.logoutFromAnyParty(client.getIp(), partyId);
                     if (banned) {
                         this.prizeFeign.banClientFromParty(client.getId(), partyId);
                     }
@@ -351,7 +365,9 @@ public class PartiesService extends ContextService implements IPartiesService {
 
     private boolean closeIfNotClients(Long partyId){
         try {
-            return this.prizeFeign.closePartyIfHaveNoClients(partyId);
+            if(partyId != null){
+                return this.prizeFeign.closePartyIfHaveNoClients(partyId);
+            }
         }catch(Exception e){
             log.error("No se pudo verificar el estado de la mesa.");
         }

@@ -49,7 +49,7 @@ public interface PrizeFeign {
     List<ClientPartyDTO> findClientsByPartyId(@PathVariable("id") Long id);
 
     @DeleteMapping("/parties/client/{client}")
-    void logoutClientFromTables(@PathVariable ("client") String client);
+    void logoutClientFromParties(@PathVariable ("client") String client);
 
     @GetMapping("/parties/table/code/{code}")
     Optional<PartyDTO> findActivePartyByTableCode(@PathVariable("code") String code);
@@ -74,4 +74,7 @@ public interface PrizeFeign {
 
     @GetMapping("/parties/bar/{id}")
     ResponseEntity<List<PartyDTO>> findActivePartiesByBar(@PathVariable("id") Long id);
+
+    @DeleteMapping("/parties/client/{client}/but/{partyId}")
+    void logoutClientFromPartiesBut(@PathVariable("client") String client, @PathVariable("partyId") Long partyId);
 }

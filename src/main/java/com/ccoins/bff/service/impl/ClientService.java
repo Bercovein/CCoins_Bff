@@ -124,6 +124,6 @@ public class ClientService implements IClientService {
 
     @Override
     public void logout(String client, Long partyId) {
-        this.partyService.logout(client, partyId);
+        this.partyService.logoutFromAnyParty(client, partyId);
     }
 }
