@@ -6,6 +6,9 @@ public class ObjectNotFoundException extends CustomException {
         super(code, message);
     }
 
+    public ObjectNotFoundException() {
+    }
+
     @Override
     public Object get() {
         return null;

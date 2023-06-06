@@ -36,7 +36,9 @@ public interface IPartiesService {
 
     List<Long> findAllIdsByClients(List<Long> clientsIds);
 
-    ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderTo(HttpHeaders headers, IdDTO idDTO);
+    ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderToFromClient(HttpHeaders headers, IdDTO request);
+
+    ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderTo(String leader, Long partyId, Long newLeader);
 
     ResponseEntity<GenericRsDTO<ResponseDTO>> kickFromPartyByLeader(LongListDTO request, HttpHeaders headers);
 

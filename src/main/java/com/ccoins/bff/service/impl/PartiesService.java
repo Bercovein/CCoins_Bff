@@ -252,43 +252,77 @@ public class PartiesService extends ContextService implements IPartiesService {
     }
 
     @Override
-    public ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderTo(HttpHeaders headers, IdDTO request) {
-
+    public ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderToFromClient(HttpHeaders headers, IdDTO request){
         String leader = HeaderUtils.getClient(headers);
         Long newLeader = request.getId();
-        ResponseEntity<GenericRsDTO<ResponseDTO>> response;
         Long partyId = HeaderUtils.getPartyId(headers);
+        return this.giveLeaderTo(leader, partyId, newLeader);
+    }
 
+
+    @Override
+    public ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderTo(String leader, Long partyId, Long newLeader) {
+
+        ResponseEntity<GenericRsDTO<ResponseDTO>> response;
+
+        //si no se eligió la lider, se elige a uno random
+        if(newLeader == null){
+            try {
+                newLeader = this.getAnyClientIdFromParty(partyId);
+            }catch(Exception e){
+                return ResponseEntity.ok(new GenericRsDTO<>(GIVE_LEADER_TO_ERROR_CODE, GIVE_LEADER_TO_ERROR, null));
+            }
+        }
+
+        //se hace el cambio de lider
         try {
             response = this.prizeFeign.giveLeaderTo(leader, newLeader);
         }catch(Exception e){
             return ResponseEntity.ok(new GenericRsDTO<>(GIVE_LEADER_TO_ERROR_CODE,GIVE_LEADER_TO_ERROR,null));
         }
 
+        //se preparan los menajes para enviar a los participantes de la party
         if(response.hasBody() && Objects.requireNonNull(response.getBody()).getCode() == null){
-            String message = response.getBody().getMessage().toString();
-
-            this.sseService.dispatchEventToClientsFromParty(NEW_LEADER.name(),message,partyId);
-
-            ResponseEntity<IdDTO> barIdResponse = this.barsFeign.getBarIdByParty(partyId);
-
-            if(barIdResponse.hasBody() && barIdResponse.getBody() != null){
-
-                IdDTO idDTO = barIdResponse.getBody();
-                String newLeaderIp;
-                List<Long> newLeaderList = new ArrayList<>();
-                newLeaderList.add(newLeader);
-
-                List<ClientDTO> clientList = this.usersFeign.findByIdIn(newLeaderList);
-
-                if(!clientList.isEmpty()) {
-                    newLeaderIp = clientList.get(0).getIp();
-                    this.sseService.dispatchEventToSomeClientsFromBar(YOU_ARE_THE_LEADER.name(), YOU_ARE_THE_LEADER.getMessage(),idDTO.getId(),List.of(newLeaderIp));
-                }
-            }
+            this.dispatchMessageWhenLeaderChanges(
+                    response.getBody().getMessage().toString(),
+                    partyId,
+                    newLeader
+            );
         }
 
         return response;
+    }
+
+    private Long getAnyClientIdFromParty(Long partyId){
+
+        List<ClientPartyDTO> clients = this.prizeFeign.findClientsByPartyId(partyId);
+
+        if (clients.isEmpty()) {
+            throw new ObjectNotFoundException();
+        }
+        return clients.get(0).getClient();
+    }
+
+    private void dispatchMessageWhenLeaderChanges(String message, Long partyId, Long newLeader){
+        this.sseService.dispatchEventToClientsFromParty(NEW_LEADER.name(),message,partyId);
+
+        ResponseEntity<IdDTO> barIdResponse = this.barsFeign.getBarIdByParty(partyId);
+
+        if(barIdResponse.hasBody() && barIdResponse.getBody() != null){
+
+            IdDTO idDTO = barIdResponse.getBody();
+            String newLeaderIp;
+            List<Long> newLeaderList = new ArrayList<>();
+            newLeaderList.add(newLeader);
+
+            List<ClientDTO> clientList = this.usersFeign.findByIdIn(newLeaderList);
+
+            if(!clientList.isEmpty()) {
+                newLeaderIp = clientList.get(0).getIp();
+                this.sseService.dispatchEventToSomeClientsFromBar(YOU_ARE_THE_LEADER.name(),
+                        YOU_ARE_THE_LEADER.getMessage(),idDTO.getId(),List.of(newLeaderIp));
+            }
+        }
     }
 
     @Override
@@ -321,25 +355,27 @@ public class PartiesService extends ContextService implements IPartiesService {
 
     }
 
+    private void logoutOrBanClient(ClientDTO client, Long partyId, boolean banned){
+        try {
+            this.logoutFromAnyParty(client.getIp(), partyId);
+            if (banned) {
+                this.prizeFeign.banClientFromParty(client.getId(), partyId);
+            }
+        } catch (Exception ignored) {
+            log.error("No se pudo kickear al cliente.");
+        }
+    }
+
     @Override
     public ResponseEntity<GenericRsDTO<ResponseDTO>> kickFromParty(List<Long> list, Long partyId, boolean banned) {
 
         List<ClientDTO> clientList;
         ResponseEntity<IdDTO> barId;
+        Optional<ClientDTO> leaderOpt;
         try {
             clientList = this.usersFeign.findByIdIn(list);
-
-            clientList.forEach(client -> {
-                try {
-                    this.logoutFromAnyParty(client.getIp(), partyId);
-                    if (banned) {
-                        this.prizeFeign.banClientFromParty(client.getId(), partyId);
-                    }
-                } catch (Exception ignored) {
-                    log.error("No se pudo kickear al cliente.");
-                }
-            });
-
+            leaderOpt = clientList.stream().filter(ClientDTO::isLeader).findAny();
+            clientList.forEach(client -> this.logoutOrBanClient(client, partyId, banned));
             barId = this.barsFeign.getBarIdByParty(partyId);
         }catch(Exception e){
             return ResponseEntity.ok(new GenericRsDTO<>(CLOSED_PARTY_ERROR.getCode(),CLOSED_PARTY_ERROR.getMessage(),null));
@@ -357,6 +393,12 @@ public class PartiesService extends ContextService implements IPartiesService {
 
         if(response){ //avisa si se cerró la party o solo se desloguearon los clientes
             return ResponseEntity.ok(new GenericRsDTO<>(CLOSED_PARTY.getCode(),CLOSED_PARTY.getMessage(),null));
+        }
+
+        //ver si hace falta pasar el lider a otra persona
+        if(leaderOpt.isPresent()) {
+            ClientDTO leader = leaderOpt.get();
+            this.giveLeaderTo(leader.getIp(), partyId, null);
         }
 
         return ResponseEntity.ok(new GenericRsDTO<>(CLIENTS_ALREADY_ON_PARTY.getCode(),CLIENTS_ALREADY_ON_PARTY.getMessage(),null));

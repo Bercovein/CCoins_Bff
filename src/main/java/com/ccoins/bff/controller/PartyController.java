@@ -76,7 +76,7 @@ public class PartyController implements IPartyController {
     @PutMapping("/leader")
     @LimitedTime
     public ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderTo(@RequestBody IdDTO idDTO, @RequestHeader HttpHeaders headers){
-        return this.partiesService.giveLeaderTo(headers,idDTO);
+        return this.partiesService.giveLeaderToFromClient(headers,idDTO);
     }
 
     @DeleteMapping("/kick")
