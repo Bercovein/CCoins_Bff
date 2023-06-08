@@ -245,5 +245,8 @@ public class ExceptionConstant {
     public static final String CLIENT_REDEEM_CODE_ERROR_CODE = "0073";
     public static final String CLIENT_REDEEM_CODE_ERROR = "El cliente no se encuentra para reclamar el codigo";
 
+    public static final String NEXT_LEADER_NOT_FOUND_ERROR_CODE = "0074";
+    public static final String NEXT_LEADER_NOT_FOUND_ERROR = "No se pudo encontrar al candidato a líder. Elija a otro o recargue la página.";
+
 
 }

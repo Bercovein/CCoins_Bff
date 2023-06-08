@@ -83,4 +83,7 @@ public interface PrizeFeign {
 
     @GetMapping("/parties/client/ip/{ip}")
      Optional<ClientPartyDTO> findByIp(@PathVariable("ip") String ip);
+
+    @GetMapping("/parties/client/{clientId}/party/{partyId}")
+    ClientPartyDTO findClientByClientIdAndPartyAndActive(@PathVariable("clientId") Long clientId, @PathVariable("partyId")  Long partyId);
 }

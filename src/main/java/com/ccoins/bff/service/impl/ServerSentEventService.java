@@ -27,6 +27,8 @@ public class ServerSentEventService implements IServerSentEventService {
 
     private final BarsFeign barsFeign;
     private final UsersFeign usersFeign;
+
+    //Map<BarId,Map<ClientIp,Emitter>>
     protected static final Map<Long, Map<String,SseEmitter>> emitters = new ConcurrentHashMap<>();
 
     @Autowired

@@ -256,7 +256,12 @@ public class PartiesService extends ContextService implements IPartiesService {
         String leader = HeaderUtils.getClient(headers);
         Long newLeader = request.getId();
         Long partyId = HeaderUtils.getPartyId(headers);
-        return this.giveLeaderToAndDispatch(leader, partyId, newLeader);
+
+        ClientPartyDTO clientToLeader = this.prizeFeign.findClientByClientIdAndPartyAndActive(newLeader, partyId);
+        if(clientToLeader == null)
+            return ResponseEntity.ok(new GenericRsDTO<>(NEXT_LEADER_NOT_FOUND_ERROR_CODE, NEXT_LEADER_NOT_FOUND_ERROR, null));
+
+        return this.giveLeaderToAndDispatch(leader, partyId, clientToLeader.getId());
     }
 
 
@@ -309,7 +314,7 @@ public class PartiesService extends ContextService implements IPartiesService {
             throw new ObjectNotFoundException();
         }
 
-        return clients.stream().filter(ClientPartyDTO::isActive).collect(Collectors.toList()).get(0).getClient();
+        return clients.stream().filter(ClientPartyDTO::isActive).collect(Collectors.toList()).get(0).getId();
     }
 
     private void dispatchMessageWhenLeaderChanges(String message, Long partyId, Long newLeader){
@@ -321,10 +326,17 @@ public class PartiesService extends ContextService implements IPartiesService {
 
             IdDTO idDTO = barIdResponse.getBody();
             String newLeaderIp;
-            List<Long> newLeaderList = new ArrayList<>();
-            newLeaderList.add(newLeader);
 
-            List<ClientDTO> clientList = this.usersFeign.findByIdIn(newLeaderList);
+            Optional<ClientPartyDTO> clientPartyDTO = this.prizeFeign.findLeaderFromParty(partyId);
+
+            if(clientPartyDTO.isEmpty()){
+                return;
+            }
+
+            List<Long> newLeaderIdList = new ArrayList<>();
+            newLeaderIdList.add(clientPartyDTO.get().getClient());
+
+            List<ClientDTO> clientList = this.usersFeign.findByIdIn(newLeaderIdList);
 
             if(!clientList.isEmpty()) {
                 newLeaderIp = clientList.get(0).getIp();
@@ -378,9 +390,10 @@ public class PartiesService extends ContextService implements IPartiesService {
     private void giveLeaderWhenKick(List<ClientDTO> clientsToKick, List<ClientDTO> allClients, Long partyId){
 
         List<ClientDTO> remainingClients;
-        ClientDTO leader = clientsToKick.stream().filter(ClientDTO::isLeader).collect(Collectors.toList()).get(0);
+        List<ClientDTO> leaderList = clientsToKick.stream().filter(ClientDTO::isLeader).collect(Collectors.toList());
 
-        if(leader != null){
+        if(!leaderList.isEmpty()){
+            ClientDTO leader = leaderList.get(0);
             remainingClients = allClients.stream().filter(client -> clientsToKick.stream().noneMatch(id -> Objects.equals(id.getId(), client.getId()))).collect(Collectors.toList());
             if(!remainingClients.isEmpty()){
                 Optional<ClientPartyDTO> newLeader = this.prizeFeign.findByIp(remainingClients.get(0).getIp());
@@ -419,7 +432,7 @@ public class PartiesService extends ContextService implements IPartiesService {
         }
 
         List<String> clients = new ArrayList<>();
-        list.forEach(c -> clients.add(c.toString()));
+        clientsToKick.forEach(c -> clients.add(c.getIp()));
 
         //notifica al front para que le actualice la sesión
         if(barId.getBody() != null) {
