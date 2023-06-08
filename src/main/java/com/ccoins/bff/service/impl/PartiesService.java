@@ -210,10 +210,10 @@ public class PartiesService extends ContextService implements IPartiesService {
     }
 
     @Override
-    public void logoutFromAnyParty(String client, Long partyId) {
+    public boolean logoutFromAnyParty(String client, Long partyId) {
         try {
             this.prizeFeign.logoutClientFromParties(client);
-            this.closeIfNotClients(partyId);
+            return this.closeIfNotClients(partyId);
         } catch (Exception e) {
             throw new BadRequestException(ExceptionConstant.LOGOUT_CLIENT_ERROR_CODE,
                     this.getClass(), ExceptionConstant.LOGOUT_CLIENT_ERROR);
@@ -256,7 +256,7 @@ public class PartiesService extends ContextService implements IPartiesService {
         String leader = HeaderUtils.getClient(headers);
         Long newLeader = request.getId();
         Long partyId = HeaderUtils.getPartyId(headers);
-        return this.giveLeaderTo(leader, partyId, newLeader);
+        return this.giveLeaderToAndDispatch(leader, partyId, newLeader);
     }
 
 
@@ -281,7 +281,15 @@ public class PartiesService extends ContextService implements IPartiesService {
             return ResponseEntity.ok(new GenericRsDTO<>(GIVE_LEADER_TO_ERROR_CODE,GIVE_LEADER_TO_ERROR,null));
         }
 
-        //se preparan los menajes para enviar a los participantes de la party
+        return response;
+    }
+
+    @Override
+    public ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderToAndDispatch(String leader, Long partyId, Long newLeader) {
+
+        ResponseEntity<GenericRsDTO<ResponseDTO>> response = this.giveLeaderTo(leader, partyId, newLeader);
+
+        //se preparan los mensajes para enviar a los participantes de la party
         if(response.hasBody() && Objects.requireNonNull(response.getBody()).getCode() == null){
             this.dispatchMessageWhenLeaderChanges(
                     response.getBody().getMessage().toString(),
@@ -300,7 +308,8 @@ public class PartiesService extends ContextService implements IPartiesService {
         if (clients.isEmpty()) {
             throw new ObjectNotFoundException();
         }
-        return clients.get(0).getClient();
+
+        return clients.stream().filter(ClientPartyDTO::isActive).collect(Collectors.toList()).get(0).getClient();
     }
 
     private void dispatchMessageWhenLeaderChanges(String message, Long partyId, Long newLeader){
@@ -366,16 +375,44 @@ public class PartiesService extends ContextService implements IPartiesService {
         }
     }
 
+    private void giveLeaderWhenKick(List<ClientDTO> clientsToKick, List<ClientDTO> allClients, Long partyId){
+
+        List<ClientDTO> remainingClients;
+        ClientDTO leader = clientsToKick.stream().filter(ClientDTO::isLeader).collect(Collectors.toList()).get(0);
+
+        if(leader != null){
+            remainingClients = allClients.stream().filter(client -> clientsToKick.stream().noneMatch(id -> Objects.equals(id.getId(), client.getId()))).collect(Collectors.toList());
+            if(!remainingClients.isEmpty()){
+                Optional<ClientPartyDTO> newLeader = this.prizeFeign.findByIp(remainingClients.get(0).getIp());
+
+                if(newLeader.isEmpty()){
+                    return;
+                }
+                this.giveLeaderToAndDispatch(leader.getIp(), partyId, newLeader.get().getId());
+            }
+        }
+    }
+
     @Override
     public ResponseEntity<GenericRsDTO<ResponseDTO>> kickFromParty(List<Long> list, Long partyId, boolean banned) {
 
-        List<ClientDTO> clientList;
+        List<ClientDTO> allClients;
+        List<ClientDTO> clientsToKick;
         ResponseEntity<IdDTO> barId;
-        Optional<ClientDTO> leaderOpt;
+
+        //ver si hace falta pasar el lider a otra persona
+        try{
+            allClients = this.findClientsFromParty(partyId);
+        }catch(Exception e){
+            return ResponseEntity.ok(new GenericRsDTO<>(CLOSED_PARTY_ERROR.getCode(),CLOSED_PARTY_ERROR.getMessage(),null));
+        }
+
+        clientsToKick = allClients.stream().filter(clientDTO -> list.contains(clientDTO.getId())).collect(Collectors.toList());
+
+        this.giveLeaderWhenKick(clientsToKick, allClients, partyId);
+
         try {
-            clientList = this.usersFeign.findByIdIn(list);
-            leaderOpt = clientList.stream().filter(ClientDTO::isLeader).findAny();
-            clientList.forEach(client -> this.logoutOrBanClient(client, partyId, banned));
+            clientsToKick.forEach(client -> this.logoutOrBanClient(client, partyId, banned));
             barId = this.barsFeign.getBarIdByParty(partyId);
         }catch(Exception e){
             return ResponseEntity.ok(new GenericRsDTO<>(CLOSED_PARTY_ERROR.getCode(),CLOSED_PARTY_ERROR.getMessage(),null));
@@ -393,12 +430,6 @@ public class PartiesService extends ContextService implements IPartiesService {
 
         if(response){ //avisa si se cerró la party o solo se desloguearon los clientes
             return ResponseEntity.ok(new GenericRsDTO<>(CLOSED_PARTY.getCode(),CLOSED_PARTY.getMessage(),null));
-        }
-
-        //ver si hace falta pasar el lider a otra persona
-        if(leaderOpt.isPresent()) {
-            ClientDTO leader = leaderOpt.get();
-            this.giveLeaderTo(leader.getIp(), partyId, null);
         }
 
         return ResponseEntity.ok(new GenericRsDTO<>(CLIENTS_ALREADY_ON_PARTY.getCode(),CLIENTS_ALREADY_ON_PARTY.getMessage(),null));

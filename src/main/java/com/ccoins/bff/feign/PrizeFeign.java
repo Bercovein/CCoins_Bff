@@ -77,4 +77,10 @@ public interface PrizeFeign {
 
     @DeleteMapping("/parties/client/{client}/but/{partyId}")
     void logoutClientFromPartiesBut(@PathVariable("client") String client, @PathVariable("partyId") Long partyId);
+
+    @GetMapping("/parties/leader/party/{partyId}")
+    public Optional<ClientPartyDTO> findLeaderFromParty(@PathVariable("partyId") Long partyId);
+
+    @GetMapping("/parties/client/ip/{ip}")
+     Optional<ClientPartyDTO> findByIp(@PathVariable("ip") String ip);
 }

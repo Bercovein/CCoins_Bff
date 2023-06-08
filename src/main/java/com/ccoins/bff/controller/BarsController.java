@@ -56,7 +56,7 @@ public class BarsController implements IBarsController {
     @Override
     @DeleteMapping("/parties/clients")
     @ResponseStatus(HttpStatus.OK)
-    public void kickFromPartyByLeader(@RequestBody LogoutPartyDTO request){
+    public void kickFromPartyByOwner(@RequestBody LogoutPartyDTO request){
         this.partiesService.kickFromPartyByOwner(request);
     }
 }

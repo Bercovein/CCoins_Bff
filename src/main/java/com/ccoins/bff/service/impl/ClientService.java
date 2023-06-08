@@ -124,6 +124,9 @@ public class ClientService implements IClientService {
 
     @Override
     public void logout(String client, Long partyId) {
-        this.partyService.logoutFromAnyParty(client, partyId);
+        boolean partyClosed = this.partyService.logoutFromAnyParty(client, partyId);
+        if(!partyClosed){
+            this.partyService.giveLeaderToAndDispatch(client,partyId,null);
+        }
     }
 }

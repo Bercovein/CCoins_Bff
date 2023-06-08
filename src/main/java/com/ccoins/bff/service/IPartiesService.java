@@ -28,7 +28,7 @@ public interface IPartiesService {
 
     ListDTO findClientsFromPartyToClients(Long id, HttpHeaders headers);
 
-    void logoutFromAnyParty(String client, Long partyId);
+    boolean logoutFromAnyParty(String client, Long partyId);
 
     void logoutFromAnyPartyBut(String client, Long partyId);
 
@@ -39,6 +39,8 @@ public interface IPartiesService {
     ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderToFromClient(HttpHeaders headers, IdDTO request);
 
     ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderTo(String leader, Long partyId, Long newLeader);
+
+    ResponseEntity<GenericRsDTO<ResponseDTO>> giveLeaderToAndDispatch(String leader, Long partyId, Long newLeader);
 
     ResponseEntity<GenericRsDTO<ResponseDTO>> kickFromPartyByLeader(LongListDTO request, HttpHeaders headers);
 

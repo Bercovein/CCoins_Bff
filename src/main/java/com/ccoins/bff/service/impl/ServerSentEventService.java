@@ -132,7 +132,8 @@ public class ServerSentEventService implements IServerSentEventService {
 
             clients.forEach(client -> {
                 try{
-                    sseEmitterMap.get(client).send(SseEmitter.event().name(eventName).data(data != null ? data : "", MediaType.APPLICATION_JSON));
+                    if(sseEmitterMap.get(client) != null)
+                        sseEmitterMap.get(client).send(SseEmitter.event().name(eventName).data(data != null ? data : "", MediaType.APPLICATION_JSON));
                 }catch(IOException e){
                     sseEmitterMap.remove(client);
                     log.error("Error while sending event to some clients.");

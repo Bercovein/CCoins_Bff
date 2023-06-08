@@ -27,5 +27,5 @@ public interface IBarsController {
     ResponseEntity<BarDTO> active(@RequestBody IdDTO id);
 
     @ApiOperation(value = LOGOUT + "clients")
-    void kickFromPartyByLeader(@RequestBody LogoutPartyDTO request);
+    void kickFromPartyByOwner(@RequestBody LogoutPartyDTO request);
 }
