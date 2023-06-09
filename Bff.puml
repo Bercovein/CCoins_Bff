@@ -1,55 +1,33 @@
 @startuml
 class CoinsController {
 }
-class ImageController {
-}
-class OauthController {
-}
-class ClientsController {
-}
 class BarsService {
 }
 interface IImageController {
 }
-interface IOauthController {
-}
-interface IRandomNameService {
+class OauthController {
 }
 interface IClientsController {
 }
-interface IPrizesController {
-}
 class CoinsService {
 }
-class PartiesService {
+class ServerSentEventService {
 }
 class ClientService {
 }
-interface UsersFeign {
-}
 interface BarsFeign {
 }
-class PartyController {
+class SpotifyService {
 }
 interface ITablesController {
 }
-class ContextService {
-}
 class BarsController {
-}
-class PrizesService {
-}
-interface ICoinsService {
-}
-class OwnerService {
 }
 class TablesService {
 }
-class OAuthService {
+class SpotifyController {
 }
 interface IContextService {
-}
-interface IBarsController {
 }
 interface IGamesController {
 }
@@ -57,19 +35,15 @@ interface IBarsService {
 }
 class RandomNameService {
 }
-interface ITablesService {
-}
 class SwaggerConstants {
 }
-interface IOwnerService {
-}
 interface IClientService {
-}
-interface IGamesService {
 }
 interface CoinsFeign {
 }
 interface PrizeFeign {
+}
+class ServerSentEventController {
 }
 interface IOauthService {
 }
@@ -77,47 +51,136 @@ class GamesController {
 }
 class ImageService {
 }
-class TablesController {
+class CodesService {
 }
-interface IPartyController {
-}
-interface IPartiesService {
+interface ISongVotesController {
 }
 class PrizesController {
-}
-interface IImageService {
 }
 interface IPrizesService {
 }
 class GamesService {
 }
+class ImageController {
+}
+interface ICoinsController {
+}
+class ClientsController {
+}
+interface IServerSentEventService {
+}
+interface IOauthController {
+}
+class SongVotesController {
+}
+interface IRandomNameService {
+}
+interface IPrizesController {
+}
+class PartiesService {
+}
+interface ISpotifyController {
+}
+interface UsersFeign {
+}
+interface SpotifyFeign {
+}
+class CodesController {
+}
+class PartyController {
+}
+interface ISpotifyService {
+}
+class ContextService {
+}
+class VoteService {
+}
+class PrizesService {
+}
+interface ICoinsService {
+}
+class OwnerService {
+}
+class OAuthService {
+}
+interface IRedeemsController {
+}
+interface IVoteService {
+}
+interface ICodesService {
+}
+interface IBarsController {
+}
+interface ITablesService {
+}
+interface IOwnerService {
+}
+interface IGamesService {
+}
+interface SpotifyTokenFeign {
+}
+class SpotifyTokenFeign$Configuration {
+}
+class RedeemsController {
+}
+class PartyTablesController {
+}
+class TablesController {
+}
+interface ICodesController {
+}
+interface IPartyController {
+}
+interface IPartiesService {
+}
+interface IPartyTablesController {
+}
+interface IServerSentEventController {
+}
+interface IImageService {
+}
 
 
-IImageController <|.. ImageController
-IOauthController <|.. OauthController
-IClientsController <|.. ClientsController
+ICoinsController <|.. CoinsController
 IBarsService <|.. BarsService
 ContextService <|-- BarsService
+IOauthController <|.. OauthController
 ICoinsService <|.. CoinsService
-IPartiesService <|.. PartiesService
-ContextService <|-- PartiesService
+ContextService <|-- CoinsService
+IServerSentEventService <|.. ServerSentEventService
 IClientService <|.. ClientService
-IPartyController <|.. PartyController
-IContextService <|.. ContextService
+ISpotifyService <|.. SpotifyService
+ContextService <|-- SpotifyService
 IBarsController <|.. BarsController
-IPrizesService <|.. PrizesService
-ContextService <|-- PrizesService
-IOwnerService <|.. OwnerService
 ITablesService <|.. TablesService
 ContextService <|-- TablesService
-IOauthService <|.. OAuthService
-UserDetailsService <|.. OAuthService
+ISpotifyController <|.. SpotifyController
 IRandomNameService <|.. RandomNameService
+IServerSentEventController <|.. ServerSentEventController
 IGamesController <|.. GamesController
 IImageService <|.. ImageService
 ContextService <|-- ImageService
-ITablesController <|.. TablesController
+ICodesService <|.. CodesService
+ContextService <|-- CodesService
 IPrizesController <|.. PrizesController
 IGamesService <|.. GamesService
 ContextService <|-- GamesService
+IImageController <|.. ImageController
+IClientsController <|.. ClientsController
+ISongVotesController <|.. SongVotesController
+IPartiesService <|.. PartiesService
+ContextService <|-- PartiesService
+ICodesController <|.. CodesController
+IPartyController <|.. PartyController
+IContextService <|.. ContextService
+IVoteService <|.. VoteService
+IPrizesService <|.. PrizesService
+ContextService <|-- PrizesService
+IOwnerService <|.. OwnerService
+IOauthService <|.. OAuthService
+UserDetailsService <|.. OAuthService
+SpotifyTokenFeign +.. SpotifyTokenFeign$Configuration
+IRedeemsController <|.. RedeemsController
+IPartyTablesController <|.. PartyTablesController
+ITablesController <|.. TablesController
 @enduml
