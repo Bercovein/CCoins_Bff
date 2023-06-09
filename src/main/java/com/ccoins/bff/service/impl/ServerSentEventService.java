@@ -5,6 +5,7 @@ import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.feign.BarsFeign;
 import com.ccoins.bff.feign.UsersFeign;
 import com.ccoins.bff.service.IServerSentEventService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -94,7 +96,7 @@ public class ServerSentEventService implements IServerSentEventService {
             sseEmitterMap.forEach((client,emitter) -> {
                 try{
                     if(!OWNER_CODE.equals(client))
-                        emitter.send(SseEmitter.event().name(eventName).data(data != null ? data : "", MediaType.APPLICATION_JSON));
+                        emitter.send(this.buildEvent(eventName, data));
                 }catch(IOException e){
                     sseEmitterMap.remove(client);
                     log.error("Error while sending event to all clients from bar.");
@@ -114,7 +116,7 @@ public class ServerSentEventService implements IServerSentEventService {
 
             sseEmitterMap.forEach((client,emitter) -> {
                 try{
-                    emitter.send(SseEmitter.event().name(eventName).data(data != null ? data : "", MediaType.APPLICATION_JSON));
+                    emitter.send(this.buildEvent(eventName, data));
                 }catch(IOException e){
                     sseEmitterMap.remove(client);
                     log.error("Error while sending event to all clients and bar.");
@@ -130,18 +132,31 @@ public class ServerSentEventService implements IServerSentEventService {
 
         Map<String,SseEmitter> sseEmitterMap = emitters.get(barId);
 
-        if(sseEmitterMap != null && !sseEmitterMap.isEmpty()){
+        if(sseEmitterMap != null && !sseEmitterMap.isEmpty()) {
 
             clients.forEach(client -> {
                 try{
                     if(sseEmitterMap.get(client) != null)
-                        sseEmitterMap.get(client).send(SseEmitter.event().name(eventName).data(data != null ? data : "", MediaType.APPLICATION_JSON));
+                        sseEmitterMap.get(client).send(this.buildEvent(eventName, data));
                 }catch(IOException e){
                     sseEmitterMap.remove(client);
                     log.error("Error while sending event to some clients.");
                 }
             });
             emitters.put(barId, sseEmitterMap);
+        }
+    }
+
+
+    private byte[] parseDataToBytes(Object data){
+        try {
+            String jsonData;
+            ObjectMapper objectMapper = new ObjectMapper();
+            jsonData = objectMapper.writeValueAsString(data);
+            return jsonData.getBytes(StandardCharsets.UTF_8);
+        }catch(Exception e){
+            log.error("Error trying to parse data to json");
+            return new byte[0];
         }
     }
 
@@ -160,7 +175,7 @@ public class ServerSentEventService implements IServerSentEventService {
             return;
 
         Map<String,SseEmitter> sseEmitterMap = emitters.get(barId.getId());
-        ResponseEntity<List<ClientDTO>> clientsResponse = this.usersFeign.findByParty(partyId);
+        ResponseEntity<List<ClientDTO>> clientsResponse = this.usersFeign.findActiveByParty(partyId);
 
         if(clientsResponse.hasBody() && sseEmitterMap != null && !sseEmitterMap.isEmpty()){
 
@@ -174,7 +189,7 @@ public class ServerSentEventService implements IServerSentEventService {
                     SseEmitter emitter = sseEmitterMap.get(client.getIp());
 
                     if(emitter != null)
-                        emitter.send(SseEmitter.event().name(eventName).data(data != null ? data : "", MediaType.APPLICATION_JSON));
+                        emitter.send(this.buildEvent(eventName, data));
                 }catch(IOException e){
                     sseEmitterMap.remove(client.getIp());
                     log.error("Error while sending event to clients from party.");
@@ -194,7 +209,7 @@ public class ServerSentEventService implements IServerSentEventService {
 
         Map<String,SseEmitter> sseEmitterMap = emitters.get(barId);
         try{
-            sseEmitterMap.get(OWNER_CODE).send(SseEmitter.event().name(eventName).data(data != null ? data : "", MediaType.APPLICATION_JSON));
+            sseEmitterMap.get(OWNER_CODE).send(this.buildEvent(eventName, data));
         }catch(IOException e){
             sseEmitterMap.remove(OWNER_CODE);
             log.error("Error while sending event to owner.");
@@ -206,7 +221,7 @@ public class ServerSentEventService implements IServerSentEventService {
 
         emitters.forEach((barId, sseEmitterMap) -> {
             try{
-                sseEmitterMap.get(OWNER_CODE).send(SseEmitter.event().name(eventName).data(data != null ? data : "", MediaType.APPLICATION_JSON));
+                sseEmitterMap.get(OWNER_CODE).send(this.buildEvent(eventName, data));
             }catch(IOException e){
                 sseEmitterMap.remove(OWNER_CODE);
                 log.error("Error while sending event to owner.");
@@ -220,5 +235,17 @@ public class ServerSentEventService implements IServerSentEventService {
         }catch (IOException e){
             e.printStackTrace();
         }
+    }
+
+
+    private SseEmitter.SseEventBuilder buildEvent(String eventName,  Object data){
+
+        byte[] encodedData = null;
+        if (data != null) {
+            encodedData = parseDataToBytes(data);
+        }
+        byte[] finalEncodedData = encodedData;
+
+        return SseEmitter.event().name(eventName).data(finalEncodedData != null && finalEncodedData.length != 0? finalEncodedData : "", new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8));
     }
 }

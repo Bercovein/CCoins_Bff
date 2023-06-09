@@ -41,5 +41,8 @@ public interface UsersFeign {
     @GetMapping("/client/party/{partyId}")
     ResponseEntity<List<ClientDTO>> findByParty(@PathVariable("partyId") Long partyId);
 
+    @GetMapping("/client/party/{partyId}/active")
+    ResponseEntity<List<ClientDTO>> findActiveByParty(@PathVariable("partyId") Long partyId);
+
 
 }
