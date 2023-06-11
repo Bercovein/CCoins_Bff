@@ -504,7 +504,8 @@ public class SpotifyService extends ContextService implements ISpotifyService {
             Long ownerId = super.getLoggedUserId();
             BarTokenDTO barTokenDTO = this.barTokens.remove(ownerId);
             this.usersFeign.saveOrUpdateRefreshTokenSpotify(ownerId, RefreshTokenDTO.builder().refreshToken(null).build());
-            this.sseService.dispatchEventToAllClientsFromBar(LOGOUT_SPOTIFY.name(),null,barTokenDTO.getId());
+            if(barTokenDTO != null)
+                this.sseService.dispatchEventToAllClientsFromBar(LOGOUT_SPOTIFY.name(),null,barTokenDTO.getId());
         }catch (Exception e){
             throw new BadRequestException(ExceptionConstant.DISCONNECT_SPTF_ERROR_CODE,
                     this.getClass(), ExceptionConstant.DISCONNECT_SPTF_ERROR);

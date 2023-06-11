@@ -32,6 +32,7 @@ public class ServerSentEventController implements IServerSentEventController {
     @RequestMapping(value="/subscribe/owner",consumes=MediaType.ALL_VALUE)
     @Override
     public SseEmitter subscribeOwner(@RequestParam("barId") Long barId){
+
         return this.service.subscribeOwner(barId);
     }
 

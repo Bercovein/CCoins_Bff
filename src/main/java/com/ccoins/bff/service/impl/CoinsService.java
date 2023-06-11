@@ -104,7 +104,7 @@ public class CoinsService extends ContextService implements ICoinsService {
         Optional<PartyDTO> partyOpt = this.prizeFeign.findActivePartyByTable(tableId.getId());
 
         if(partyOpt.isEmpty()){
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.ok(new CoinsReportDTO(0L,null));
         }
 
         PartyDTO party = partyOpt.get();
