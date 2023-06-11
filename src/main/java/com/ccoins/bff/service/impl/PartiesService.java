@@ -298,8 +298,7 @@ public class PartiesService extends ContextService implements IPartiesService {
         if(response.hasBody() && Objects.requireNonNull(response.getBody()).getCode() == null){
             this.dispatchMessageWhenLeaderChanges(
                     response.getBody().getMessage().toString(),
-                    partyId,
-                    newLeader
+                    partyId
             );
         }
 
@@ -317,7 +316,7 @@ public class PartiesService extends ContextService implements IPartiesService {
         return clients.stream().filter(ClientPartyDTO::isActive).collect(Collectors.toList()).get(0).getId();
     }
 
-    private void dispatchMessageWhenLeaderChanges(String message, Long partyId, Long newLeader){
+    private void dispatchMessageWhenLeaderChanges(String message, Long partyId){
         this.sseService.dispatchEventToClientsFromParty(NEW_LEADER.name(),message,partyId);
 
         ResponseEntity<IdDTO> barIdResponse = this.barsFeign.getBarIdByParty(partyId);
