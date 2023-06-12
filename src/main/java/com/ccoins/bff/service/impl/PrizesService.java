@@ -8,7 +8,6 @@ import com.ccoins.bff.dto.bars.BarTableDTO;
 import com.ccoins.bff.dto.prizes.PartyDTO;
 import com.ccoins.bff.dto.prizes.PrizeDTO;
 import com.ccoins.bff.dto.users.ClientDTO;
-import com.ccoins.bff.dto.ClientTableDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.ObjectNotFoundException;
 import com.ccoins.bff.exceptions.constant.ExceptionConstant;
@@ -132,11 +131,6 @@ public class PrizesService extends ContextService implements IPrizesService {
 
         BarTableDTO barTableDTO = this.tablesService.findByCode(HeaderUtils.getCode(headers));
         return this.findAllByBar(IdDTO.builder().id(barTableDTO.getBar()).build(), Optional.of("active"));
-    }
-
-    @Override
-    public ResponseEntity<Boolean> isBannedFromParty(ClientTableDTO request) {
-        return this.prizeFeign.isBannedFromParty(request);
     }
 
 }

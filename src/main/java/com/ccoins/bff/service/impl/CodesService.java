@@ -29,6 +29,7 @@ import java.util.*;
 import static com.ccoins.bff.exceptions.constant.ExceptionConstant.*;
 import static com.ccoins.bff.utils.enums.EventNamesEnum.NEW_PRIZE;
 import static com.ccoins.bff.utils.enums.EventNamesEnum.UPDATE_COINS;
+import static com.ccoins.bff.utils.enums.UpdateCoinsMessagesEnum.REDEEM_COINS;
 
 @Service
 public class CodesService extends ContextService implements ICodesService {
@@ -136,7 +137,9 @@ public class CodesService extends ContextService implements ICodesService {
         if(response.hasBody() && response.getBody() != null && response.getBody().getCode() == null && response.getBody().getData() != null){
 
             if(response.getBody().getData().getQuantity() != null) {
-                this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(),UPDATE_COINS.getMessage(), request.getPartyId());
+                Long quantity = response.getBody().getData().getQuantity();
+                String message = REDEEM_COINS.getMessage().replace("?", quantity.toString());
+                this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(),message, request.getPartyId());
             }
 
             if(response.getBody().getData().getQuantity() == null || response.getBody().getData().getQuantity() == 0){

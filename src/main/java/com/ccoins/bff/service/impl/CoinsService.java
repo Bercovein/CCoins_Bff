@@ -29,6 +29,7 @@ import java.util.Optional;
 
 import static com.ccoins.bff.utils.enums.EventNamesEnum.NEW_DEMAND;
 import static com.ccoins.bff.utils.enums.EventNamesEnum.UPDATE_COINS;
+import static com.ccoins.bff.utils.enums.UpdateCoinsMessagesEnum.*;
 
 @Service
 public class CoinsService extends ContextService implements ICoinsService {
@@ -76,7 +77,7 @@ public class CoinsService extends ContextService implements ICoinsService {
         }
             try {
                 if (HttpStatus.OK.equals(response.getStatusCode())) {
-                    this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(), UPDATE_COINS.getMessage(), partyId);
+                    this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(), PRIZE_SPEND_COINS.getMessage(), partyId);
 
                     ResponseEntity<IdDTO> barResponse = this.barsFeign.getBarIdByParty(partyId);
 
@@ -145,7 +146,7 @@ public class CoinsService extends ContextService implements ICoinsService {
                 Long partyId = generic.getData();
 
                 if(partyId != null){
-                    this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(),UPDATE_COINS.getMessage(),partyId);
+                    this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(),DELIVER_PRIZE_OR_COINS.getMessage(),partyId);
                 }
             }
             return response;
@@ -166,7 +167,7 @@ public class CoinsService extends ContextService implements ICoinsService {
                 Long partyId = generic.getData();
 
                 if(partyId != null){
-                    this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(),UPDATE_COINS.getMessage(),partyId);
+                    this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(),CANCEL_PRIZE_OR_COINS.getMessage(),partyId);
                 }
             }
             return response;
@@ -187,7 +188,7 @@ public class CoinsService extends ContextService implements ICoinsService {
                 Long partyId = generic.getData();
 
                 if(partyId != null){
-                    this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(),UPDATE_COINS.getMessage(),partyId);
+                    this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(),ADJUST_PRIZE_OR_COINS.getMessage(),partyId);
                 }
             }
             return response;

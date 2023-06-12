@@ -4,7 +4,6 @@ import com.ccoins.bff.dto.IdDTO;
 import com.ccoins.bff.dto.ListDTO;
 import com.ccoins.bff.dto.ResponseDTO;
 import com.ccoins.bff.dto.prizes.PrizeDTO;
-import com.ccoins.bff.dto.ClientTableDTO;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
@@ -24,5 +23,4 @@ public interface IPrizesService {
 
     ResponseEntity<ListDTO> findAllByHeader(HttpHeaders headers);
 
-    ResponseEntity<Boolean> isBannedFromParty(ClientTableDTO request);
 }
