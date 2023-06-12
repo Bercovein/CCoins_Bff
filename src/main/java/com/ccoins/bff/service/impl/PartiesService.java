@@ -56,7 +56,7 @@ public class PartiesService extends ContextService implements IPartiesService {
 
 
     @Override
-    public void asignOrCreatePartyByCode(ClientTableDTO request, ClientDTO clientDTO) {
+    public PartyBarDTO asignOrCreatePartyByCode(ClientTableDTO request, ClientDTO clientDTO) {
 
         PartyDTO party;
         Optional<PartyDTO> partyOpt;
@@ -86,6 +86,8 @@ public class PartiesService extends ContextService implements IPartiesService {
 
         request.setPartyId(party.getId());
         request.setLeader(leader);
+
+        return PartyBarDTO.builder().id(party.getId()).name(party.getName()).barId(barTableDTO.getBar()).build();
     }
 
     @Override
@@ -212,8 +214,16 @@ public class PartiesService extends ContextService implements IPartiesService {
     @Override
     public boolean logoutFromAnyParty(String client, Long partyId) {
         try {
+            boolean response;
+
+            Optional<ClientDTO> clientOpt = this.usersFeign.findActiveByIp(client);
             this.prizeFeign.logoutClientFromParties(client);
-            return this.closeIfNotClients(partyId);
+
+            response = this.closeIfNotClients(partyId);
+
+            clientOpt.ifPresent(clientDTO -> this.sseService.dispatchEventToClientsFromParty(CLIENT_LEFT_THE_PARTY.name(), String.format(CLIENT_LEFT_THE_PARTY.getMessage(), clientDTO.getNickName()), partyId));
+
+            return response;
         } catch (Exception e) {
             throw new BadRequestException(ExceptionConstant.LOGOUT_CLIENT_ERROR_CODE,
                     this.getClass(), ExceptionConstant.LOGOUT_CLIENT_ERROR);

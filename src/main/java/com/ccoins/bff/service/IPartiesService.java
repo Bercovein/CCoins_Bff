@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface IPartiesService {
 
-    void asignOrCreatePartyByCode(ClientTableDTO request, ClientDTO clientDTO);
+    PartyBarDTO asignOrCreatePartyByCode(ClientTableDTO request, ClientDTO clientDTO);
 
     ResponseEntity<ClientPartyDTO> asignClientToParty(Long partyId, Long clientId, boolean leader);
 
