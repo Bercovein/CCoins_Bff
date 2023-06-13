@@ -135,14 +135,11 @@ public class CodesService extends ContextService implements ICodesService {
         ResponseEntity<GenericRsDTO<CoinsDTO>> response = this.coinsFeign.redeemCode(request);
 
         if(response.hasBody() && response.getBody() != null && response.getBody().getCode() == null && response.getBody().getData() != null){
-
-            if(response.getBody().getData().getQuantity() != null) {
-                Long quantity = response.getBody().getData().getQuantity();
+            Long quantity = response.getBody().getData().getQuantity();
+            if(quantity != null && quantity != 0L) {
                 String message = String.format(REDEEM_COINS.getMessage(), quantity.toString());
                 this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(),message, request.getPartyId());
-            }
-
-            if(response.getBody().getData().getQuantity() == null || response.getBody().getData().getQuantity() == 0){
+            }else if(response.getBody().getData().getPrize() != null){
                 this.sseService.dispatchEventToClientsFromParty(NEW_PRIZE.name(), NEW_PRIZE.getMessage(),request.getPartyId());
             }
         }

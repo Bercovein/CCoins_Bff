@@ -18,6 +18,7 @@ public class CoinsDTO {
     private Long quantity;
     private boolean active;
     private Long client;
+    private Long prize;
     private Long party;
     private String state;
 }
