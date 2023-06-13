@@ -164,6 +164,10 @@ public class PartiesService extends ContextService implements IPartiesService {
         List<ClientPartyDTO> list;
         List<ClientDTO> clients = new ArrayList<>();
 
+        if(partyId == null){
+            return clients;
+        }
+
         try {
             list = this.prizeFeign.findClientsByPartyId(partyId);
         }catch(Exception e){
@@ -516,8 +520,10 @@ public class PartiesService extends ContextService implements IPartiesService {
     }
 
     @Override
-    public ListDTO findClientsByPartyIdToOwner(IdDTO request) {
-        List<ClientDTO> clients = this.findClientsFromParty(request.getId());
-        return ListDTO.builder().list(clients).build();
+    public PartyClientsDTO findClientsByTableIdToOwner(IdDTO request) {
+        Optional<PartyDTO> partyOpt = this.findActivePartyByTable(request.getId());
+        Long party = partyOpt.map(PartyDTO::getId).orElse(null);
+        List<ClientDTO> clients = this.findClientsFromParty(party);
+        return PartyClientsDTO.builder().list(clients).party(party).build();
     }
 }

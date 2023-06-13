@@ -1,7 +1,7 @@
 package com.ccoins.bff.controller.swagger;
 
 import com.ccoins.bff.dto.IdDTO;
-import com.ccoins.bff.dto.ListDTO;
+import com.ccoins.bff.dto.PartyClientsDTO;
 import com.ccoins.bff.dto.PartyTableDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,5 +21,5 @@ public interface IPartyTablesController {
     ResponseEntity<List<PartyTableDTO>> findActivePartiesByOwner();
 
     @ApiOperation("Find clients from party id")
-    ResponseEntity<ListDTO> findClientsByPartyIdToOwner(@RequestBody IdDTO request);
+    ResponseEntity<PartyClientsDTO> findClientsByPartyIdToOwner(@RequestBody IdDTO request);
 }

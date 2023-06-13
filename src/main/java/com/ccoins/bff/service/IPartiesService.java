@@ -52,5 +52,5 @@ public interface IPartiesService {
 
     ResponseEntity<List<PartyTableDTO>> findActivePartiesByOwner();
 
-    ListDTO findClientsByPartyIdToOwner(IdDTO request);
+    PartyClientsDTO findClientsByTableIdToOwner(IdDTO request);
 }

@@ -2,7 +2,7 @@ package com.ccoins.bff.controller;
 
 import com.ccoins.bff.controller.swagger.IPartyTablesController;
 import com.ccoins.bff.dto.IdDTO;
-import com.ccoins.bff.dto.ListDTO;
+import com.ccoins.bff.dto.PartyClientsDTO;
 import com.ccoins.bff.dto.PartyTableDTO;
 import com.ccoins.bff.service.IPartiesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +30,8 @@ public class PartyTablesController implements IPartyTablesController {
     }
 
     @Override
-    @PostMapping("/party/clients")
-    public ResponseEntity<ListDTO> findClientsByPartyIdToOwner(@RequestBody IdDTO request){
-        return ResponseEntity.ok(this.partiesService.findClientsByPartyIdToOwner(request));
+    @PostMapping("/table/clients")
+    public ResponseEntity<PartyClientsDTO> findClientsByPartyIdToOwner(@RequestBody IdDTO request){
+        return ResponseEntity.ok(this.partiesService.findClientsByTableIdToOwner(request));
     }
 }
