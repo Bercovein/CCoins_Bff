@@ -12,15 +12,10 @@ import lombok.NoArgsConstructor;
 public class CoinsReportStatesDTO {
 
     private Long coinsId;
-
     private String date;
-
     private Long tableNumber;
-
     private String prizeName;
-
     private String state;
-
     private Boolean updatable;
 
 }

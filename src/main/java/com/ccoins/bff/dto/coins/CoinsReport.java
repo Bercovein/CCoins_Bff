@@ -16,5 +16,6 @@ public class CoinsReport {
     private Long coins;
     private String activity;
     private String client;
+    private String prize;
     private String state;
 }
