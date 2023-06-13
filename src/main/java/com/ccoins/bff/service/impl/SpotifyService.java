@@ -151,10 +151,7 @@ public class SpotifyService extends ContextService implements ISpotifyService {
                 && request.getRefreshToken() == null){
             this.generateToken(headers, request);
             this.barTokens.put(request.getOwnerId(), request);
-        }
-
-        //si el token expiró, lo renueva (si la hora actual supera a la hora de expiración del token)
-        if (DateUtils.isAfterLocalDateTime(DateUtils.nowLocalDateTime(), request.getExpirationDate())){
+        }else{
             this.refreshToken(headers, request);
             this.barTokens.put(request.getOwnerId(), request);
         }
@@ -211,8 +208,13 @@ public class SpotifyService extends ContextService implements ISpotifyService {
                                         .id(bar.getId())
                                         .ownerId(ownerId).build();
             if(request.getCode() == null) {
-                ResponseEntity<RefreshTokenDTO> refreshTokenDTO = this.usersFeign.getSpotifyRefreshTokenByOwnerId(ownerId);
-                if(refreshTokenDTO.hasBody() && refreshTokenDTO.getBody() != null){
+                ResponseEntity<RefreshTokenDTO> refreshTokenDTO = null;
+                try {
+                    refreshTokenDTO = this.usersFeign.getSpotifyRefreshTokenByOwnerId(ownerId);
+                }catch (Exception e){
+                    log.error(e.getMessage());
+                }
+                if(refreshTokenDTO != null && refreshTokenDTO.hasBody() && refreshTokenDTO.getBody() != null){
                     barTokenDTO.setRefreshToken(refreshTokenDTO.getBody().getRefreshToken());
                 }
             }

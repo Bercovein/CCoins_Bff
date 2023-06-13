@@ -56,7 +56,7 @@ public class PartiesService extends ContextService implements IPartiesService {
 
 
     @Override
-    public PartyBarDTO asignOrCreatePartyByCode(ClientTableDTO request, ClientDTO clientDTO) {
+    public void asignOrCreatePartyByCode(ClientTableDTO request, ClientDTO clientDTO) {
 
         PartyDTO party;
         Optional<PartyDTO> partyOpt;
@@ -86,8 +86,6 @@ public class PartiesService extends ContextService implements IPartiesService {
 
         request.setPartyId(party.getId());
         request.setLeader(leader);
-
-        return PartyBarDTO.builder().id(party.getId()).name(party.getName()).barId(barTableDTO.getBar()).build();
     }
 
     @Override

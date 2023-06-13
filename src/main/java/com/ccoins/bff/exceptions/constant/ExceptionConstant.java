@@ -249,4 +249,8 @@ public class ExceptionConstant {
     public static final String NEXT_LEADER_NOT_FOUND_ERROR = "No se pudo encontrar al candidato a líder. Elija a otro o recargue la página.";
 
 
+    public static final String SPOTIFY_RECONNECT_ERROR_CODE = "0075";
+    public static final String SPOTIFY_RECONNECT_ERROR = "Error to reconnect spotify.";
+
+
 }

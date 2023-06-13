@@ -1,7 +1,6 @@
 package com.ccoins.bff.service.impl;
 
 import com.ccoins.bff.dto.ClientTableDTO;
-import com.ccoins.bff.dto.PartyBarDTO;
 import com.ccoins.bff.dto.users.ClientDTO;
 import com.ccoins.bff.exceptions.BadRequestException;
 import com.ccoins.bff.exceptions.ObjectNotFoundException;
@@ -15,12 +14,10 @@ import com.ccoins.bff.service.IServerSentEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 import static com.ccoins.bff.exceptions.constant.ExceptionConstant.CLIENT_BANNED_FROM_PARTY_ERROR;
 import static com.ccoins.bff.exceptions.constant.ExceptionConstant.CLIENT_BANNED_FROM_PARTY_ERROR_CODE;
-import static com.ccoins.bff.utils.enums.EventNamesEnum.LOGIN_CLIENT;
 import static com.ccoins.bff.utils.enums.EventNamesEnum.NEW_CLIENT_TO_PARTY;
 
 @Service
@@ -56,7 +53,7 @@ public class ClientService implements IClientService {
             throw new UnauthorizedException(CLIENT_BANNED_FROM_PARTY_ERROR_CODE, this.getClass(),CLIENT_BANNED_FROM_PARTY_ERROR);
         }
 
-        PartyBarDTO partyTable = this.partyService.asignOrCreatePartyByCode(request, clientDTO);
+        this.partyService.asignOrCreatePartyByCode(request, clientDTO);
 
         request.setClientId(clientDTO.getId());
         request.setNickName(clientDTO.getNickName());
@@ -65,10 +62,6 @@ public class ClientService implements IClientService {
 
         if (partyId != null){
             this.sseService.dispatchEventToClientsFromParty(NEW_CLIENT_TO_PARTY.name(),String.format(NEW_CLIENT_TO_PARTY.getMessage(),clientDTO.getNickName()),partyId);
-        }
-
-        if(partyTable != null) {
-            this.sseService.dispatchEventToSomeClientsFromBar(LOGIN_CLIENT.name(), String.format(LOGIN_CLIENT.getMessage(), partyTable.getName()), partyTable.getBarId(), List.of(request.getClientIp()));
         }
 
         return request;
