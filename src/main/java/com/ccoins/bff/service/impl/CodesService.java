@@ -138,7 +138,7 @@ public class CodesService extends ContextService implements ICodesService {
 
             if(response.getBody().getData().getQuantity() != null) {
                 Long quantity = response.getBody().getData().getQuantity();
-                String message = REDEEM_COINS.getMessage().replace("?", quantity.toString());
+                String message = String.format(REDEEM_COINS.getMessage(), quantity.toString());
                 this.sseService.dispatchEventToClientsFromParty(UPDATE_COINS.name(),message, request.getPartyId());
             }
 

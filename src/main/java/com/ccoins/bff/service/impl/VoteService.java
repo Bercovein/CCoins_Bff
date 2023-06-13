@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import static com.ccoins.bff.exceptions.constant.ExceptionConstant.*;
 import static com.ccoins.bff.utils.enums.EventNamesEnum.UPDATE_COINS;
+import static com.ccoins.bff.utils.enums.UpdateCoinsMessagesEnum.WIN_VOTE_COINS;
 
 @Service
 @Slf4j
@@ -142,7 +143,7 @@ public class VoteService implements IVoteService {
 
             List<Long> parties = this.partiesService.findAllIdsByClients(clientsIds);
 
-            this.sseService.dispatchEventToClientsFromParties(UPDATE_COINS.name(), UPDATE_COINS.getMessage(),parties);
+            this.sseService.dispatchEventToClientsFromParties(UPDATE_COINS.name(), String.format(WIN_VOTE_COINS.getMessage(),voting.getWinnerSong().getName()),parties);
         }
 
         return ipClients;

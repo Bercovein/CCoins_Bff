@@ -7,7 +7,8 @@ import lombok.Getter;
 @Getter
 public enum UpdateCoinsMessagesEnum {
 
-    REDEEM_COINS("La party ha adquirido ? coins!"),
+    REDEEM_COINS("La party ha adquirido %s coins!"),
+    WIN_VOTE_COINS("Sumaste coins al ganar la canción '%s'!"),
     PRIZE_SPEND_COINS("Alguien de la party ha canjeado un premio!"),
     DELIVER_PRIZE_OR_COINS("Se aprobó la entrega del premio!"),
     CANCEL_PRIZE_OR_COINS("Se canceló la entrega del premio."),

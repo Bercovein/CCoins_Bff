@@ -77,7 +77,6 @@ public class SpotifyService extends ContextService implements ISpotifyService {
     }
 
     @Scheduled(fixedDelayString = "${spotify.playback.cron}")
-    @SuppressWarnings({})
     public void sendPlayback(){
         this.barTokens.forEach((c,v) -> this.sendPlaybackToClients(v));
     }
