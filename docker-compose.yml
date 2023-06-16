@@ -1,0 +1,117 @@
+version: '3.5'
+services:
+
+  # bff-backend:
+    # build:
+# #     context: ./CCoins_Bff
+      # dockerfile: Dockerfile
+    # container_name: ccoins-bff
+    # ##volumes:
+    # ##  - ./:/bff
+    # ##  - ./.m2:/root/.m2
+    # ##working_dir: /bff
+    # ports:
+      # - 8000:8000
+    # networks:
+      # - internal-networks
+
+  # users-backend:
+    # container_name: ccoins-users
+    # build:
+      # context: ../CCoins_Users
+      # dockerfile: Dockerfile
+    # environment:
+      # - MYSQL_HOST=ccoins-mysql
+      # - MYSQL_PORT=3306
+    # depends_on:
+      # - ccoins-mysql
+    # ports:
+      # - 8084:8084
+    # networks:
+      # - internal-network
+
+  # bars-backend:
+    # container_name: ccoins-bars
+    # build:
+      # context: ../CCoins_Bars
+      # dockerfile: Dockerfile
+    # environment:
+      # - MYSQL_HOST=ccoins-mysql
+      # - MYSQL_PORT=3306
+    # depends_on:
+      # - ccoins-mysql
+    # ports:
+      # - 8082:8082
+    # networks:
+      # - internal-network
+
+  # prizes-backend:
+    # container_name: ccoins-prizes
+    # build:
+      # context: ../CCoins_Prizes
+      # dockerfile: Dockerfile
+    # environment:
+      # - MYSQL_HOST=ccoins-mysql
+      # - MYSQL_PORT=3306
+    # depends_on:
+      # - ccoins-mysql
+    # ports:
+      # - 8083:8083
+    # networks:
+      # - internal-network
+
+  # coins-backend:
+    # container_name: ccoins-coins
+    # build:
+      # context: ../CCoins_Coins
+      # dockerfile: Dockerfile
+    # environment:
+      # - MYSQL_HOST=ccoins-mysql
+      # - MYSQL_PORT=3306
+    # depends_on:
+      # - ccoins-mysql
+    # ports:
+      # - 8081:8081
+    # networks:
+      # - internal-network
+
+  ccoins-mysql:
+    container_name: ccoins-mysql
+    image: mysql:5.7.42
+    #command: --lower_case_table_names=0
+    command: [--default-authentication-plugin=mysql_native_password,--explicit_defaults_for_timestamp]
+    cap_add:
+      - SYS_NICE
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./data:/var/lib/mysql:rw
+    # Establecer permisos del volumen de datos de MySQL
+      - ./data:/var/lib/mysql:rw,z
+    environment:
+      - MYSQL_DATABASE=chopp_coins
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=ccoins
+      - MYSQL_PASSWORD=chopp_coins2022
+    ports:
+      - 3306:3306
+    networks:
+      - internal-network
+
+  phpmyadmin:
+    container_name: ccoins-phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_HOST=ccoins-mysql
+      - MYSQL_ROOT_PASSWORD=password
+    ports:
+      - "8090:80"
+    networks:
+      - internal-network
+      
+networks: 
+  internal-network:
+    driver: bridge
+    name: ccoins-network
+
+volumes:
+  data: {}
