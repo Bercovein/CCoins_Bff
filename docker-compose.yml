@@ -10,8 +10,13 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_INIT_OPTIONS: ${MYSQL_INIT_OPTIONS}
-    # healthcheck:
-    #   test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD} --skip-host-cache"]
+      MYSQL_PORT: ${MYSQL_PORT}
+    healthcheck:
+      test: "/usr/bin/mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD --execute \"SHOW DATABASES;\""
+      start_period: 5s
+      interval: 5s
+      timeout: 10s
+      retries: 2
     #command: --lower_case_table_names=0
     command: [--default-authentication-plugin=mysql_native_password,--explicit_defaults_for_timestamp]
     
@@ -32,76 +37,80 @@ services:
       context: ../CCoins_Users
       dockerfile: Dockerfile
     environment:
-      - MYSQL_HOST=ccoins-mysql
-      - MYSQL_PORT=3306
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
     depends_on:
-      - ccoins-mysql
-      # :
-      #   condition: service_healthy
+      ccoins-mysql:
+        condition: service_healthy
     ports:
       - 8084:8084
     networks:
       - internal-network
 
-  # bars-backend:
-  #   container_name: ccoins-bars
-  #   build:
-  #     context: ../CCoins_Bars
-  #     dockerfile: Dockerfile
-  #   environment:
-  #     - MYSQL_HOST=ccoins-mysql
-  #     - MYSQL_PORT=3306
-  #   depends_on:
-  #     ccoins-mysql:
-  #       condition: service_healthy
-  #   ports:
-  #     - 8082:8082
-  #   networks:
-  #     - internal-network
+  bars-backend:
+    container_name: ccoins-bars
+    build:
+      context: ../CCoins_Bars
+      dockerfile: Dockerfile
+    environment:
+      - MYSQL_HOST=ccoins-mysql
+      - MYSQL_PORT=3306
+    depends_on:
+      ccoins-mysql:
+        condition: service_healthy
+    ports:
+      - 8082:8082
+    networks:
+      - internal-network
 
-  # prizes-backend:
-  #   container_name: ccoins-prizes
-  #   build:
-  #     context: ../CCoins_Prizes
-  #     dockerfile: Dockerfile
-  #   environment:
-  #     - MYSQL_HOST=ccoins-mysql
-  #     - MYSQL_PORT=3306
-  #   depends_on:
-  #     - ccoins-mysql
-  #   ports:
-  #     - 8083:8083
-  #   networks:
-  #     - internal-network
+  prizes-backend:
+    container_name: ccoins-prizes
+    build:
+      context: ../CCoins_Prizes
+      dockerfile: Dockerfile
+    environment:
+      - MYSQL_HOST=ccoins-mysql
+      - MYSQL_PORT=3306
+    depends_on:
+      - ccoins-mysql
+    ports:
+      - 8083:8083
+    networks:
+      - internal-network
 
-  # coins-backend:
-  #   container_name: ccoins-coins
-  #   build:
-  #     context: ../CCoins_Coins
-  #     dockerfile: Dockerfile
-  #   environment:
-  #     - MYSQL_HOST=ccoins-mysql
-  #     - MYSQL_PORT=3306
-  #   depends_on:
-  #     - ccoins-mysql
-  #   ports:
-  #     - 8081:8081
-  #   networks:
-  #     - internal-network
+  coins-backend:
+    container_name: ccoins-coins
+    build:
+      context: ../CCoins_Coins
+      dockerfile: Dockerfile
+    environment:
+      - MYSQL_HOST=ccoins-mysql
+      - MYSQL_PORT=3306
+    depends_on:
+      - ccoins-mysql
+    ports:
+      - 8081:8081
+    networks:
+      - internal-network
 
-  #   bff-backend:
-  #     build:
-  # #     context: ./CCoins_Bff
-  #       dockerfile: Dockerfile
-  #     container_name: ccoins-bff
-  #     ##volumes:
-  #     ##  - ./:/bff
-  #     ##  - ./.m2:/root/.m2
-  #     ##working_dir: /bff
-  #     ports:
-  #       - 8000:8000
-  #     networks:
-  #       - internal-networks
+  bff-backend:
+    build:
+#     context: ./CCoins_Bff
+      dockerfile: Dockerfile
+    container_name: ccoins-bff
+    ##volumes:
+    ##  - ./:/bff
+    ##  - ./.m2:/root/.m2
+    ##working_dir: /bff
+    depends_on:
+      - users-backend
+      - bars-backend
+      - prizes-backend
+      - coins-backend
+    ports:
+      - 8000:8000
+    networks:
+      - internal-network
 
   phpmyadmin:
     container_name: ccoins-phpmyadmin
