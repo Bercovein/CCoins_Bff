@@ -112,6 +112,21 @@ services:
     networks:
       - internal-network
 
+  angular-frontend:
+    build:
+      context: ../CCoins
+      dockerfile: Dockerfile
+    container_name: ccoins-angular
+    depends_on:
+      - bff-backend
+    ports:
+      - 4200:4200
+    networks:
+      - internal-network
+    volumes:
+      - ../CCoins:/app
+    command: bash -c "npm install --loglevel verbose && ng serve --configuration=local --port 4200 --host 0.0.0.0 --open --poll"
+
   phpmyadmin:
     container_name: ccoins-phpmyadmin
     image: phpmyadmin/phpmyadmin
