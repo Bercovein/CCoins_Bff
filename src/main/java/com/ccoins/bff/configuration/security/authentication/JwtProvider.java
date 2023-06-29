@@ -4,12 +4,11 @@ import com.ccoins.bff.configuration.security.JwtUserDTO;
 import com.ccoins.bff.configuration.security.JwtUtils;
 import com.ccoins.bff.configuration.security.PrincipalUser;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.spec.SecretKeySpec;
 import java.util.Date;
 
 import static com.ccoins.bff.configuration.security.JwtUtils.SECRET_KEY;
@@ -26,11 +25,19 @@ public class JwtProvider {
     public String generateToken(Authentication authentication, JwtUserDTO user){
         PrincipalUser principalUser = (PrincipalUser) authentication.getPrincipal();
 
-        return Jwts.builder().setSubject(principalUser.getUsername())
+//        return Jwts.builder().setSubject(principalUser.getUsername())
+//                .setIssuedAt(new Date(System.currentTimeMillis()))
+//                .setClaims(JwtUtils.parse(user))
+//                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+//                .signWith(new SecretKeySpec(SECRET_KEY.getBytes(), SignatureAlgorithm.HS512.getJcaName()))
+//                .compact();
+
+        return Jwts.builder()
+                .setSubject(principalUser.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setClaims(JwtUtils.parse(user))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(new SecretKeySpec(SECRET_KEY.getBytes(), SignatureAlgorithm.HS512.getJcaName()))
+                .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()))
                 .compact();
     }
 
