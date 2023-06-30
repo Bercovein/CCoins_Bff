@@ -18,7 +18,6 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import net.glxn.qrgen.javase.QRCode;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,20 +68,6 @@ public class ImageService extends ContextService implements IImageService {
         this.logoName = logoName;
         this.tablesService = tablesService;
     }
-
-    @Override
-    public BufferedImage generateQr(final String qrCodeText, final int width, final int height) throws BadRequestException, IOException {
-        final ByteArrayOutputStream stream = QRCode
-                .from(qrCodeText)
-                .withSize(width, height)
-                .stream();
-
-        final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(stream.toByteArray());
-
-        return ImageIO.read(byteArrayInputStream);
-    }
-
-
 
     @Override
     public  ResponseEntity<byte[]> generatePDFWithQRCodes(LongListDTO request) throws JRException, IOException {
@@ -195,7 +180,12 @@ public class ImageService extends ContextService implements IImageService {
             bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, 250, 250, hints);
             MatrixToImageConfig config = new MatrixToImageConfig(MatrixToImageConfig.BLACK, MatrixToImageConfig.WHITE);
 
-            BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix, config);
+//            BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix, config);
+
+            ByteArrayOutputStream qrImageOutputStream = new ByteArrayOutputStream();
+            MatrixToImageWriter.writeToStream(bitMatrix, "PNG", qrImageOutputStream);
+            InputStream qrImageInputStream = new ByteArrayInputStream(qrImageOutputStream.toByteArray());
+            BufferedImage qrImage = ImageIO.read(qrImageInputStream);
 
             File file = new File(imagesFolderPath.concat(logoName));
             BufferedImage logoImage = ImageIO.read(file);
@@ -220,4 +210,43 @@ public class ImageService extends ContextService implements IImageService {
         }
     }
 
+//    public InputStream createQRImage(String text, String fileName) {
+//
+//        Map<EncodeHintType, ErrorCorrectionLevel> hints = new HashMap<>();
+//        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+//        QRCodeWriter writer = new QRCodeWriter();
+//        BitMatrix bitMatrix = null;
+//
+//        try {
+//            bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, 250, 250, hints);
+//            MatrixToImageConfig config = new MatrixToImageConfig(MatrixToImageConfig.BLACK, MatrixToImageConfig.WHITE);
+//
+//            BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix, config);
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            ImageIO.write(qrImage, "png", baos);
+//            baos.flush();
+//            InputStream qrImageInputStream = new ByteArrayInputStream(baos.toByteArray());
+//
+//            File file = new File(imagesFolderPath.concat(logoName));
+//            BufferedImage logoImage = ImageIO.read(file);
+//
+//            int deltaHeight = qrImage.getHeight() - logoImage.getHeight();
+//            int deltaWidth = qrImage.getWidth() - logoImage.getWidth();
+//
+//            BufferedImage combined = new BufferedImage(qrImage.getHeight(), qrImage.getWidth(), BufferedImage.TYPE_INT_ARGB);
+//            Graphics2D g = (Graphics2D) combined.getGraphics();
+//            g.drawImage(qrImage, 0, 0, null);
+//            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+//
+//            g.drawImage(logoImage, deltaWidth / 2, deltaHeight / 2, null);
+//
+//            String filePath = tempFolderPath.concat(fileName.concat(".").concat(PNG));
+//            ImageIO.write(combined, PNG, new File(filePath));
+//
+//            return qrImageInputStream;
+//        } catch (Exception e) {
+//            throw new BadRequestException(ExceptionConstant.QR_CODE_GENERATION_ERROR_CODE,
+//                    this.getClass(), ExceptionConstant.QR_CODE_GENERATION_ERROR);
+//        }
+//    }
 }
