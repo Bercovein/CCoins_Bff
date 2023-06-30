@@ -180,12 +180,12 @@ public class ImageService extends ContextService implements IImageService {
             bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, 250, 250, hints);
             MatrixToImageConfig config = new MatrixToImageConfig(MatrixToImageConfig.BLACK, MatrixToImageConfig.WHITE);
 
-//            BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix, config);
+            BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix, config);
 
-            ByteArrayOutputStream qrImageOutputStream = new ByteArrayOutputStream();
-            MatrixToImageWriter.writeToStream(bitMatrix, "PNG", qrImageOutputStream);
-            InputStream qrImageInputStream = new ByteArrayInputStream(qrImageOutputStream.toByteArray());
-            BufferedImage qrImage = ImageIO.read(qrImageInputStream);
+//            ByteArrayOutputStream qrImageOutputStream = new ByteArrayOutputStream();
+//            MatrixToImageWriter.writeToStream(bitMatrix, "PNG", qrImageOutputStream);
+//            InputStream qrImageInputStream = new ByteArrayInputStream(qrImageOutputStream.toByteArray());
+//            BufferedImage qrImage = ImageIO.read(qrImageInputStream);
 
             File file = new File(imagesFolderPath.concat(logoName));
             BufferedImage logoImage = ImageIO.read(file);
