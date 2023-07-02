@@ -18,6 +18,7 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.*;
 
 @Service
+@Slf4j
 public class ImageService extends ContextService implements IImageService {
 
     private final String url;
@@ -79,6 +81,7 @@ public class ImageService extends ContextService implements IImageService {
 
         //generar QRs
         for (BarTableDTO table : listed) {
+            log.error("CREANDO PDF:");
             InputStream inputStream = this.createQRImage(this.url.concat("/login").concat(table.getCode()), table.getCode());
             imageList.add(ImageToPdfDTO.builder().number(table.getNumber()).image(inputStream).build());
         }
@@ -92,6 +95,7 @@ public class ImageService extends ContextService implements IImageService {
 
     public  ResponseEntity<byte[]> generatePdfFromList(List<ImageToPdfDTO> list) throws JRException, IOException {
         try {
+            log.error("GENERATING PDF: generatePdfFromList");
             JasperReport report = JasperCompileManager.compileReport(BffApplication.class.getResourceAsStream(jasperReportQrPath));
 
             List<RowToPdfDTO> rowList = this.imagesToRows(list);
@@ -102,6 +106,7 @@ public class ImageService extends ContextService implements IImageService {
             String tempPath = tempFolderPath.concat(DateUtils.nowCurrentMillis()).concat(".pdf");
 
             OutputStream output = new FileOutputStream(tempPath);
+            log.error("CREANDO JASPER REPORT");
             JasperExportManager.exportReportToPdfStream(print, output);
             output.close();
 
@@ -258,18 +263,25 @@ public class ImageService extends ContextService implements IImageService {
         QRCodeWriter writer = new QRCodeWriter();
         BitMatrix bitMatrix;
         try {
+            log.error("INICIO CREACIÓN IMAGEN QR");
             bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, 250, 250, hints);
 
             MatrixToImageConfig config = new MatrixToImageConfig(MatrixToImageConfig.BLACK, MatrixToImageConfig.WHITE);
+
             BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix, config);
+            log.error("BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix, config);");
 
             File logoFile = new File(imagesFolderPath.concat(logoName));
             BufferedImage logoImage = Thumbnails.of(logoFile).size(100, 100).asBufferedImage();
+            log.error("BufferedImage logoImage = Thumbnails.of(logoFile).size(100, 100).asBufferedImage();");
 
             int deltaHeight = qrImage.getHeight() - logoImage.getHeight();
             int deltaWidth = qrImage.getWidth() - logoImage.getWidth();
 
             BufferedImage combined = new BufferedImage(qrImage.getHeight(), qrImage.getWidth(), BufferedImage.TYPE_INT_ARGB);
+            log.error("BufferedImage combined = new BufferedImage(qrImage.getHeight(), qrImage.getWidth(), BufferedImage.TYPE_INT_ARGB);");
+
+
             Graphics2D g = combined.createGraphics();
             g.drawImage(qrImage, 0, 0, null);
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
@@ -278,6 +290,7 @@ public class ImageService extends ContextService implements IImageService {
 
             String filePath = tempFolderPath.concat(fileName).concat(".").concat(PNG);
             ImageIO.write(combined, PNG, new File(filePath));
+            log.error("ImageIO.write(combined, PNG, new File(filePath));");
 
             return Files.newInputStream(Path.of(filePath), StandardOpenOption.DELETE_ON_CLOSE);
         } catch (Exception e) {
