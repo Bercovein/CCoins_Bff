@@ -19,7 +19,6 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import lombok.extern.slf4j.Slf4j;
-import net.coobird.thumbnailator.Thumbnails;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -175,6 +174,47 @@ public class ImageService extends ContextService implements IImageService {
     }
 
     @Override
+    public InputStream createQRImage(String text, String fileName) {
+
+        Map hints = new HashMap();
+        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+        QRCodeWriter writer = new QRCodeWriter();
+        BitMatrix bitMatrix = null;
+
+        try {
+            bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, 250, 250, hints);
+            MatrixToImageConfig config = new MatrixToImageConfig(MatrixToImageConfig.BLACK, MatrixToImageConfig.WHITE);
+
+            BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix, config);
+
+//            ByteArrayOutputStream qrImageOutputStream = new ByteArrayOutputStream();
+//            MatrixToImageWriter.writeToStream(bitMatrix, "PNG", qrImageOutputStream);
+//            InputStream qrImageInputStream = new ByteArrayInputStream(qrImageOutputStream.toByteArray());
+//            BufferedImage qrImage = ImageIO.read(qrImageInputStream);
+
+            File file = new File(imagesFolderPath.concat(logoName));
+            BufferedImage logoImage = ImageIO.read(file);
+
+            int deltaHeight = qrImage.getHeight() - logoImage.getHeight();
+            int deltaWidth = qrImage.getWidth() - logoImage.getWidth();
+
+            BufferedImage combined = new BufferedImage(qrImage.getHeight(), qrImage.getWidth(), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = (Graphics2D) combined.getGraphics();
+            g.drawImage(qrImage, 0, 0, null);
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+
+            g.drawImage(logoImage, deltaWidth / 2, deltaHeight / 2, null);
+
+            String filePath = tempFolderPath.concat(fileName.concat(".").concat(PNG));
+            ImageIO.write(combined, PNG, new File(filePath));
+
+            return Files.newInputStream(Path.of(filePath), new StandardOpenOption[]{StandardOpenOption.DELETE_ON_CLOSE});
+        }catch(Exception e){
+            throw new BadRequestException(ExceptionConstant.QR_CODE_GENERATION_ERROR_CODE,
+                    this.getClass(), ExceptionConstant.QR_CODE_GENERATION_ERROR);
+        }
+    }
+//
 //    public InputStream createQRImage(String text, String fileName) {
 //
 //        Map hints = new HashMap();
@@ -188,10 +228,10 @@ public class ImageService extends ContextService implements IImageService {
 //
 //            BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix, config);
 //
-////            ByteArrayOutputStream qrImageOutputStream = new ByteArrayOutputStream();
-////            MatrixToImageWriter.writeToStream(bitMatrix, "PNG", qrImageOutputStream);
-////            InputStream qrImageInputStream = new ByteArrayInputStream(qrImageOutputStream.toByteArray());
-////            BufferedImage qrImage = ImageIO.read(qrImageInputStream);
+//            Thumbnails.of(new File(imagesFolderPath.concat(logoName)).listFiles())
+//                    .size(100, 100)
+//                    .outputFormat(PNG)
+//                    .toFiles(Rename.PREFIX_DOT_THUMBNAIL);
 //
 //            File file = new File(imagesFolderPath.concat(logoName));
 //            BufferedImage logoImage = ImageIO.read(file);
@@ -216,87 +256,31 @@ public class ImageService extends ContextService implements IImageService {
 //        }
 //    }
 
-//    public InputStream createQRImage(String text, String fileName) {
-//
-//        Map<EncodeHintType, ErrorCorrectionLevel> hints = new HashMap<>();
-//        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
-//        QRCodeWriter writer = new QRCodeWriter();
-//        BitMatrix bitMatrix = null;
+//    public static void generateQRCode(String data, String imagePath, String filePath) {
+//        QRCode qrCode = QRCode.from(data);
 //
 //        try {
-//            bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, 250, 250, hints);
-//            MatrixToImageConfig config = new MatrixToImageConfig(MatrixToImageConfig.BLACK, MatrixToImageConfig.WHITE);
+//            InputStream qrStream = qrCode.to(ImageType.PNG).stream();
+//            Image qrImage = new Image(qrStream);
 //
-//            BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix, config);
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            ImageIO.write(qrImage, "png", baos);
-//            baos.flush();
-//            InputStream qrImageInputStream = new ByteArrayInputStream(baos.toByteArray());
-//
-//            File file = new File(imagesFolderPath.concat(logoName));
-//            BufferedImage logoImage = ImageIO.read(file);
+//            File logoFile = new File(imagePath);
+//            Image logoImage = new Image(logoFile);
 //
 //            int deltaHeight = qrImage.getHeight() - logoImage.getHeight();
 //            int deltaWidth = qrImage.getWidth() - logoImage.getWidth();
 //
-//            BufferedImage combined = new BufferedImage(qrImage.getHeight(), qrImage.getWidth(), BufferedImage.TYPE_INT_ARGB);
-//            Graphics2D g = (Graphics2D) combined.getGraphics();
-//            g.drawImage(qrImage, 0, 0, null);
-//            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+//            Image combined = Thumbnails.of(qrImage.toBufferedImage())
+//                    .size(qrImage.getWidth(), qrImage.getHeight())
+//                    .watermark(Positions.CENTER, logoImage.toBufferedImage(), 1.0f)
+//                    .asBufferedImage();
 //
-//            g.drawImage(logoImage, deltaWidth / 2, deltaHeight / 2, null);
+//            Path path = new File(filePath).toPath();
+//            combined.saveAs(path.toFile());
 //
-//            String filePath = tempFolderPath.concat(fileName.concat(".").concat(PNG));
-//            ImageIO.write(combined, PNG, new File(filePath));
+//            qrStream.close();
 //
-//            return qrImageInputStream;
-//        } catch (Exception e) {
-//            throw new BadRequestException(ExceptionConstant.QR_CODE_GENERATION_ERROR_CODE,
-//                    this.getClass(), ExceptionConstant.QR_CODE_GENERATION_ERROR);
+//        } catch (IOException e) {
+//            e.printStackTrace();
 //        }
 //    }
-
-    public InputStream createQRImage(String text, String fileName) {
-        Map<EncodeHintType, Object> hints = new HashMap<>();
-        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
-
-        QRCodeWriter writer = new QRCodeWriter();
-        BitMatrix bitMatrix;
-        try {
-            log.error("INICIO CREACIÓN IMAGEN QR");
-            bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, 250, 250, hints);
-
-            MatrixToImageConfig config = new MatrixToImageConfig(MatrixToImageConfig.BLACK, MatrixToImageConfig.WHITE);
-            log.error("MatrixToImageConfig config = new MatrixToImageConfig(MatrixToImageConfig.BLACK, MatrixToImageConfig.WHITE);");
-
-            BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix, config);
-            log.error("BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix, config);");
-
-            File logoFile = new File(imagesFolderPath.concat(logoName));
-            BufferedImage logoImage = Thumbnails.of(logoFile).size(100, 100).asBufferedImage();
-            log.error("BufferedImage logoImage = Thumbnails.of(logoFile).size(100, 100).asBufferedImage();");
-
-            int deltaHeight = qrImage.getHeight() - logoImage.getHeight();
-            int deltaWidth = qrImage.getWidth() - logoImage.getWidth();
-
-            BufferedImage combined = new BufferedImage(qrImage.getHeight(), qrImage.getWidth(), BufferedImage.TYPE_INT_ARGB);
-            log.error("BufferedImage combined = new BufferedImage(qrImage.getHeight(), qrImage.getWidth(), BufferedImage.TYPE_INT_ARGB);");
-
-
-            Graphics2D g = combined.createGraphics();
-            g.drawImage(qrImage, 0, 0, null);
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-            g.drawImage(logoImage, deltaWidth / 2, deltaHeight / 2, null);
-            g.dispose();
-
-            String filePath = tempFolderPath.concat(fileName).concat(".").concat(PNG);
-            ImageIO.write(combined, PNG, new File(filePath));
-            log.error("ImageIO.write(combined, PNG, new File(filePath));");
-
-            return Files.newInputStream(Path.of(filePath), StandardOpenOption.DELETE_ON_CLOSE);
-        } catch (Exception e) {
-            throw new BadRequestException(ExceptionConstant.QR_CODE_GENERATION_ERROR_CODE,
-                    this.getClass(), ExceptionConstant.QR_CODE_GENERATION_ERROR);
-        }
-    }
 }
