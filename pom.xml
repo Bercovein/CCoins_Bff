@@ -291,6 +291,12 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 			<version>3.0.5</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>core</artifactId>
+			<version>3.5.1</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/javaxt/javaxt-core -->
 		<dependency>
 			<groupId>javaxt</groupId>
