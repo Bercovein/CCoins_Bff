@@ -14,7 +14,6 @@ import com.ccoins.bff.utils.DateUtils;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import lombok.extern.slf4j.Slf4j;
@@ -230,11 +229,10 @@ public class ImageService extends ContextService implements IImageService {
             log.error("String filePath = tempFolderPath.concat(fileName.concat(\".\").concat(PNG));");
 
             return Files.newInputStream(Path.of(filePath), new StandardOpenOption[]{StandardOpenOption.DELETE_ON_CLOSE});
-        } catch (WriterException e) {
+        } catch (Exception e) {
+            log.error(e.getMessage());
             throw new BadRequestException(ExceptionConstant.QR_CODE_GENERATION_ERROR_CODE,
                     this.getClass(), ExceptionConstant.QR_CODE_GENERATION_ERROR);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
 
     }

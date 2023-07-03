@@ -297,6 +297,13 @@
 			<artifactId>core</artifactId>
 			<version>3.5.1</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>javase</artifactId>
+			<version>3.4.1</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/javaxt/javaxt-core -->
 		<dependency>
 			<groupId>javaxt</groupId>
