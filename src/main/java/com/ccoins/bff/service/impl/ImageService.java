@@ -186,6 +186,7 @@ public class ImageService extends ContextService implements IImageService {
             MatrixToImageConfig config = new MatrixToImageConfig(MatrixToImageConfig.BLACK, MatrixToImageConfig.WHITE);
             log.error("MatrixToImageConfig config = new MatrixToImageConfig(MatrixToImageConfig.BLACK, MatrixToImageConfig.WHITE);\n");
 
+            log.error("BIT MATRIX: " + bitMatrix + " \n CONFIG: " +  config);
             BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix, config);
             log.error("BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix, config);\n");
 
