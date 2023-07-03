@@ -267,6 +267,7 @@ public class ImageService extends ContextService implements IImageService {
             bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, 250, 250, hints);
 
             MatrixToImageConfig config = new MatrixToImageConfig(MatrixToImageConfig.BLACK, MatrixToImageConfig.WHITE);
+            log.error("MatrixToImageConfig config = new MatrixToImageConfig(MatrixToImageConfig.BLACK, MatrixToImageConfig.WHITE);");
 
             BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix, config);
             log.error("BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix, config);");
