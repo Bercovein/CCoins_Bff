@@ -6,7 +6,7 @@ CREATE TABLE if not exists games_types (
   PRIMARY KEY (id)
 );
 
-insert IGNORE into GAMES_TYPES (id, name) values (1, 'VOTE'), (2, 'GAME'), (3, 'CODE');
+insert IGNORE into games_types (id, name) values (1, 'VOTE'), (2, 'GAME'), (3, 'CODE');
 
 CREATE TABLE if not exists owners (
   ID int NOT NULL AUTO_INCREMENT,

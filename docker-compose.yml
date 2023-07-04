@@ -97,7 +97,17 @@ services:
     build:
 #     context: ./CCoins_Bff
       dockerfile: Dockerfile
+      # args:
+      #   - MAVEN_BUILD_COMMAND=mvn clean package -Dmaven.test.skip
     container_name: ccoins-bff
+    # command: ["java", "-Djava.awt.headless=true", "-jar", "../app/bff-app.jar"]
+    volumes:
+      - ./images:/app/images
+      - ./files:/app/files
+      - ./src/main/resources/ireport:/app/ireport
+      - ./temp:/app/temp
+    env_file:
+      - ./.env
     ##volumes:
     ##  - ./:/bff
     ##  - ./.m2:/root/.m2
