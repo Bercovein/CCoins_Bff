@@ -2,13 +2,8 @@
 
 * Pre-requirements:
   - Install Docker: https://www.docker.com/products/docker-desktop/
-  - Clone this repository and the following ones:
-    - https://github.com/MarcosBertolotti/CCoins
-    - https://github.com/Bercovein/CCoins_Coins
-    - https://github.com/Bercovein/CCoins_Prizes
-    - https://github.com/Bercovein/CCoins_Bars
-    - https://github.com/Bercovein/CCoins_Users
-
+  - Clone this repository in a folder with git clone
+  - Enter CCoins_Bff and execute "./clone_repos.sh" to clone full-program repository
 
 * To run all microservices, step on CCoins_Bff and execute:
 $ ./run.sh
