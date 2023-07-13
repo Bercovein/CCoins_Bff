@@ -101,7 +101,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         config.setAllowedMethods(Arrays.asList(HttpMethods.GET, HttpMethods.POST, HttpMethods.PUT, HttpMethods.PATCH, HttpMethods.DELETE, HttpMethods.OPTIONS)); // configuramos los verbos que vamos a permitir en el backend
         config.setAllowCredentials(true);
         config.setAllowedHeaders(Arrays.asList(CONTENT_TYPE, AUTHORIZATION, LOCATION, CLIENT, CODE, PARTY_ID, NGROK_BYPASS));
-        config.setExposedHeaders(Arrays.asList(ACCESS_CONTROL_EXPOSE_HEADERS, AUTHORIZATION));
+        config.setExposedHeaders(Arrays.asList(ACCESS_CONTROL_EXPOSE_HEADERS, ACCESS_CONTROL_ALLOW_ORIGIN, AUTHORIZATION));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);                            // configurar cors para todos nuestros endpoints
