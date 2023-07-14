@@ -12,7 +12,7 @@ $ ./run.sh
 http://localhost:4200/admin
 
 * Once you login and create a Bar in your account, you have to create 1 or more tables.
-Each table has a QR code to enter into Client side (Recommend to download QR image and use https://scanqr.org/ to scan it in another browser)
+Each table has a QR code to enter into Client side (Require to download QR image and use https://scanqr.org/ in another browser to scan)
 
 
 ---------------------------------------------------------------
