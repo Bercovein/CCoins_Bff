@@ -95,12 +95,14 @@ services:
 
   bff-backend:
     build:
-#     context: ./CCoins_Bff
       dockerfile: Dockerfile
-      # args:
-      #   - MAVEN_BUILD_COMMAND=mvn clean package -Dmaven.test.skip
     container_name: ccoins-bff
-    # command: ["java", "-Djava.awt.headless=true", "-jar", "../app/bff-app.jar"]
+    environment:
+      COINS_HOST: ${COINS_HOST}
+      BARS_HOST: ${BARS_HOST}
+      PRIZES_HOST: ${PRIZES_HOST}
+      USERS_HOST: ${USERS_HOST}
+      FRONT_HOST: ${FRONT_HOST}
     volumes:
       - ./images:/app/images
       - ./files:/app/files
@@ -108,10 +110,6 @@ services:
       - ./temp:/app/temp
     env_file:
       - ./.env
-    ##volumes:
-    ##  - ./:/bff
-    ##  - ./.m2:/root/.m2
-    ##working_dir: /bff
     depends_on:
       - users-backend
       - bars-backend
