@@ -3,7 +3,7 @@
 * Pre-requirements:
   - Install Docker: https://www.docker.com/products/docker-desktop/
   - Clone this repository in a folder with git clone
-  - Enter CCoins_Bff and execute "./clone_repos.sh" to clone full-program repository
+  - Enter CCoins_Bff and execute on console: "./clone_repos.sh" to clone full-program repository
 
 * To run all microservices, step on CCoins_Bff and execute:
 $ ./run.sh
