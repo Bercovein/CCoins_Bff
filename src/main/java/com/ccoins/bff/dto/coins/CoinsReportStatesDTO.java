@@ -16,6 +16,8 @@ public class CoinsReportStatesDTO {
     private Long tableNumber;
     private String prizeName;
     private String state;
+    private String partyName;
     private Boolean updatable;
+
 
 }
