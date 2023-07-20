@@ -1,6 +1,7 @@
 package com.ccoins.bff.controller;
 
 import com.ccoins.bff.annotation.LimitedTime;
+import com.ccoins.bff.annotation.MobileCheck;
 import com.ccoins.bff.controller.swagger.IClientsController;
 import com.ccoins.bff.dto.ClientTableDTO;
 import com.ccoins.bff.dto.StringDTO;
@@ -30,7 +31,7 @@ public class ClientsController implements IClientsController {
     }
 
     @PostMapping("/login")
-//    @MobileCheck
+    @MobileCheck
     @LimitedTime
     @Override
     public ClientTableDTO login(@RequestHeader HttpHeaders headers, Device device){

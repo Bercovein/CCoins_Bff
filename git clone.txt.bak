@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Repositorios a clonar
+repos=(
+    "https://github.com/usuario/repo1.git"
+    "https://github.com/usuario/repo2.git"
+    "https://github.com/usuario/repo3.git"
+)
+
+# Directorio de destino para clonar los repositorios
+destino="/ruta/de/destino"
+
+# Iterar sobre los repositorios y clonarlos
+for repo in "${repos[@]}"
+do
+    git clone "$repo" "$destino"
+done

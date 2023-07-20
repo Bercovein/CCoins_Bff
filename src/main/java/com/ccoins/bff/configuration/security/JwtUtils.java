@@ -27,6 +27,7 @@ public class JwtUtils {
     public static final String AUTHORIZATION = "Authorization";
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String ACCESS_CONTROL_EXPOSE_HEADERS = "Access-Control-Expose-Headers";
+    public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
     public static final String LOCATION = "Location";
     public static final String CLIENT = "client";
     public static final String CODE = "code";

@@ -10,6 +10,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mobile.device.Device;
 import org.springframework.stereotype.Component;
@@ -30,9 +31,13 @@ public class AnnotationAspect {
 
     private final ITablesService tablesService;
 
+    private final Boolean deviceCheck;
+
     @Autowired
-    public AnnotationAspect(ITablesService tablesService) {
+    public AnnotationAspect(ITablesService tablesService,
+                            @Value("${api.device.check}") Boolean deviceCheck) {
         this.tablesService = tablesService;
+        this.deviceCheck = deviceCheck;
     }
 
     @Around(value = "@annotation(com.ccoins.bff.annotation.LimitedTime)")
@@ -63,13 +68,15 @@ public class AnnotationAspect {
 
         Object[] args = joinPoint.getArgs();
 
-        for (Object arg : args) {
-            if (arg instanceof Device) {
-                Device device = (Device) arg;
-                if (!device.isMobile()) {
-                    log.error("NOT A MOBILE DEVICE");
-                    throw new UnauthorizedException(ExceptionConstant.NOT_MOBILE_ERROR_CODE,
-                            NOT_MOBILE_ERROR);
+        if(deviceCheck != null && deviceCheck){
+            for (Object arg : args) {
+                if (arg instanceof Device) {
+                    Device device = (Device) arg;
+                    if (!device.isMobile()) {
+                        log.error("NOT A MOBILE DEVICE");
+                        throw new UnauthorizedException(ExceptionConstant.NOT_MOBILE_ERROR_CODE,
+                                NOT_MOBILE_ERROR);
+                    }
                 }
             }
         }

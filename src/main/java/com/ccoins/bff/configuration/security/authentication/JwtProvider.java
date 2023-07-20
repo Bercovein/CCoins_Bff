@@ -25,12 +25,6 @@ public class JwtProvider {
     public String generateToken(Authentication authentication, JwtUserDTO user){
         PrincipalUser principalUser = (PrincipalUser) authentication.getPrincipal();
 
-//        return Jwts.builder().setSubject(principalUser.getUsername())
-//                .setIssuedAt(new Date(System.currentTimeMillis()))
-//                .setClaims(JwtUtils.parse(user))
-//                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-//                .signWith(new SecretKeySpec(SECRET_KEY.getBytes(), SignatureAlgorithm.HS512.getJcaName()))
-//                .compact();
 
         return Jwts.builder()
                 .setSubject(principalUser.getUsername())

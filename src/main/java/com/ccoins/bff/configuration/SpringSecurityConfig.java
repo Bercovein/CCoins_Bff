@@ -46,6 +46,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${api.url.path.localhost}")
     private String API_LOCALHOST_PATH;
 
+    @Value("${api.ngrok.bypass}")
+    private String NGROK_BYPASS;
+
     @Bean
     JwtRefreshFilter jwtTokenFilter (){
         return new JwtRefreshFilter();
@@ -97,8 +100,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         config.setAllowedOrigins(Arrays.asList(API_PATH, API_LOCALHOST_PATH));                   // agregamos nuestros dominios, ej: "http://localhost:4200"
         config.setAllowedMethods(Arrays.asList(HttpMethods.GET, HttpMethods.POST, HttpMethods.PUT, HttpMethods.PATCH, HttpMethods.DELETE, HttpMethods.OPTIONS)); // configuramos los verbos que vamos a permitir en el backend
         config.setAllowCredentials(true);
-        config.setAllowedHeaders(Arrays.asList(CONTENT_TYPE, AUTHORIZATION, LOCATION, CLIENT, CODE, PARTY_ID));
-        config.setExposedHeaders(Arrays.asList(ACCESS_CONTROL_EXPOSE_HEADERS, AUTHORIZATION));
+        config.setAllowedHeaders(Arrays.asList(CONTENT_TYPE, AUTHORIZATION, LOCATION, CLIENT, CODE, PARTY_ID, NGROK_BYPASS));
+        config.setExposedHeaders(Arrays.asList(ACCESS_CONTROL_EXPOSE_HEADERS, ACCESS_CONTROL_ALLOW_ORIGIN, AUTHORIZATION));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);                            // configurar cors para todos nuestros endpoints

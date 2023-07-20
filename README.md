@@ -1,9 +1,19 @@
 # CCoins-ms
 
-* To run all microservices with cached m2 execute:
-$ COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose up --build
+* Pre-requirements:
+  - Install Docker: https://www.docker.com/products/docker-desktop/
+  - Clone this repository in a folder with git clone
+  - Enter CCoins_Bff and execute on console: "./clone_repos.sh" to clone full-program repository
 
-* Or only execute:
+* To run all microservices, step on CCoins_Bff and execute:
 $ ./run.sh
 
-spring.datasource.url=jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/chopp_coins
+* To open Owner side, use:
+http://localhost:4200/admin
+
+* Once you login and create a Bar in your account, you have to create 1 or more tables.
+Each table has a QR code to enter into Client side (Require to download QR image and use https://scanqr.org/ in another browser to scan)
+
+
+---------------------------------------------------------------
+To take server down, execute: docker-compose down
