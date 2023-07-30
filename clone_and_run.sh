@@ -7,16 +7,20 @@ repos=(
     "./CCoins_Users/":"https://github.com/Bercovein/CCoins_Users"
 )
 
+folder="./Chopp_Coins/"
+if [ ! -d "$folder" ]; then
+    mkdir "$folder"
+fi
+
+cd "$folder"
+
 # Iterar sobre los repositorios y clonarlos
 for element in "${repos[@]}"
 do
 	IFS=":" read -r directory repository <<< "$element"
 	
-	if [ -d "$directory" ]
+	if [ ! -d "$directory" ]
     then
-		echo  "$repository" + " Sí, sí existe."
-	else
-		echo "$repository" + " No, no existe"
 		git clone "$repository"
 	fi
 done
