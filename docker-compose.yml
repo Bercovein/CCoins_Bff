@@ -39,9 +39,6 @@ services:
     environment:
       MYSQL_HOST: ${MYSQL_HOST}
       MYSQL_PORT: ${MYSQL_PORT}
-    depends_on:
-      ccoins-mysql:
-        condition: service_healthy
     ports:
       - 8084:8084
     networks:
@@ -55,9 +52,6 @@ services:
     environment:
       - MYSQL_HOST=ccoins-mysql
       - MYSQL_PORT=3306
-    depends_on:
-      ccoins-mysql:
-        condition: service_healthy
     ports:
       - 8082:8082
     networks:
@@ -95,6 +89,7 @@ services:
 
   bff-backend:
     build:
+      context: .
       dockerfile: Dockerfile
     container_name: ccoins-bff
     environment:
