@@ -38,7 +38,8 @@ while true; do
 
 	# Comprueba la respuesta del usuario
 	if [[ "$response" == "yes" || "$response" == "y" ]]; then
-		./CCoins_Bff/run.sh
+		cd ./CCoins_Bff/
+		./run.sh
 		break
 	elif [[ "$response" == "no" || "$response" == "n"  ]]; then
 		echo "Para ejecutarlo luego, puede utilizar el comando ./run.sh dentro de la carpeta 'CCoins_Bff'"
