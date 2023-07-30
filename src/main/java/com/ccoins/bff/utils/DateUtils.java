@@ -38,8 +38,17 @@ public class DateUtils {
 
     public static boolean isNowBetweenLocalTimes(LocalTime start, LocalTime end){
         boolean response = true;
-        if(start != null && end != null)
-            response = DateUtils.isBetweenLocalTimes(LocalTime.now(), start, end);
+        LocalTime now = LocalTime.now();
+
+        if (start != null && end != null) {
+            if (start.isBefore(end)) {
+                // Caso normal: el intervalo está dentro del mismo día.
+                response = now.isAfter(start) && now.isBefore(end);
+            } else {
+                // Caso especial: el intervalo cruza a otro día.
+                response = now.isAfter(start) || now.isBefore(end);
+            }
+        }
         return response;
     }
 
