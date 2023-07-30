@@ -7,7 +7,8 @@
 *How to Run:
 
   *First time? Use this steps to download and run project, else you can jump this step 
-  HIGH RECOMMENDED: Have a SSH on GitHub: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+  
+  - HIGH RECOMMENDED: Have a SSH on GitHub: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
 	(or else clone repositories manually and ignore this steps)
   - Enter the following link and download file "clone_and_run.sh": https://github.com/Bercovein/CCoins_Bff/blob/develop/clone_and_run.sh
   - Step on download folder, open a bash console and run: "./clone_and_run.sh"
