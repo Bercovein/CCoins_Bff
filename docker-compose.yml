@@ -97,7 +97,8 @@ services:
       BARS_HOST: ${BARS_HOST}
       PRIZES_HOST: ${PRIZES_HOST}
       USERS_HOST: ${USERS_HOST}
-      FRONT_HOST: ${FRONT_HOST}
+      FRONT_HOST: ${DOCKER_FRONT_HOST}
+
     volumes:
       - ./images:/app/images
       - ./files:/app/files
